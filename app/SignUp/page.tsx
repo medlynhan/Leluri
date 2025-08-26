@@ -9,10 +9,10 @@ import { RiArrowDropDownLine } from "react-icons/ri";
 // Tipe data untuk menangani state
 interface SignUpState {
     email: string;
-    password: string;
+    password: string;   
     username: string;
     role: string;
-    address: string;
+    location: string;
     error: string;
 }
 
@@ -22,7 +22,7 @@ const SignUp: React.FC = () => {
         password: '',
         username: '',
         role: '',
-        address: '',
+        location: '',
         error: '',
     });
 
@@ -32,7 +32,7 @@ const SignUp: React.FC = () => {
 
     const handleSignUp = async () => {
       
-      if (state.email === "" || state.password === "" || state.username === "" || state.role === "" || state.address === "") {
+      if (state.email === "" || state.password === "" || state.username === "" || state.role === "" || state.location === "") {
           setState({ ...state, error: 'Mohon lengkapi data anda' });
           return;
       }
@@ -50,25 +50,25 @@ const SignUp: React.FC = () => {
           return;
       }
 
-      // Jika user berhasil sign-up, kita simpan data ke tabel 'user'
+      // Jika user berhasil sign-up, kita simpan data ke tabel 'users'
       const user = data?.user;
 
       if (user) {
           const { error: dbError } = await supabase
-              .from('user')
+              .from('users')
               .insert([{
                   id: user.id,
                   email: state.email,
                   username: state.username,
-                  peran: state.role,
-                  alamat: state.address,
-                  password: state.password
+                  role: state.role,
+                  location: state.location,
               }]);
 
           if (dbError) {
               setState({ ...state, error: dbError.message });
               return;
           }
+          router.push('/Login');
 
       } else {
           setState({ ...state, error: 'User not found after sign up' });
@@ -165,11 +165,11 @@ const SignUp: React.FC = () => {
                     />
                 </div>
                 <div>
-                    <label className='font-semibold'>Alamat</label>
+                    <label className='font-semibold'>Location</label>
                     <input
                         type="text"
-                        value={state.address}
-                        onChange={(e) => setState({ ...state, address: e.target.value })}
+                        value={state.location}
+                        onChange={(e) => setState({ ...state, location: e.target.value })}
                         required
                         className='bg-[var(--light-grey)] p-2 w-full rounded-3xl'
                     />
