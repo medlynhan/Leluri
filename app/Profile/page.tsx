@@ -7,6 +7,17 @@ import Image from 'next/image';
 import { FaPlus } from "react-icons/fa6";
 import { IoLocationOutline } from "react-icons/io5";
 import Button from '../components/Button';
+import PostPreview from '../components/PostPreview';
+
+interface Post {
+    id: string;
+    user_id: string;
+    description: string;
+    image_url: string;
+    created_at: string;
+    likes: number;
+    category: string;
+}
 
 interface ProfileState {
     username: string;
@@ -27,9 +38,11 @@ const ProfilePage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
+    const [posts, setPosts] = useState<Post[]>([]);
+    const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
     useEffect(() => {
-        const fetchUser = async () => {
+        const fetchUserAndPosts = async () => {
             const { data: { user } } = await supabase.auth.getUser();
             if (user) {
                 setUser(user);
@@ -44,13 +57,25 @@ const ProfilePage: React.FC = () => {
                 } else if (data) {
                     setProfile(data);
                 }
+
+                const { data: postsData, error: postsError } = await supabase
+                    .from('posts')
+                    .select('*')
+                    .eq('user_id', user.id);
+
+                if (postsError) {
+                    setError(postsError.message);
+                } else if (postsData) {
+                    setPosts(postsData);
+                }
+
             } else {
                 router.push('/Login');
             }
             setLoading(false);
         };
 
-        fetchUser();
+        fetchUserAndPosts();
     }, [router]);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -188,11 +213,34 @@ const ProfilePage: React.FC = () => {
                         </div>
                     )}
                 </div>
-                <div className="md:col-span-2 p-4 flex flex-col items-center justify-center">
-                    <FaPlus className="text-5xl text-gray-400" />
-                    <p className="mt-4 text-gray-600">Mulai postingan pertama kamu</p>
+                <div className="md:col-span-2 p-4">
+                    {posts.length > 0 ? (
+                        <div className="relative h-full">
+                            <div className="grid grid-cols-3 gap-4">
+                                {posts.map(post => (
+                                    <div key={post.id} className="cursor-pointer" onClick={() => setSelectedPost(post)}>
+                                        <Image src={post.image_url} alt={post.description} width={200} height={200} className="object-cover w-full h-full"/>
+                                    </div>
+                                ))}
+                            </div>
+                            <button
+                                onClick={() => router.push('/post')}
+                                className="absolute top-4 right-4 bg-black text-white p-4 rounded-full shadow-lg hover:bg-gray-800"
+                                aria-label="Create new post"
+                            >
+                                <FaPlus/>
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="flex flex-col items-center justify-center h-full">
+                            <FaPlus className="text-5xl text-gray-400" />
+                            <p className="mt-4 text-gray-600">Mulai postingan pertama kamu</p>
+                            <Button onClick={() => router.push('/post')} text="Create Post" additional_styles="mt-4 bg-black text-white" />
+                        </div>
+                    )}
                 </div>
             </div>
+            {selectedPost && <PostPreview post={selectedPost} onClose={() => setSelectedPost(null)} />}
         </div>
     );
 };
