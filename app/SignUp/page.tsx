@@ -12,7 +12,6 @@ interface SignUpState {
     password: string;   
     username: string;
     role: string;
-    location: string;
     error: string;
 }
 
@@ -22,7 +21,6 @@ const SignUp: React.FC = () => {
         password: '',
         username: '',
         role: '',
-        location: '',
         error: '',
     });
 
@@ -32,7 +30,7 @@ const SignUp: React.FC = () => {
 
     const handleSignUp = async () => {
       
-      if (state.email === "" || state.password === "" || state.username === "" || state.role === "" || state.location === "") {
+      if (state.email === "" || state.password === "" || state.username === "" || state.role === "" ) {
           setState({ ...state, error: 'Mohon lengkapi data anda' });
           return;
       }
@@ -61,7 +59,6 @@ const SignUp: React.FC = () => {
                   email: state.email,
                   username: state.username,
                   role: state.role,
-                  location: state.location,
               }]);
 
           if (dbError) {
@@ -102,7 +99,7 @@ const SignUp: React.FC = () => {
     return (
         <div className='container flex justify-center items-center relative'>
             <IoMdClose className='text-3xl absolute top-5 right-5 cursor-pointer' onClick={goBack}/>
-            <div className=' grid gap-4 lg:min-h-[80vh] lg:max-h-[90vh] lg:min-w-[30vw] p-6 '>
+            <div className=' grid gap-4 lg:min-h-[50vh]  lg:min-w-[30vw] p-6 '>
                 <div className='flex justify-center items-center flex-col gap-4 '>
                     <div  className='text-xl font-semibold '>Daftar Akun</div>
                     <p className='font-semibold'>Sudah punya akun ? <span className='underline underline-offset-1 cursor-pointer' onClick={goToLoginPage}>Masuk</span></p>
@@ -121,24 +118,24 @@ const SignUp: React.FC = () => {
 
                 {/* Input Role */}
                 <div className='relative'>
-                    <label className='font-semibold'>Role</label>
+                    <label className='font-semibold'>Masuk Sebagai</label>
                     <div onClick={openRoleDDl} className='bg-[var(--light-grey)] p-2 w-full rounded-3xl cursor-pointer flex justify-between items-center'>
                         <p>{selectedRole || "Pilih Role"}</p>
                         <RiArrowDropDownLine className='text-2xl'/>
                     </div>
 
                     {isRoleOpen && (
-                      <div className='absolute top-10 bg-white w-full border rounded-lg shadow-md'>
-                            <div onClick={() => handleRoleSelect('Pelajar Budaya')} className='p-2 cursor-pointer hover:bg-gray-200'>
+                      <div className='absolute top-15 bg-white w-full border rounded-xl shadow-md'>
+                            <div onClick={() => handleRoleSelect('Pelajar Budaya')} className='p-2 rounded-t-xl cursor-pointer hover:bg-[var(--light-grey)]'>
                                 Pelajar Budaya
                             </div>
-                            <div onClick={() => handleRoleSelect('Pengrajin')} className='p-2 cursor-pointer hover:bg-gray-200'>
+                            <div onClick={() => handleRoleSelect('Pengrajin')} className='p-2 cursor-pointer hover:bg-[var(--light-grey)]'>
                                 Pengrajin
                             </div>
-                            <div onClick={() => handleRoleSelect('Sanggar Seni')} className='p-2 cursor-pointer hover:bg-gray-200'>
+                            <div onClick={() => handleRoleSelect('Sanggar Seni')} className='p-2 cursor-pointer hover:bg-[var(--light-grey)]'>
                                 Sanggar Seni
                             </div>
-                            <div onClick={() => handleRoleSelect('Sanggar Seni')} className='p-2 cursor-pointer hover:bg-gray-200'>
+                            <div onClick={() => handleRoleSelect('Sanggar Seni')} className='p-2 rounded-b-xl cursor-pointer hover:bg-[var(--light-grey)]'>
                                 Kolektor
                             </div>
                         </div>
@@ -165,16 +162,6 @@ const SignUp: React.FC = () => {
                         type="password"
                         value={state.password}
                         onChange={(e) => setState({ ...state, password: e.target.value })}
-                        required
-                        className='bg-[var(--light-grey)] p-2 w-full rounded-3xl'
-                    />
-                </div>
-                <div>
-                    <label className='font-semibold'>Location</label>
-                    <input
-                        type="text"
-                        value={state.location}
-                        onChange={(e) => setState({ ...state, location: e.target.value })}
                         required
                         className='bg-[var(--light-grey)] p-2 w-full rounded-3xl'
                     />
