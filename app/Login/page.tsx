@@ -15,7 +15,7 @@ export default function Login() {
   return (
     <div className='container'>
       <div>Login Page</div>
-      <Button onClick={goBack} text={"Go back home"}/>
+      <Button onClick={goBack} text={"Go back home"} additional_styles=""/>
     </div>
   )
 }
