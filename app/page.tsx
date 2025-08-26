@@ -22,7 +22,7 @@ export default function Home() {
     <div className="container">
       <h1>Hello</h1>
       <Button onClick={goToSignUpPage} text={"Go to signup page"} additional_styles=""/>
-      <Button onClick={goToLoginPage} text={"Go to login page"}additional_styles=""/>
+      <Button onClick={goToLoginPage} text={"Go to login page"} additional_styles=""/>
     </div>
   );
 }

@@ -5,17 +5,17 @@
 
 :root {
 
-  --white: #FFFFFF;        /* Warna putih cerah */
-  --light-yellow: #FFFFEA; /* Warna kuning lembut untuk highlight atau alert */
-  --dark-yellow: #fdfdb8; /* Warna kuning lebih gelap untuk aksen */
-  --light-green-1: #c7f0bb; /* Warna hijau terang untuk tombol atau elemen interaktif */
-  --light-green-2: #bbe0c8; /* Warna hijau yang lebih gelap untuk background sekunder */
-  --medium-green: #599c96; /* Warna hijau medium untuk header dan CTA */
-  --dark-green: #217566;   /* Warna hijau gelap untuk teks utama */
-  --gray: #D9D9D9;         /* Warna abu-abu untuk border atau background netral */
-  --black: #06392C;        /* Warna hitam untuk teks gelap */
-  --red: #f15a5a;          /* Warna merah untuk error atau warning */
-  --baby-blue : #c8f6f3; /* Warna biru untuk background utama */
+  --white: #FFFFFF;  
+  --light-grey: #f5f5f5; 
+  --medium-grey: #d8d8d8; 
+  --dark-grey: #a6a6a6; 
+  --yellow: #ffaa00; 
+  --pink: #fc83ff; 
+  --red: #ff4b4b;   
+  --light-blue: #34bfc4;      
+  --dark-blue: #5887ff;      
+  --dark-green: #00843f; 
+  --black: #1E1E1E;        
 }
 
 
@@ -38,16 +38,12 @@
 
 @layer base {
   body {
-    @apply bg-yellow-200 w-screen overflow-x-hidden scroll-smooth w-screen; /*base styling*/
+    @apply bg-[var(--white)] w-screen overflow-x-hidden scroll-smooth w-screen ; /*base styling*/
     @apply flex flex-col justify-start items-start; /*flex*/
     @apply text-xs font-sans text-justify; /*font*/
-    @apply border-2 border-yellow-400; 
-    @apply font-display font-medium;
+    /* @apply border-2 border-yellow-400;  */
+    @apply font-display font-medium text-[var(--black)];
 
-  }
-
-  body{
-    color: var(--black);
   }
   
 }
@@ -56,7 +52,7 @@
 @layer components {
 
   .container{
-    @apply flex flex-col gap-10 p-15 min-w-full items-start justify-start;
+    @apply flex flex-col gap-10 p-15 min-w-full items-start justify-start
     /* @apply border border-3 border-blue-400; */
   }
 

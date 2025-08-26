@@ -3,11 +3,16 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '../components/Button';
 import { supabase } from '../lib/supabase'; 
+import { IoMdClose } from "react-icons/io";
+import { RiArrowDropDownLine } from "react-icons/ri";
 
 // Tipe data untuk menangani state
 interface SignUpState {
     email: string;
     password: string;
+    username: string;
+    role: string;
+    address: string;
     error: string;
 }
 
@@ -15,42 +20,74 @@ const SignUp: React.FC = () => {
     const [state, setState] = useState<SignUpState>({
         email: '',
         password: '',
+        username: '',
+        role: '',
+        address: '',
         error: '',
     });
+
+
 
     const router = useRouter();
 
     const handleSignUp = async () => {
-        setState({ ...state, error: '' });
+      
+      if (state.email === "" || state.password === "" || state.username === "" || state.role === "" || state.address === "") {
+          setState({ ...state, error: 'Mohon lengkapi data anda' });
+          return;
+      }
 
-        // Sign up with email and password using Supabase Auth
-        const { data, error } = await supabase.auth.signUp({
-            email: state.email,
-            password: state.password,
-        });
+      setState({ ...state, error: '' });
 
-        if (error) {
-            setState({ ...state, error: error.message });
-            return;
-        }
+      // Sign up with email and password using Supabase Auth
+      const { data, error } = await supabase.auth.signUp({
+          email: state.email,
+          password: state.password,
+      });
 
-        // Jika user berhasil sign-up, kita simpan data ke tabel 'user' (hanya email dan id)
-        const user = data?.user;
+      if (error) {
+          setState({ ...state, error: error.message });
+          return;
+      }
 
-        if (user) {
-            const { error: dbError } = await supabase
-                .from('user')  
-                .insert([{ id: user.id, email: state.email, password:state.password}]);
+      // Jika user berhasil sign-up, kita simpan data ke tabel 'user'
+      const user = data?.user;
 
-            if (dbError) {
-                setState({ ...state, error: dbError.message });
-                return;
-            }
+      if (user) {
+          const { error: dbError } = await supabase
+              .from('user')
+              .insert([{
+                  id: user.id,
+                  email: state.email,
+                  username: state.username,
+                  peran: state.role,
+                  alamat: state.address,
+                  password: state.password
+              }]);
+
+          if (dbError) {
+              setState({ ...state, error: dbError.message });
+              return;
+          }
+
+      } else {
+          setState({ ...state, error: 'User not found after sign up' });
+      }
+  };
 
 
-        } else {
-            setState({ ...state, error: 'User not found after sign up' });
-        }
+
+    const [isRoleOpen, setIsRoleOpen] = useState(false); 
+    const [selectedRole, setSelectedRole] = useState(''); 
+
+    const openRoleDDl = () => {
+        setIsRoleOpen(!isRoleOpen);
+    }
+
+    const handleRoleSelect = (role: string) => {
+        setSelectedRole(role); 
+        setState({ ...state, role }); 
+        setIsRoleOpen(false); 
     };
 
     const goBack = () => {
@@ -58,41 +95,91 @@ const SignUp: React.FC = () => {
     };
 
     return (
-        <div className='container flex justify-center items-center '>
-            <div className='border grid gap-6 landscape:h-[80vh] p-6 '>
-                <div  className='text-xl font-semibold'>SignUp Page</div>
-                <p className='font-semibold'>Sudah punya akun ? <span className='underline underline-offset-1'>Masuk</span></p>
-                  {/* Input Email */}
-                  <div className=''>
-                      <label className='font-semibold'>Email</label>
-                      <input
-                          type="email"
-                          value={state.email}
-                          onChange={(e) => setState({ ...state, email: e.target.value })}
-                          required
+        <div className='container flex justify-center items-center relative'>
+            <IoMdClose className='text-3xl absolute top-5 right-5' onClick={goBack}/>
+            <div className=' grid gap-4 lg:min-h-[80vh] lg:max-h-[90vh] lg:min-w-[30vw] p-6 '>
+                <div className='flex justify-center items-center flex-col gap-4 '>
+                    <div  className='text-xl font-semibold '>Daftar Akun</div>
+                    <p className='font-semibold'>Sudah punya akun ? <span className='underline underline-offset-1'>Masuk</span></p>
+                </div>
+                {/* Input Username */}
+                <div>
+                    <label className='font-semibold'>Username</label>
+                    <input
+                        type="text"
+                        value={state.username}
+                        onChange={(e) => setState({ ...state, username: e.target.value })}
+                        required
+                        className='bg-[var(--light-grey)] p-2 w-full rounded-3xl'
+                    />
+                </div>
 
-                          className='bg-white p-2 w-full rounded-3xl'
-                      />
-                  </div>
+                {/* Input Role */}
+                <div className='relative'>
+                    <label className='font-semibold'>Role</label>
+                    <div onClick={openRoleDDl} className='bg-[var(--light-grey)] p-2 w-full rounded-3xl cursor-pointer flex justify-between items-center'>
+                        <p>{selectedRole || "Pilih Role"}</p>
+                        <RiArrowDropDownLine className='text-2xl'/>
+                    </div>
+
+                    {isRoleOpen && (
+                      <div className='absolute top-10 bg-white w-full border rounded-lg shadow-md'>
+                            <div onClick={() => handleRoleSelect('Pelajar Budaya')} className='p-2 cursor-pointer hover:bg-gray-200'>
+                                Pelajar Budaya
+                            </div>
+                            <div onClick={() => handleRoleSelect('Pengrajin')} className='p-2 cursor-pointer hover:bg-gray-200'>
+                                Pengrajin
+                            </div>
+                            <div onClick={() => handleRoleSelect('Sanggar Seni')} className='p-2 cursor-pointer hover:bg-gray-200'>
+                                Sanggar Seni
+                            </div>
+                            <div onClick={() => handleRoleSelect('Sanggar Seni')} className='p-2 cursor-pointer hover:bg-gray-200'>
+                                Kolektor
+                            </div>
+                        </div>
+                      )}
+                </div>
+                
+                {/* Input Email */}
+                <div className=''>
+                    <label className='font-semibold'>Email</label>
+                    <input
+                        type="email"
+                        value={state.email}
+                        onChange={(e) => setState({ ...state, email: e.target.value })}
+                        required
+
+                        className='bg-[var(--light-grey)] p-2 w-full rounded-3xl'
+                    />
+                </div>
                   
-                  {/* Input Password */}
-                  <div>
-                      <label className='font-semibold'>Password</label>
-                      <input
-                          type="password"
-                          value={state.password}
-                          onChange={(e) => setState({ ...state, password: e.target.value })}
-                          required
-                          className='bg-white p-2 w-full rounded-3xl'
-                      />
-                  </div>
+                {/* Input Password */}
+                <div>
+                    <label className='font-semibold'>Password</label>
+                    <input
+                        type="password"
+                        value={state.password}
+                        onChange={(e) => setState({ ...state, password: e.target.value })}
+                        required
+                        className='bg-[var(--light-grey)] p-2 w-full rounded-3xl'
+                    />
+                </div>
+                <div>
+                    <label className='font-semibold'>Alamat</label>
+                    <input
+                        type="text"
+                        value={state.address}
+                        onChange={(e) => setState({ ...state, address: e.target.value })}
+                        required
+                        className='bg-[var(--light-grey)] p-2 w-full rounded-3xl'
+                    />
+                </div>
 
                   {/* Error Message */}
-                  {state.error && <p style={{ color: 'red' }}>{state.error}</p>}
+                  {state.error && <p className="text-[var(--red)] w-full text-center">{state.error}</p>}
 
+                  <Button onClick={handleSignUp} text={"Daftar"} additional_styles={"bg-[var(--black)]  hover:bg-transparent text-[var(--white)] hover:text-[var(--black)]"}/>
                   
-                  <Button onClick={handleSignUp} text={"Sign Up"} additional_styles={"hover:bg-[var(--black)] hover:text-[var(--white)]"}/>
-                  <Button onClick={goBack} text={"Go back home"} additional_styles={"hover:bg-[var(--black)] hover:text-[var(--white)]"}/>
         
             </div>
         </div>   
