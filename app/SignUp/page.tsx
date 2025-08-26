@@ -94,13 +94,18 @@ const SignUp: React.FC = () => {
         router.push('/');
     };
 
+    const goToLoginPage = () => {
+        router.push('/Login');
+    };
+
+
     return (
         <div className='container flex justify-center items-center relative'>
-            <IoMdClose className='text-3xl absolute top-5 right-5' onClick={goBack}/>
+            <IoMdClose className='text-3xl absolute top-5 right-5 cursor-pointer' onClick={goBack}/>
             <div className=' grid gap-4 lg:min-h-[80vh] lg:max-h-[90vh] lg:min-w-[30vw] p-6 '>
                 <div className='flex justify-center items-center flex-col gap-4 '>
                     <div  className='text-xl font-semibold '>Daftar Akun</div>
-                    <p className='font-semibold'>Sudah punya akun ? <span className='underline underline-offset-1'>Masuk</span></p>
+                    <p className='font-semibold'>Sudah punya akun ? <span className='underline underline-offset-1 cursor-pointer' onClick={goToLoginPage}>Masuk</span></p>
                 </div>
                 {/* Input Username */}
                 <div>
