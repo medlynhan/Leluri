@@ -8,6 +8,7 @@ import { FaPlus } from "react-icons/fa6";
 import { IoLocationOutline } from "react-icons/io5";
 import Button from '../components/Button';
 import PostPreview from '../components/PostPreview';
+import PostButton from '../components/PostButton';
 
 interface Post {
     id: string;
@@ -223,13 +224,10 @@ const ProfilePage: React.FC = () => {
                                     </div>
                                 ))}
                             </div>
-                            <button
+                            <PostButton
                                 onClick={() => router.push('/post')}
-                                className="absolute top-4 right-4 bg-black text-white p-4 rounded-full shadow-lg hover:bg-gray-800"
-                                aria-label="Create new post"
-                            >
-                                <FaPlus/>
-                            </button>
+                                className="absolute top-4 right-4"
+                            />
                         </div>
                     ) : (
                         <div className="flex flex-col items-center justify-center h-full">
