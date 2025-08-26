@@ -17,12 +17,19 @@ export default function Home() {
     router.push('/SignUp'); 
   };
 
+
+  const goToProfilePage = () => {
+    router.push('/Profile'); 
+  };
+
+
   return (
     
     <div className="container">
       <h1>Hello</h1>
       <Button onClick={goToSignUpPage} text={"Go to signup page"} additional_styles=""/>
       <Button onClick={goToLoginPage} text={"Go to login page"} additional_styles=""/>
+      <Button onClick={goToProfilePage} text={"Go to profile page"} additional_styles=""/>
     </div>
   );
 }
