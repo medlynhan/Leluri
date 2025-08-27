@@ -22,6 +22,11 @@ export default function Home() {
     router.push('/Profile'); 
   };
 
+  const goToStorePage = () => {
+    router.push('/Store'); 
+  };
+
+
 
   return (
     
@@ -30,6 +35,7 @@ export default function Home() {
       <Button onClick={goToSignUpPage} text={"Go to signup page"} additional_styles=""/>
       <Button onClick={goToLoginPage} text={"Go to login page"} additional_styles=""/>
       <Button onClick={goToProfilePage} text={"Go to profile page"} additional_styles=""/>
+      <Button onClick={goToStorePage} text={"Go to Store page"} additional_styles=""/>
     </div>
   );
 }
