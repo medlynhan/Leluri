@@ -12,30 +12,12 @@ export default function Home() {
     router.push('/Login'); 
   };
 
-
-  const goToSignUpPage = () => {
-    router.push('/SignUp'); 
-  };
-
-
-  const goToProfilePage = () => {
-    router.push('/Profile'); 
-  };
-
-  const goToStorePage = () => {
-    router.push('/Store'); 
-  };
-
-
-
   return (
     
     <div className="container">
-      <h1>Hello World</h1>
-      <Button onClick={goToSignUpPage} text={"Go to signup page"} additional_styles=""/>
-      <Button onClick={goToLoginPage} text={"Go to login page"} additional_styles=""/>
-      <Button onClick={goToProfilePage} text={"Go to profile page"} additional_styles=""/>
-      <Button onClick={goToStorePage} text={"Go to Store page"} additional_styles=""/>
+      <h1>Welcome to Leluri</h1>
+      <p>This is the landing page.</p>
+      <Button onClick={goToLoginPage} text={"Login"} additional_styles=""/>
     </div>
   );
 }

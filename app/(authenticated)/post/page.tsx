@@ -1,10 +1,10 @@
 'use client'
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../../lib/supabase';
 import { User } from '@supabase/supabase-js';
 import Image from 'next/image';
-import Button from '../components/Button';
+import Button from '../../components/Button';
 
 const PostPage = () => {
     const [user, setUser] = useState<User | null>(null);

@@ -34,7 +34,7 @@ export default function Login() {
             return;
         }
 
-        router.push('/');
+        router.push('/beranda');
     };
 
   return (

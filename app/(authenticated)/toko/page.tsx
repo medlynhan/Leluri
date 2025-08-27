@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../../lib/supabase';
 import Image from 'next/image';
 import { FaSearch, FaShoppingCart } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
@@ -89,7 +89,7 @@ const StorePage: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {products.map(product => (
-                    <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer" onClick={() => router.push(`/toko/${product.id}`)}>
+                    <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer" onClick={() => router.push(`/Store/${product.id}`)}>
                         <div className="relative h-64">
                             <Image
                                 src={product.image_url}

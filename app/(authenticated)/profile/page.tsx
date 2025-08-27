@@ -1,12 +1,12 @@
 'use client'
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../../lib/supabase';
 import { User } from '@supabase/supabase-js';
 import Image from 'next/image';
 import { FaPlus } from "react-icons/fa6";
 import { IoLocationOutline } from "react-icons/io5";
-import PostPreview from '../components/PostPreview';
+import PostPreview from '../../components/PostPreview';
 import { X } from "lucide-react"
 
 
