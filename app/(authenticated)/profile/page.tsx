@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { FaPlus } from "react-icons/fa6";
 import { IoLocationOutline } from "react-icons/io5";
 import PostPreview from '../../components/PostPreview';
-import { X } from "lucide-react"
+import { LogOut, X } from "lucide-react"
 
 
 interface Post {
@@ -78,6 +78,11 @@ const ProfilePage: React.FC = () => {
     }
   }
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    router.push('/Login')
+  }
+
   const handleUpdateProfile = async () => {
     if (!user || !profile || !supabase) return
 
@@ -129,15 +134,41 @@ const ProfilePage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="text-gray-600">Loading...</div>
+      <div className="flex animate-pulse">
+        <div className="w-80 min-h-screen p-6 border-r border-gray-200">
+          <div className="flex flex-col items-center text-center">
+            <div className="relative mb-4">
+              <div className="w-24 h-24 rounded-full bg-gray-200"></div>
+            </div>
+            <div className="h-4 bg-gray-200 rounded w-20 mb-3"></div>
+            <div className="h-4 bg-gray-200 rounded w-48 mb-4"></div>
+            <div className="h-10 bg-gray-200 rounded-full w-full mb-6"></div>
+            <div className="flex justify-center gap-8 mb-4">
+              <div className="text-center">
+                <div className="h-4 bg-gray-200 rounded w-8 mb-2"></div>
+                <div className="h-3 bg-gray-200 rounded w-12"></div>
+              </div>
+              <div className="text-center">
+                <div className="h-4 bg-gray-200 rounded w-8 mb-2"></div>
+                <div className="h-3 bg-gray-200 rounded w-12"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="flex-1 p-6">
+          <div className="grid grid-cols-3 gap-4">
+            <div className="aspect-square bg-gray-200 rounded-lg"></div>
+            <div className="aspect-square bg-gray-200 rounded-lg"></div>
+            <div className="aspect-square bg-gray-200 rounded-lg"></div>
+          </div>
+        </div>
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="max-w-md mx-4 p-6 bg-white rounded-lg shadow-sm">
           <div className="text-red-600 mb-4">Error: {error}</div>
         </div>
@@ -167,7 +198,7 @@ const ProfilePage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-white">
       <div className="flex">
         {/* Left Sidebar - Profile Info */}
         <div className="w-80 bg-white min-h-screen p-6 border-r border-gray-200">
@@ -214,6 +245,12 @@ const ProfilePage: React.FC = () => {
             <div className="flex items-center gap-2 text-sm text-gray-600 mb-6">
               <IoLocationOutline className="w-4 h-4" />
               <span>{displayProfile.location}</span>
+            </div>
+            <div>
+                <button onClick={handleLogout} className="flex items-center p-3 my-2 w-full text-left hover:bg-gray-100 rounded-lg transition-colors">
+                  <LogOut className="w-5 h-5" />
+                  <span className="ml-4 font-medium">Logout</span>
+                </button>
             </div>
           </div>
         </div>
