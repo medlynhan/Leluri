@@ -10,7 +10,7 @@ interface ButtonProps {
 
 const Button: React.FC<ButtonProps> = ({ onClick, text, additional_styles, disabled }) => {
   return (
-    <button className={`rounded-3xl border px-3 py-2 ${additional_styles} font-semibold cursor-pointer`} onClick={onClick} disabled={disabled}>
+    <button className={`rounded-3xl border px-3 py-2  ${additional_styles} font-semibold cursor-pointer`} onClick={onClick} disabled={disabled}>
       {text}
     </button>
   );

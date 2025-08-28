@@ -52,9 +52,26 @@
 @layer components {
 
   .container{
-    @apply flex flex-col gap-10 p-15 min-w-full items-start justify-start
+    @apply flex flex-col gap-5 p-5 min-w-full items-start justify-start
     /* @apply border border-3 border-blue-400; */
   }
+
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 20s linear infinite;
+}
+
 
   
 }
