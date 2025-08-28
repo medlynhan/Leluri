@@ -21,15 +21,19 @@ interface Product {
 }
 
 const StarRating = ({ rating }: { rating: number }) => {
-    const fullStars = Math.floor(rating);
-    const halfStar = rating % 1 !== 0;
-    const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+    const value = Math.max(0, Math.min(5, Number.isFinite(rating) ? rating : 0));
     return (
         <div className="flex items-center">
-            {[...Array(fullStars)].map((_, i) => <Star key={`full-${i}`} className="w-4 h-4 text-yellow-400 fill-yellow-400" />)}
-            {halfStar && <Star key="half" className="w-4 h-4 text-yellow-400" />}
-            {[...Array(emptyStars)].map((_, i) => <Star key={`empty-${i}`} className="w-4 h-4 text-gray-300 fill-gray-300" />)}
-            <span className="ml-2 text-sm text-gray-600">{rating.toFixed(1)}</span>
+            {Array.from({ length: 5 }).map((_, i) => {
+                const filled = value >= i + 1; 
+                return (
+                    <Star
+                        key={i}
+                        className={`w-4 h-4 ${filled ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
+                    />
+                );
+            })}
+            <span className="ml-2 text-sm text-gray-600">{value.toFixed(1)}</span>
         </div>
     );
 };

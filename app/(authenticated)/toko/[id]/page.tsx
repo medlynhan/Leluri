@@ -73,7 +73,7 @@ const ProductDetailPage: React.FC = () => {
   };
 
   const addToCart = async (buyNow?: boolean) => {
-    if (!product || !userId || adding) return;
+  if (!product || !userId || adding || product.stock === 0) return; // block if out of stock
     setAdding(true);
     const { data: existing } = await supabase
       .from('keranjang')
@@ -137,6 +137,7 @@ const ProductDetailPage: React.FC = () => {
 
   if (error) return <div className="p-4">Error: {error}</div>;
   if (!product) return <div className="p-4">Product not found.</div>;
+  const outOfStock = product.stock === 0;
 
   return (
     <div className="w-full p-4">
@@ -157,30 +158,34 @@ const ProductDetailPage: React.FC = () => {
 
           <div>
             <p className="text-sm text-gray-600 mb-2">Stok Barang: {product.stock}</p>
-            <div className="flex">
-              <div className="flex items-center border rounded-full px-2 py-1 w-full max-w-md">
-                <button
-                  onClick={() => handleQuantityChange(-1)}
-                  className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-40"
-                  disabled={quantity <= 1}
-                >
-                  <Minus className="w-4 h-4" />
-                </button>
-                <span className="flex-1 text-center font-semibold select-none">{quantity}</span>
-                <button
-                  onClick={() => handleQuantityChange(1)}
-                  className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-40"
-                  disabled={quantity >= product.stock}
-                >
-                  <Plus className="w-4 h-4" />
-                </button>
+            {outOfStock ? (
+              <div className="text-sm font-semibold text-red-500 py-3">Stok habis</div>
+            ) : (
+              <div className="flex">
+                <div className="flex items-center border rounded-full px-2 py-1 w-full max-w-md">
+                  <button
+                    onClick={() => handleQuantityChange(-1)}
+                    className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-40"
+                    disabled={quantity <= 1}
+                  >
+                    <Minus className="w-4 h-4" />
+                  </button>
+                  <span className="flex-1 text-center font-semibold select-none">{quantity}</span>
+                  <button
+                    onClick={() => handleQuantityChange(1)}
+                    className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-40"
+                    disabled={quantity >= product.stock}
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           <div className="flex gap-5 w-full max-w-md">
-            <button onClick={() => addToCart(false)} disabled={adding} className="flex-1 py-3 border border-black rounded-full font-semibold hover:bg-gray-50 disabled:opacity-50 transition-colors">{adding ? '...' : 'Keranjang'}</button>
-            <button onClick={() => addToCart(true)} disabled={adding} className="flex-1 py-3 bg-black text-white rounded-full font-semibold hover:bg-gray-800 disabled:opacity-50 transition-colors">{adding ? '...' : 'Beli Langsung'}</button>
+            <button onClick={() => addToCart(false)} disabled={adding || outOfStock} className="flex-1 py-3 border border-black rounded-full font-semibold hover:bg-gray-50 disabled:opacity-50 transition-colors">{outOfStock ? 'Tidak Tersedia' : (adding ? '...' : 'Keranjang')}</button>
+            <button onClick={() => addToCart(true)} disabled={adding || outOfStock} className="flex-1 py-3 bg-black text-white rounded-full font-semibold hover:bg-gray-800 disabled:opacity-50 transition-colors">{outOfStock ? 'Habis' : (adding ? '...' : 'Beli Langsung')}</button>
           </div>
         </div>
 
