@@ -56,7 +56,11 @@ const ProfilePage: React.FC = () => {
           setProfile(data)
         }
 
-        const { data: postsData, error: postsError } = await supabase.from("posts").select("*").eq("user_id", user.id)
+        const { data: postsData, error: postsError } = await supabase
+          .from("posts")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false })
 
         if (postsError) {
           setError(postsError.message)
@@ -200,10 +204,8 @@ const ProfilePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       <div className="flex">
-        {/* Left Sidebar - Profile Info */}
         <div className="w-80 bg-white min-h-screen p-6 border-r border-gray-200">
           <div className="flex flex-col items-center text-center">
-            {/* Profile Avatar */}
             <div className="relative mb-4">
               <div className="w-24 h-24 rounded-full bg-gradient-to-br from-orange-300 to-orange-500 p-1">
                 <Image
@@ -216,12 +218,10 @@ const ProfilePage: React.FC = () => {
               </div>
             </div>
 
-            {/* Profile Info */}
             <p className="text-sm text-gray-500 mb-1">{displayProfile.role}</p>
             <h1 className="text-lg font-semibold text-gray-900 mb-3">{displayProfile.username}</h1>
             <p className="text-sm text-gray-600 mb-4 leading-relaxed">{displayProfile.biography}</p>
 
-            {/* Edit Profile Button */}
             <button
               onClick={() => setIsEditMode(true)}
               className="w-full py-2 px-4 border border-gray-300 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors mb-6"
@@ -229,7 +229,6 @@ const ProfilePage: React.FC = () => {
               Edit Profile
             </button>
 
-            {/* Stats */}
             <div className="flex justify-center gap-8 mb-4">
               <div className="text-center">
                 <p className="font-semibold text-gray-900">{displayProfile.followers.length}</p>
@@ -241,7 +240,6 @@ const ProfilePage: React.FC = () => {
               </div>
             </div>
 
-            {/* Location */}
             <div className="flex items-center gap-2 text-sm text-gray-600 mb-6">
               <IoLocationOutline className="w-4 h-4" />
               <span>{displayProfile.location}</span>
@@ -255,7 +253,6 @@ const ProfilePage: React.FC = () => {
           </div>
         </div>
 
-        {/* Main Content Area */}
         <div className="flex-1 p-6">
           {posts.length > 0 ? (
             <div className="relative">

@@ -145,7 +145,7 @@ const PostPage = () => {
                                 rows={4}
                                 className="shadow-sm focus:ring-orange-500 focus:border-orange-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md p-2"
                                 placeholder="Tulis category postmu di sini..."
-                                value={description}
+                                value={category}
                                 onChange={(e) => setCategory(e.target.value)}
                             ></textarea>
                         </div>
