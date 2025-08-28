@@ -23,7 +23,6 @@ interface Product {
   };
 }
 
-// Helper to format price consistently (no trailing decimals if not needed)
 const formatPrice = (price: number) =>
   `Rp ${price.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
@@ -34,8 +33,14 @@ const ProductDetailPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [adding, setAdding] = useState(false);
 
   useEffect(() => {
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) setUserId(user.id); else router.push('/Login');
+    })();
     const fetchProduct = async () => {
       if (!id) return;
       const { data, error } = await supabase
@@ -67,13 +72,28 @@ const ProductDetailPage: React.FC = () => {
     });
   };
 
-  // Fixed layout constants
-  // Container max width chosen to fit 520px (image column) + 40px gap + 540px (info column)
-  // 520 + 40 + 540 = 1100px
+  const addToCart = async (buyNow?: boolean) => {
+    if (!product || !userId || adding) return;
+    setAdding(true);
+    const { data: existing } = await supabase
+      .from('keranjang')
+      .select('id, quantity')
+      .eq('user_id', userId)
+      .eq('product_id', product.id)
+      .maybeSingle();
+    if (existing) {
+      const newQty = Math.min(product.stock, existing.quantity + quantity);
+      await supabase.from('keranjang').update({ quantity: newQty, updated_at: new Date().toISOString() }).eq('id', existing.id);
+    } else {
+      await supabase.from('keranjang').insert([{ user_id: userId, product_id: product.id, quantity }]);
+    }
+    setAdding(false);
+    if (buyNow) router.push('/pembayaran'); else router.push('/keranjang');
+  };
+
   const containerWidth = 'max-w-[1100px]';
   const gridCols = 'grid grid-cols-1 xl:grid-cols-[520px_540px] gap-10 w-full';
 
-  // Skeleton Loader (mirrors final fixed-width layout)
   if (loading) {
     return (
       <div className="w-full p-4 animate-pulse">
@@ -124,19 +144,17 @@ const ProductDetailPage: React.FC = () => {
         <button onClick={() => router.back()} className="p-2 hover:bg-gray-100 rounded-full">
           <ArrowLeft className="w-6 h-6" />
         </button>
-        <button className="p-2 hover:bg-gray-100 rounded-full">
-          <ShoppingCart className="w-6 h-6" />
+        <button onClick={() => router.push('/keranjang')} aria-label="Keranjang" className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+            <ShoppingCart className="w-6 h-6" />
         </button>
       </header>
 
       <div className={`${gridCols} ${containerWidth} mx-auto`}>
-        {/* LEFT */}
         <div className="flex flex-col gap-5 w-full max-w-[520px]">
           <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-gray-100">
             <Image src={product.image_url} alt={product.name} fill className="object-cover" />
           </div>
 
-          {/* Stock + Quantity */}
           <div>
             <p className="text-sm text-gray-600 mb-2">Stok Barang: {product.stock}</p>
             <div className="flex">
@@ -160,14 +178,12 @@ const ProductDetailPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Action Buttons */}
           <div className="flex gap-5 w-full max-w-md">
-            <button className="flex-1 py-3 border border-black rounded-full font-semibold hover:bg-gray-50 transition-colors">Keranjang</button>
-            <button className="flex-1 py-3 bg-black text-white rounded-full font-semibold hover:bg-gray-800 transition-colors">Beli Langsung</button>
+            <button onClick={() => addToCart(false)} disabled={adding} className="flex-1 py-3 border border-black rounded-full font-semibold hover:bg-gray-50 disabled:opacity-50 transition-colors">{adding ? '...' : 'Keranjang'}</button>
+            <button onClick={() => addToCart(true)} disabled={adding} className="flex-1 py-3 bg-black text-white rounded-full font-semibold hover:bg-gray-800 disabled:opacity-50 transition-colors">{adding ? '...' : 'Beli Langsung'}</button>
           </div>
         </div>
 
-        {/* RIGHT */}
         <div className="flex flex-col gap-8 w-full">
           <h1 className="text-4xl font-semibold leading-tight break-words">{product.name}</h1>
           <p className="text-3xl font-bold text-gray-900">{formatPrice(product.price)}</p>
