@@ -54,7 +54,7 @@ const Sidebar = () => {
         <ul>
           {navItems.map((item) => (
             <li key={item.href}>
-              <Link href={item.href} className={`flex items-center p-3 my-2 rounded-lg transition-colors ${pathname === item.href ? 'bg-orange-100 text-orange-600' : 'hover:bg-gray-100'}`}>
+              <Link href={item.href} className={`flex items-center p-3 my-2 rounded-lg transition-colors ${pathname === item.href ? 'bg-gray-100 text-orange-600' : 'hover:bg-gray-100'}`}>
                 <item.icon className="w-5 h-5" />
                 <span className="ml-4 font-medium">{item.label}</span>
               </Link>
