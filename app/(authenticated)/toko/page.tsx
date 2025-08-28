@@ -140,7 +140,9 @@ const StorePage: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-6">
                     <button onClick={handleSearch} className="bg-orange-500 text-white py-3 px-8 rounded-full font-semibold hover:bg-orange-600 transition-colors">Cari</button>
-                    <ShoppingCart className="w-6 h-6" />
+                    <button onClick={() => router.push('/keranjang')} aria-label="Keranjang" className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                        <ShoppingCart className="w-6 h-6" />
+                    </button>
                 </div>
             </div>
 

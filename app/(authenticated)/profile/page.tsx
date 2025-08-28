@@ -303,7 +303,6 @@ const ProfilePage: React.FC = () => {
         </div>
       </div>
 
-      {/* Edit Profile Modal */}
       {isEditMode && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-6 w-96 max-w-md mx-4">
@@ -318,7 +317,6 @@ const ProfilePage: React.FC = () => {
             </div>
 
             <div className="space-y-4">
-              {/* Avatar Upload */}
               <div className="flex justify-center mb-6">
                 <div className="relative">
                   <div className="w-24 h-24 rounded-full bg-gradient-to-br from-orange-300 to-orange-500 p-1">
@@ -350,7 +348,6 @@ const ProfilePage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Username */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Username</label>
                 <input
@@ -362,7 +359,6 @@ const ProfilePage: React.FC = () => {
                 />
               </div>
 
-              {/* Role */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Peran Anda</label>
                 <select
@@ -377,7 +373,6 @@ const ProfilePage: React.FC = () => {
                 </select>
               </div>
 
-              {/* Bio */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Bio</label>
                 <textarea
@@ -389,7 +384,6 @@ const ProfilePage: React.FC = () => {
                 />
               </div>
 
-              {/* Location */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Lokasi</label>
                 <input
@@ -402,7 +396,6 @@ const ProfilePage: React.FC = () => {
               </div>
             </div>
 
-            {/* Action Buttons */}
             <div className="flex gap-3 mt-8">
               <button
                 onClick={() => setIsEditMode(false)}
@@ -422,7 +415,6 @@ const ProfilePage: React.FC = () => {
         </div>
       )}
 
-      {/* Post Preview Modal with edit/delete/comment support */}
       {selectedPost && (
         <PostPreview
           post={selectedPost}
