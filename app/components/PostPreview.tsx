@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import { supabase } from '../lib/supabase';
 import { X, MoreHorizontal, Check, Edit2, Trash2, Heart } from 'lucide-react';
@@ -48,6 +48,8 @@ const PostPreview: React.FC<PostPreviewProps> = ({ post, onClose, onPostUpdated,
         const [likeAnimating, setLikeAnimating] = useState(false);
         const [likes, setLikes] = useState(post.likes);
         const [showMenu, setShowMenu] = useState(false);
+        const menuRef = useRef<HTMLDivElement | null>(null);
+        const menuButtonRef = useRef<HTMLButtonElement | null>(null);
         const [postUser, setPostUser] = useState<{ username: string; image_url: string | null } | null>(null);
 
     useEffect(() => {
@@ -58,6 +60,19 @@ const PostPreview: React.FC<PostPreviewProps> = ({ post, onClose, onPostUpdated,
         };
         init();
     }, [post.id]);
+
+    // Close menu when clicking outside
+    useEffect(() => {
+        if (!showMenu) return;
+        const handler = (e: MouseEvent) => {
+            const target = e.target as Node;
+            if (menuRef.current && !menuRef.current.contains(target) && menuButtonRef.current && !menuButtonRef.current.contains(target)) {
+                setShowMenu(false);
+            }
+        };
+        document.addEventListener('mousedown', handler);
+        return () => document.removeEventListener('mousedown', handler);
+    }, [showMenu]);
 
     const fetchComments = async () => {
         setLoadingComments(true);
@@ -213,14 +228,13 @@ const PostPreview: React.FC<PostPreviewProps> = ({ post, onClose, onPostUpdated,
                                 </div>
                                 {isOwner && (
                                     <div className="relative">
-                                        <button onClick={() => setShowMenu(s => !s)} className="p-2 hover:bg-gray-100 rounded-full" title="Menu">
+                                        <button ref={menuButtonRef} onClick={() => setShowMenu(s => !s)} className="p-2 hover:bg-gray-100 rounded-full" title="Menu">
                                             <MoreHorizontal className="w-5 h-5" />
                                         </button>
                                         {showMenu && (
-                                            <div className="absolute right-0 mt-2 w-40 bg-white border rounded-xl shadow-lg z-10 overflow-hidden text-sm">
+                                            <div ref={menuRef} className="absolute right-0 mt-2 w-40 bg-white border rounded-xl shadow-lg z-10 overflow-hidden text-sm">
                                                 <button onClick={() => { setIsEditing(true); setShowMenu(false); }} className="w-full px-4 py-2 flex items-center gap-2 hover:bg-gray-50"><Edit2 className="w-4 h-4" /> Edit</button>
                                                 <button onClick={handleDelete} disabled={deleting} className="w-full px-4 py-2 flex items-center gap-2 text-red-600 hover:bg-red-50"><Trash2 className="w-4 h-4" /> Hapus</button>
-                                                <button onClick={() => setShowMenu(false)} className="w-full px-4 py-2 hover:bg-gray-50">Batal</button>
                                             </div>
                                         )}
                                     </div>
