@@ -97,7 +97,7 @@ const SignUp: React.FC = () => {
 
 
     return (
-        <div className='container flex justify-center items-center relative'>
+        <div className='container h-[100vh] flex justify-center items-center relative '>
             <IoMdClose className='text-3xl absolute top-5 right-5 cursor-pointer' onClick={goBack}/>
             <div className=' grid gap-4 lg:min-h-[50vh]  lg:min-w-[30vw] p-6 '>
                 <div className='flex justify-center items-center flex-col gap-4 '>
