@@ -48,7 +48,8 @@ const Sidebar = () => {
   return (
     <div className="w-64 bg-white h-screen p-4 flex flex-col border-r">
       <div className="mb-10">
-        <h1 className="text-2xl font-bold">Leluri</h1>
+        {/*logo*/}
+        <Image src="/logo-leluri.png" alt="Leluri Logo" width={70} height={70} className="absolute top-5 left-5 fixed border"/>
       </div>
       <nav className="flex-grow">
         <ul>
