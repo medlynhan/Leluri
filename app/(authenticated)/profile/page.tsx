@@ -422,8 +422,21 @@ const ProfilePage: React.FC = () => {
         </div>
       )}
 
-      {/* Post Preview Modal */}
-      {selectedPost && <PostPreview post={selectedPost} onClose={() => setSelectedPost(null)} />}
+      {/* Post Preview Modal with edit/delete/comment support */}
+      {selectedPost && (
+        <PostPreview
+          post={selectedPost}
+          onClose={() => setSelectedPost(null)}
+          onPostUpdated={(updated) => {
+            setPosts(p => p.map(pt => pt.id === updated.id ? updated : pt));
+            setSelectedPost(updated);
+          }}
+          onPostDeleted={(deletedId) => {
+            setPosts(p => p.filter(pt => pt.id !== deletedId));
+            setSelectedPost(null);
+          }}
+        />
+      )}
     </div>
   )
 }
