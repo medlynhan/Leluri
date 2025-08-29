@@ -7,8 +7,7 @@ export default function AuthenticatedLayout({
 }) {
   return (
     <div className="flex">
-      <Sidebar />
-      <main className="flex-1 p-6 bg-white">{children}</main>
+      <main className=" bg-white w-screen ">{children}</main>
     </div>
   );
 }
