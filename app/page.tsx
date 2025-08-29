@@ -3,8 +3,6 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Button from "./components/Button";
-import { PiStudent } from "react-icons/pi";
-import { GiStoneCrafting } from "react-icons/gi";
 import CommunityMemberCard from "./components/CommunityMemberCard";
 import LandingPageSection from "./components/LandingPageSection";
 import { FaInstagram, FaTwitter, FaFacebook } from "react-icons/fa"; 

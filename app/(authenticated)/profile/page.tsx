@@ -5,7 +5,7 @@ import { supabase } from '../../lib/supabase';
 import { User } from '@supabase/supabase-js';
 import Image from 'next/image';
 import { FaPlus } from "react-icons/fa6";
-import { IoLocationOutline } from "react-icons/io5";
+import { IoLocationOutline, IoLogoWhatsapp } from "react-icons/io5";
 import PostPreview from '../../components/PostPreview';
 import { LogOut, X } from "lucide-react"
 import Sidebar from '../../components/Sidebar';
@@ -30,6 +30,7 @@ interface ProfileState {
   image_url: string
   followers: string[]
   following: string[]
+  phone_number: string
 }
 
 const ProfilePage: React.FC = () => {
@@ -42,9 +43,26 @@ const ProfilePage: React.FC = () => {
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
   const [posts, setPosts] = useState<Post[]>([])
   const [selectedPost, setSelectedPost] = useState<Post | null>(null)
+  const [hasProduct, setHasProduct] = useState(false)
+  const [hasClass, setHasClass] = useState(false) 
+
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [creatingType, setCreatingType] = useState<'product' | 'class' | null>(null)
+  const [newProductName, setNewProductName] = useState('')
+  const [newProductPrice, setNewProductPrice] = useState('')
+  const [newProductDescription, setNewProductDescription] = useState('')
+
+  const [newProductImageFile, setNewProductImageFile] = useState<File | null>(null)
+  const [newProductStock, setNewProductStock] = useState('')
+  const [newProductLength, setNewProductLength] = useState('')
+  const [newProductWidth, setNewProductWidth] = useState('')
+  const [newProductThickness, setNewProductThickness] = useState('')
+  const [newClassName, setNewClassName] = useState('')
+  const [newClassDescription, setNewClassDescription] = useState('')
+  const [savingNew, setSavingNew] = useState(false)
 
   useEffect(() => {
-    const fetchUserAndPosts = async () => {
+  const fetchUserAndPosts = async () => {
       const {
         data: { user },
       } = await supabase.auth.getUser()
@@ -58,7 +76,7 @@ const ProfilePage: React.FC = () => {
           setProfile(data)
         }
 
-        const { data: postsData, error: postsError } = await supabase
+  const { data: postsData, error: postsError } = await supabase
           .from("posts")
           .select("*")
           .eq("user_id", user.id)
@@ -68,6 +86,22 @@ const ProfilePage: React.FC = () => {
           setError(postsError.message)
         } else if (postsData) {
           setPosts(postsData)
+        }
+
+        const { data: productCheck } = await supabase
+          .from("product")
+          .select("id")
+          .eq("user_id", user.id)
+          .limit(1)
+        setHasProduct(!!productCheck && productCheck.length > 0)
+
+        const { data: classCheck, error: classError } = await supabase
+          .from("kelas")
+          .select("id")
+          .eq("user_id", user.id)
+          .limit(1)
+        if (!classError) {
+          setHasClass(!!classCheck && classCheck.length > 0)
         }
       } else {
         router.push("/Login")
@@ -126,6 +160,7 @@ const ProfilePage: React.FC = () => {
         biography: profile.biography,
         location: profile.location,
         image_url: imageUrl,
+        phone_number: profile.phone_number || null,
       })
       .eq("id", user.id)
 
@@ -161,7 +196,7 @@ const ProfilePage: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="flex-1 p-6">
+  <div className="flex-1 p-6 overflow-hidden">
           <div className="grid grid-cols-3 gap-4">
             <div className="aspect-square bg-[var(--medium-grey)] rounded-lg"></div>
             <div className="aspect-square bg-[var(--medium-grey)] rounded-lg"></div>
@@ -191,6 +226,7 @@ const ProfilePage: React.FC = () => {
     image_url: "/diverse-profile-avatars.png",
     followers: [],
     following: [],
+    phone_number: "0812-3456-7890",
   }
 
   const displayProfile = profile || mockProfile
@@ -232,11 +268,29 @@ const ProfilePage: React.FC = () => {
             <button
               onClick={() => setIsEditMode(true)}
               className="w-full max-w-[20em] py-2 px-4 border border-[var(--black)] cursor-pointer rounded-full text-sm  text-[var(--black)] transition-colors mb-6"
+
             >
               Edit Profile
             </button>
 
-            <div className="flex justify-center gap-8 mb-4">
+            {(hasProduct || hasClass) && (
+              <div className="w-full flex flex-col gap-2 mb-4">
+                {hasProduct && (
+                  <button
+                    onClick={() => router.push('/toko/saya')}
+                    className="w-full py-2 px-4 border border-gray-300 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                  >Toko Saya</button>
+                )}
+                {hasClass && (
+                  <button
+                    onClick={() => router.push('/kelas/saya')}
+                    className="w-full py-2 px-4 border border-gray-300 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                  >Kelas Saya</button>
+                )}
+              </div>
+            )}
+
+            <div className="flex justify-center gap-8 mb-2">
               <div className="text-center">
                 <p className="font-semibold text-[var(--black)]">{displayProfile.followers.length}</p>
                 <p className="text-sm text-[var(--dark-grey)]">pengikut</p>
@@ -246,11 +300,22 @@ const ProfilePage: React.FC = () => {
                 <p className="text-sm text-[var(--dark-grey)]">mengikuti</p>
               </div>
             </div>
+            
 
             <div className="flex items-center gap-2 text-sm  ">
               <IoLocationOutline className="w-4 h-4" />
               <span>{displayProfile.location}</span>
             </div>
+            <div className="flex items-center gap-2 text-sm text-gray-600 mb-6">
+              <IoLogoWhatsapp className="w-4 h-4 text-green-500" />
+              <span>{displayProfile.phone_number || 'Tambah nomor'}</span>
+            </div>
+            <p
+              className="text-xs text-gray-400 mb-4 cursor-pointer hover:text-gray-600 underline"
+              onClick={() => { setShowAddModal(true); setCreatingType(null); }}
+            >
+              + Tambah toko / kelas
+            </p>
             <div>
                 <button onClick={handleLogout} className="flex items-center p-3 my-2 w-full text-left hover:text-[var(--medium-grey)] rounded-lg transition-colors">
                   <LogOut className="w-5 h-5" />
@@ -260,9 +325,9 @@ const ProfilePage: React.FC = () => {
           </div>
         </div>
 
-
         {/*Postingan */}
         <div className="flex-1 min-h-screen p-6 ">
+
           {posts.length > 0 ? (
             <div className="relative">
               <div className="grid grid-cols-3 gap-4">
@@ -403,6 +468,17 @@ const ProfilePage: React.FC = () => {
                   placeholder="Tangerang, Indonesia"
                 />
               </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Nomor WhatsApp</label>
+                <input
+                  type="text"
+                  value={displayProfile.phone_number || ''}
+                  onChange={(e) => setProfile({ ...displayProfile, phone_number: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                  placeholder="0812xxxxxxxx"
+                />
+              </div>
             </div>
 
             <div className="flex gap-3 mt-8">
@@ -423,6 +499,177 @@ const ProfilePage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl w-full max-w-md p-6 relative">
+            <button
+              onClick={() => setShowAddModal(false)}
+              className="absolute top-3 right-3 p-1 rounded-full hover:bg-gray-100"
+              aria-label="Tutup"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            {!creatingType && (
+              <div>
+                <h2 className="text-lg font-semibold mb-6">Pilih Tipe</h2>
+                <div className="grid grid-cols-2 gap-4">
+                  <button
+                    onClick={() => setCreatingType('product')}
+                    className="border rounded-xl p-4 hover:bg-gray-50 flex flex-col items-center gap-2"
+                  >
+                    <span className="text-sm font-medium">Produk</span>
+                    <span className="text-[11px] text-gray-500 text-center">Tambahkan produk baru</span>
+                  </button>
+                  <button
+                    onClick={() => setCreatingType('class')}
+                    className="border rounded-xl p-4 hover:bg-gray-50 flex flex-col items-center gap-2"
+                  >
+                    <span className="text-sm font-medium">Kelas</span>
+                    <span className="text-[11px] text-gray-500 text-center">Buat kelas baru</span>
+                  </button>
+                </div>
+              </div>
+            )}
+            {creatingType === 'product' && (
+              <div>
+                <h2 className="text-lg font-semibold mb-4">Produk Baru</h2>
+                <div className="space-y-4 text-sm">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Gambar Produk</label>
+                    <div className="flex items-center gap-3">
+                      <div className="w-16 h-16 rounded-lg border flex items-center justify-center overflow-hidden bg-gray-50 text-[10px] text-gray-400">
+                        {newProductImageFile ? (
+                          <Image
+                            src={URL.createObjectURL(newProductImageFile)}
+                            alt="Preview"
+                            width={64}
+                            height={64}
+                            className="object-cover w-full h-full"
+                          />
+                        ) : (
+                          <span>Preview</span>
+                        )}
+                      </div>
+                      <label className="text-xs px-3 py-2 border rounded-full cursor-pointer hover:bg-gray-50">
+                        Pilih File
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={e => {
+                            if (e.target.files && e.target.files[0]) setNewProductImageFile(e.target.files[0])
+                          }}
+                        />
+                      </label>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Nama Produk</label>
+                    <input value={newProductName} onChange={e => setNewProductName(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm" placeholder="Contoh: Tas Batik" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">Harga (Rp)</label>
+                      <input type="number" value={newProductPrice} onChange={e => setNewProductPrice(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm" placeholder="50000" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">Stok</label>
+                      <input type="number" value={newProductStock} onChange={e => setNewProductStock(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm" placeholder="10" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">Panjang (cm)</label>
+                      <input type="number" value={newProductLength} onChange={e => setNewProductLength(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm" placeholder="20" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">Lebar (cm)</label>
+                      <input type="number" value={newProductWidth} onChange={e => setNewProductWidth(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm" placeholder="15" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">Ketebalan (cm)</label>
+                      <input type="number" value={newProductThickness} onChange={e => setNewProductThickness(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm" placeholder="2" />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Deskripsi</label>
+                    <textarea value={newProductDescription} onChange={e => setNewProductDescription(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm resize-none h-24" placeholder="Jelaskan produk kamu" />
+                  </div>
+                  <p className="text-[10px] text-gray-400">Semua field wajib diisi.</p>
+                </div>
+                <div className="flex gap-3 mt-6 text-sm">
+                  <button onClick={() => setCreatingType(null)} className="flex-1 border rounded-full py-2 hover:bg-gray-50">Kembali</button>
+                  <button
+                    disabled={savingNew || !newProductImageFile || !newProductName || !newProductPrice || !newProductDescription || !newProductStock || !newProductLength || !newProductWidth || !newProductThickness}
+                    onClick={async () => {
+                      if (!user || !newProductImageFile) return; setSavingNew(true);
+                      try {
+                        const bucket = 'products';
+                        const ext = newProductImageFile.name.split('.').pop();
+                        const fileName = `${user.id}-${Date.now()}.${ext}`;
+                        const { error: uploadError } = await supabase.storage.from(bucket).upload(fileName, newProductImageFile);
+                        if (uploadError) throw uploadError;
+                        const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(fileName);
+                        await supabase.from('product').insert({
+                          name: newProductName,
+                          price: Number(newProductPrice),
+                          description: newProductDescription,
+                          user_id: user.id,
+                          image_url: publicUrl,
+                          stock: Number(newProductStock),
+                          length: Number(newProductLength),
+                          width: Number(newProductWidth),
+                          thickness: Number(newProductThickness)
+                        });
+                        setHasProduct(true);
+                        setNewProductName(''); setNewProductPrice(''); setNewProductDescription('');
+                        setNewProductImageFile(null); setNewProductStock(''); setNewProductLength(''); setNewProductWidth(''); setNewProductThickness('');
+                        setShowAddModal(false);
+                      } catch (e) {
+                        console.error(e);
+                      } finally {
+                        setSavingNew(false);
+                      }
+                    }}
+                    className="flex-1 bg-black text-white rounded-full py-2 disabled:opacity-50 hover:bg-gray-800"
+                  >{savingNew ? 'Menyimpan...' : 'Simpan'}</button>
+                </div>
+              </div>
+            )}
+            {creatingType === 'class' && (
+              <div>
+                <h2 className="text-lg font-semibold mb-4">Kelas Baru</h2>
+                <div className="space-y-4 text-sm">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Nama / Judul Kelas</label>
+                    <input value={newClassName} onChange={e => setNewClassName(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm" placeholder="Contoh: Belajar Batik" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Deskripsi</label>
+                    <textarea value={newClassDescription} onChange={e => setNewClassDescription(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm resize-none h-24" placeholder="Jelaskan kelas kamu" />
+                  </div>
+                </div>
+                <div className="flex gap-3 mt-6 text-sm">
+                  <button onClick={() => setCreatingType(null)} className="flex-1 border rounded-full py-2 hover:bg-gray-50">Kembali</button>
+                  <button
+                    disabled={savingNew || !newClassName}
+                    onClick={async () => {
+                      if (!user) return; setSavingNew(true);
+                      await supabase.from('kelas').insert({ name: newClassName, title: newClassName, description: newClassDescription, user_id: user.id });
+                      setHasClass(true);
+                      setSavingNew(false); setShowAddModal(false);
+                      setNewClassName(''); setNewClassDescription('');
+                    }}
+                    className="flex-1 bg-black text-white rounded-full py-2 disabled:opacity-50 hover:bg-gray-800"
+                  >{savingNew ? 'Menyimpan...' : 'Simpan'}</button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
 
       {selectedPost && (
         <PostPreview

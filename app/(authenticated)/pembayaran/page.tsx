@@ -106,7 +106,7 @@ const PembayaranPage: React.FC = () => {
           <div className="border-t px-6 py-5">
             <p className="text-sm text-gray-500 mb-1">Total Harga</p>
             <p className="text-xl font-bold">{formatPrice(total)}</p>
-          </div>
+          </div> 
         </div>
 
   <div className="flex flex-col gap-8 xl:pl-12">
