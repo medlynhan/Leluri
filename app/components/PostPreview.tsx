@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import { supabase } from '../lib/supabase';
-import { X, MoreHorizontal, Check, Edit2, Trash2, Heart } from 'lucide-react';
+import { X, MoreHorizontal, Edit2, Trash2, Heart, Send, MessageSquare } from 'lucide-react';
 
 interface Post {
     id: string;
@@ -61,7 +61,6 @@ const PostPreview: React.FC<PostPreviewProps> = ({ post, onClose, onPostUpdated,
         init();
     }, [post.id]);
 
-    // Close menu when clicking outside
     useEffect(() => {
         if (!showMenu) return;
         const handler = (e: MouseEvent) => {
@@ -197,42 +196,33 @@ const PostPreview: React.FC<PostPreviewProps> = ({ post, onClose, onPostUpdated,
 
     const isOwner = currentUserId === post.user_id;
 
+        const commentCount = comments.length;
         return (
             <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50" onClick={onClose}>
-                <div className="bg-white rounded-2xl w-full max-w-5xl h-[82vh] flex flex-col md:flex-row overflow-hidden" onClick={e => e.stopPropagation()}>
-                    {/* Image Section */}
-                    <div className="relative md:w-1/2 w-full bg-black flex items-center justify-center select-none" onDoubleClick={handleDoubleClick}>
-                        <Image src={post.image_url} alt={post.description} fill className="object-contain" />
-                        {likeAnimating && (
-                            <div className="absolute inset-0 flex items-center justify-center animate-pulse">
-                                <Heart className="w-32 h-32 text-white/90 fill-white/90 drop-shadow-[0_0_10px_rgba(0,0,0,0.4)]" />
-                            </div>
-                        )}
-                        <button onClick={onClose} className="absolute top-3 left-3 p-2 bg-black/50 hover:bg-black/70 rounded-full text-white">
-                            <X className="w-5 h-5" />
-                        </button>
-                    </div>
-                    <div className="flex flex-col md:w-1/2 w-full h-full">
-                            <div className="flex items-center justify-between px-5 py-3 border-b">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden">
-                                        {postUser?.image_url && <Image src={postUser.image_url} alt={postUser.username} width={40} height={40} className="object-cover w-full h-full" />}
-                                    </div>
-                                    <div className="leading-tight">
-                                        <p className="font-semibold text-sm">{postUser?.username || 'Pengguna'}</p>
-                                        <p className="text-[11px] text-gray-500 flex items-center gap-1">
-                                            <span>{relativeTime(post.created_at)}</span>
-                                            {post.category && <span className="px-1.5 py-0.5 bg-gray-100 rounded-full text-[10px] font-medium">#{post.category}</span>}
-                                        </p>
-                                    </div>
+                <div className="w-full max-w-5xl h-[82vh] bg-white rounded-2xl overflow-hidden flex" onClick={e => e.stopPropagation()}>
+                    <div className="flex flex-col w-full md:w-[640px] h-full border-r">
+                        {/* Header */}
+                        <div className="flex items-center justify-between px-5 py-4">
+                            <div className="flex items-center gap-3">
+                                <div className="w-11 h-11 rounded-full bg-gray-200 overflow-hidden">
+                                    {postUser?.image_url && <Image src={postUser.image_url} alt={postUser.username} width={44} height={44} className="object-cover w-full h-full" />}
                                 </div>
+                                <div className="leading-tight">
+                                    <p className="font-semibold text-sm">{postUser?.username || 'Pengguna'}</p>
+                                    <p className="text-[11px] text-gray-500 flex items-center gap-1">
+                                        <span>{relativeTime(post.created_at)}</span>
+                                        {post.category && <span className="px-1.5 py-0.5 bg-gray-100 rounded-full text-[10px] font-medium">#{post.category}</span>}
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2">
                                 {isOwner && (
                                     <div className="relative">
                                         <button ref={menuButtonRef} onClick={() => setShowMenu(s => !s)} className="p-2 hover:bg-gray-100 rounded-full" title="Menu">
                                             <MoreHorizontal className="w-5 h-5" />
                                         </button>
                                         {showMenu && (
-                                            <div ref={menuRef} className="absolute right-0 mt-2 w-40 bg-white border rounded-xl shadow-lg z-10 overflow-hidden text-sm">
+                                            <div ref={menuRef} className="absolute right-0 mt-2 w-40 bg-white border rounded-xl shadow-lg z-20 overflow-hidden text-sm">
                                                 <button onClick={() => { setIsEditing(true); setShowMenu(false); }} className="w-full px-4 py-2 flex items-center gap-2 hover:bg-gray-50"><Edit2 className="w-4 h-4" /> Edit</button>
                                                 <button onClick={handleDelete} disabled={deleting} className="w-full px-4 py-2 flex items-center gap-2 text-red-600 hover:bg-red-50"><Trash2 className="w-4 h-4" /> Hapus</button>
                                             </div>
@@ -240,77 +230,100 @@ const PostPreview: React.FC<PostPreviewProps> = ({ post, onClose, onPostUpdated,
                                     </div>
                                 )}
                             </div>
-                        <div className="flex-1 overflow-y-auto px-5 py-4 space-y-5">
-                            <div>
-                                {isEditing ? (
-                                    <div className="space-y-3">
-                                        <p>Kategori</p>
-                                        <input
-                                            value={editCategory}
-                                            onChange={e => setEditCategory(e.target.value)}
-                                            className="w-full border rounded-md px-3 py-2 text-sm"
-                                            placeholder="Kategori"
-                                        />
-                                        <p>Deskripsi</p>
-                                        <textarea
-                                            value={editDescription}
-                                            onChange={e => setEditDescription(e.target.value)}
-                                            className="w-full border rounded-md px-3 py-2 text-sm min-h-[100px] resize-none"
-                                            placeholder="Deskripsi"
-                                        />
-                                        <div className="flex gap-2">
-                                            <button onClick={handleSaveEdit} disabled={savingEdit} className="flex-1 bg-black text-white py-2 rounded-full text-sm font-medium disabled:opacity-50">{savingEdit ? 'Menyimpan...' : 'Simpan'}</button>
-                                            <button onClick={() => { setIsEditing(false); setEditDescription(post.description); setEditCategory(post.category); }} className="flex-1 border py-2 rounded-full text-sm font-medium">Batal</button>
+                        </div>
+                        {/* Image */}
+                        <div className="relative flex-1 bg-black flex items-center justify-center select-none" onDoubleClick={handleDoubleClick}>
+                            <Image src={post.image_url} alt={post.description} fill className="object-contain" />
+                            {likeAnimating && (
+                                <div className="absolute inset-0 flex items-center justify-center animate-pulse">
+                                    <Heart className="w-32 h-32 text-white/90 fill-white/90 drop-shadow-[0_0_10px_rgba(0,0,0,0.4)]" />
+                                </div>
+                            )}
+                        </div>
+                        <div className="px-5 py-4 space-y-4 border-t bg-white">
+                            {isEditing ? (
+                                <div className="space-y-3">
+                                    <p className="text-xs font-medium">Kategori</p>
+                                    <input
+                                        value={editCategory}
+                                        onChange={e => setEditCategory(e.target.value)}
+                                        className="w-full border rounded-md px-3 py-2 text-sm"
+                                        placeholder="Kategori"
+                                    />
+                                    <p className="text-xs font-medium">Deskripsi</p>
+                                    <textarea
+                                        value={editDescription}
+                                        onChange={e => setEditDescription(e.target.value)}
+                                        className="w-full border rounded-md px-3 py-2 text-sm min-h-[90px] resize-none"
+                                        placeholder="Deskripsi"
+                                    />
+                                    <div className="flex gap-2">
+                                        <button onClick={handleSaveEdit} disabled={savingEdit} className="flex-1 bg-black text-white py-2 rounded-full text-sm font-medium disabled:opacity-50">{savingEdit ? 'Menyimpan...' : 'Simpan'}</button>
+                                        <button onClick={() => { setIsEditing(false); setEditDescription(post.description); setEditCategory(post.category); }} className="flex-1 border py-2 rounded-full text-sm font-medium">Batal</button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <>
+                                    <div className="flex items-center gap-6 text-sm">
+                                        <button onClick={toggleLike} aria-label="like" className="group flex items-center gap-1">
+                                            <Heart className={`w-6 h-6 transition-colors ${liked ? 'fill-red-500 text-red-500' : 'text-gray-700 group-hover:text-black'}`} />
+                                            <span className="font-medium text-gray-800">{likes}</span>
+                                        </button>
+                                        <div className="flex items-center gap-1 text-gray-700">
+                                            <MessageSquare className="w-5 h-5" />
+                                            <span className="font-medium">{commentCount}</span>
                                         </div>
                                     </div>
-                                ) : (
-                                    <>
-                                        <p className="text-sm leading-relaxed whitespace-pre-line break-words">{post.description}</p>
-                                    </>
-                                )}
-                            </div>
-                            <div className="flex items-center gap-4 text-sm">
-                                <button onClick={toggleLike} aria-label="like" className="group">
-                                    <Heart className={`w-6 h-6 transition-colors ${liked ? 'fill-red-500 text-red-500' : 'text-gray-700 group-hover:text-black'}`} />
-                                </button>
-                                <p className="font-medium text-gray-800">{likes} suka</p>
-                            </div>
-                            <div className="space-y-4">
-                                <h4 className="text-sm font-semibold">Komentar</h4>
-                                {loadingComments ? (
-                                    <p className="text-xs text-gray-500">Memuat komentar...</p>
-                                ) : comments.length === 0 ? (
-                                    <p className="text-xs text-gray-400">Belum ada komentar.</p>
-                                ) : (
-                                    <ul className="space-y-3">
-                                        {comments.map(c => (
-                                            <li key={c.id} className="flex items-start gap-3 group">
-                                                <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden shrink-0">
-                                                    {c.user?.image_url && <Image src={c.user.image_url} alt={c.user.username} width={32} height={32} className="object-cover w-full h-full" />}
+                                    <p className="text-sm leading-relaxed whitespace-pre-line break-words">{post.description}</p>
+                                    <p className="text-[11px] text-gray-500">{new Date(post.created_at).toLocaleDateString('id-ID')}</p>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                    <div className="flex flex-col w-[360px] h-full">
+                        <div className="flex items-center justify-between px-5 py-4 border-b">
+                            <h4 className="text-sm font-semibold">Komentar ({commentCount})</h4>
+                            <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full" aria-label="Close"><X className="w-5 h-5" /></button>
+                        </div>
+                        <div className="flex-1 overflow-y-auto px-5 py-4">
+                            {loadingComments ? (
+                                <p className="text-xs text-gray-500">Memuat komentar...</p>
+                            ) : commentCount === 0 ? (
+                                <div className="h-full flex items-center justify-center">
+                                    <p className="text-xs text-gray-400">Belum ada komentar</p>
+                                </div>
+                            ) : (
+                                <ul className="space-y-4">
+                                    {comments.map(c => (
+                                        <li key={c.id} className="flex items-start gap-3 group">
+                                            <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden shrink-0">
+                                                {c.user?.image_url && <Image src={c.user.image_url} alt={c.user.username} width={32} height={32} className="object-cover w-full h-full" />}
+                                            </div>
+                                            <div className="flex-1">
+                                                <p className="text-sm leading-snug"><span className="font-semibold mr-2">{c.user?.username}</span>{c.content}</p>
+                                                <div className="flex items-center gap-3 mt-1">
+                                                    <p className="text-[10px] text-gray-400">{relativeTime(c.created_at)}</p>
+                                                    {c.user_id === currentUserId && !isEditing && (
+                                                        <button
+                                                            onClick={async () => { await supabase.from('comment').delete().eq('id', c.id); fetchComments(); }}
+                                                            className="text-[10px] text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                        >Hapus</button>
+                                                    )}
                                                 </div>
-                                                <div className="flex-1">
-                                                    <p className="text-sm leading-snug"><span className="font-semibold mr-2">{c.user?.username}</span>{c.content}</p>
-                                                    <div className="flex items-center gap-3 mt-1">
-                                                        <p className="text-[10px] text-gray-400">{relativeTime(c.created_at)}</p>
-                                                        {c.user_id === currentUserId && !isEditing && (
-                                                            <button
-                                                                onClick={async () => { await supabase.from('comment').delete().eq('id', c.id); fetchComments(); }}
-                                                                className="text-[10px] text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
-                                                            >Hapus</button>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-                            </div>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
                         </div>
                         {currentUserId && !isEditing && (
                             <div className="border-t px-5 py-3 flex items-center gap-3">
+                                <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden shrink-0">
+                                    {postUser?.image_url && <Image src={postUser.image_url} alt={postUser.username} width={32} height={32} className="object-cover w-full h-full" />}
+                                </div>
                                 <input
                                     type="text"
-                                    placeholder="Tambahkan komentar..."
+                                    placeholder="Tambah komentar..."
                                     className="flex-1 text-sm border rounded-full px-4 py-2"
                                     value={newComment}
                                     onChange={e => setNewComment(e.target.value)}
@@ -319,8 +332,10 @@ const PostPreview: React.FC<PostPreviewProps> = ({ post, onClose, onPostUpdated,
                                 <button
                                     onClick={handleAddComment}
                                     disabled={!newComment.trim()}
-                                    className="text-sm font-medium text-black disabled:opacity-30"
-                                >Kirim</button>
+                                    className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-30"
+                                >
+                                    <Send className="w-5 h-5" />
+                                </button>
                             </div>
                         )}
                         {error && <p className="px-5 pb-3 text-xs text-red-500">{error}</p>}
