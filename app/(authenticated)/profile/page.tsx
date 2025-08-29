@@ -5,7 +5,7 @@ import { supabase } from '../../lib/supabase';
 import { User } from '@supabase/supabase-js';
 import Image from 'next/image';
 import { FaPlus } from "react-icons/fa6";
-import { IoLocationOutline } from "react-icons/io5";
+import { IoLocationOutline, IoLogoWhatsapp } from "react-icons/io5";
 import PostPreview from '../../components/PostPreview';
 import { LogOut, X } from "lucide-react"
 
@@ -28,6 +28,7 @@ interface ProfileState {
   image_url: string
   followers: string[]
   following: string[]
+  phone_number: string
 }
 
 const ProfilePage: React.FC = () => {
@@ -124,6 +125,7 @@ const ProfilePage: React.FC = () => {
         biography: profile.biography,
         location: profile.location,
         image_url: imageUrl,
+        phone_number: profile.phone_number || null,
       })
       .eq("id", user.id)
 
@@ -138,8 +140,8 @@ const ProfilePage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex animate-pulse">
-        <div className="w-80 min-h-screen p-6 border-r border-gray-200">
+      <div className="flex h-full animate-pulse overflow-hidden">
+        <div className="w-80 h-full p-6 border-r border-gray-200">
           <div className="flex flex-col items-center text-center">
             <div className="relative mb-4">
               <div className="w-24 h-24 rounded-full bg-gray-200"></div>
@@ -159,7 +161,7 @@ const ProfilePage: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="flex-1 p-6">
+  <div className="flex-1 p-6 overflow-hidden">
           <div className="grid grid-cols-3 gap-4">
             <div className="aspect-square bg-gray-200 rounded-lg"></div>
             <div className="aspect-square bg-gray-200 rounded-lg"></div>
@@ -189,6 +191,7 @@ const ProfilePage: React.FC = () => {
     image_url: "/diverse-profile-avatars.png",
     followers: [],
     following: [],
+    phone_number: "0812-3456-7890",
   }
 
   const displayProfile = profile || mockProfile
@@ -202,9 +205,9 @@ const ProfilePage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="flex">
-        <div className="w-80 bg-white min-h-screen p-6 border-r border-gray-200">
+    <div className="bg-white overflow-hidden">
+      <div className="flex h-full">
+        <div className="w-80 bg-white h-full p-6 border-r border-gray-200 flex-shrink-0">
           <div className="flex flex-col items-center text-center">
             <div className="relative mb-4">
               <div className="w-24 h-24 rounded-full bg-gradient-to-br from-orange-300 to-orange-500 p-1">
@@ -244,6 +247,10 @@ const ProfilePage: React.FC = () => {
               <IoLocationOutline className="w-4 h-4" />
               <span>{displayProfile.location}</span>
             </div>
+            <div className="flex items-center gap-2 text-sm text-gray-600 mb-6">
+              <IoLogoWhatsapp className="w-4 h-4 text-green-500" />
+              <span>{displayProfile.phone_number || 'Tambah nomor'}</span>
+            </div>
             <div>
                 <button onClick={handleLogout} className="flex items-center p-3 my-2 w-full text-left hover:bg-gray-100 rounded-lg transition-colors">
                   <LogOut className="w-5 h-5" />
@@ -253,7 +260,7 @@ const ProfilePage: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex-1 p-6">
+  <div className="flex-1 h-full overflow-y-auto p-6">
           {posts.length > 0 ? (
             <div className="relative">
               <div className="grid grid-cols-3 gap-4">
@@ -392,6 +399,17 @@ const ProfilePage: React.FC = () => {
                   onChange={(e) => setProfile({ ...displayProfile, location: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                   placeholder="Tangerang, Indonesia"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Nomor WhatsApp</label>
+                <input
+                  type="text"
+                  value={displayProfile.phone_number || ''}
+                  onChange={(e) => setProfile({ ...displayProfile, phone_number: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                  placeholder="0812xxxxxxxx"
                 />
               </div>
             </div>
