@@ -14,7 +14,7 @@ interface Props {
 
 export default function LandingPageSection({title,  description, image, order1, order2}: Props) {
   return (
-        <div className="grid md:grid-rows-1 md:grid-cols-2 gap-4 justify-center items-center w-full  h-fit border rounded-2xl">
+        <div className="grid md:grid-rows-1 md:grid-cols-2 gap-4 justify-center items-center w-full h-fit border rounded-2xl">
           
           <div className={`w-full min-h-[30vh] md:min-h-[50vh]  flex flex-col  gap-6 text-left justify-center px-5 md:px-10  ${order1}`}>
             <h1 className="text-xl md:text-2xl 2xl:text-4xl font-semibold w-full">{title}</h1>

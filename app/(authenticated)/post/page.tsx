@@ -81,91 +81,112 @@ const PostPage = () => {
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-2xl p-8 w-[480px] max-w-lg mx-4 relative">
-                <button
-                    onClick={() => router.back()}
-                    className="absolute top-6 right-6 p-1 hover:bg-gray-100 rounded-full transition-colors"
-                >
-                    <X className="w-6 h-6 text-gray-600" />
-                </button>
+    <div className="absolute flex top-0 left-0 min-w-full min-h-full bg-black/70 items-center justify-center z-50">
+      <div className="bg-white rounded-2xl grid gap-4 min-h-[50%] lg:min-w-[40%] min-w-[80%] p-6 my-10">
+        
+        {/* Tombol Close */}
+        <button
+          onClick={() => router.back()}
+          className="absolute top-3 right-3 p-1 rounded-full hover:bg-[var(--medium-grey)] transition-colors"
+          aria-label="Tutup"
+        >
+          <X className="w-5 h-5 text-[var(--dark-grey)]" />
+        </button>
 
-                <div className="text-center mb-6">
-                    <h1 className="text-2xl font-bold">Postingan Baru</h1>
-                    <p className="text-gray-500">Buat postingan terbaikmu!</p>
-                </div>
-
-                <div className="space-y-6">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Foto</label>
-                        <label
-                            htmlFor="file-upload"
-                            className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md cursor-pointer"
-                        >
-                            <div className="space-y-1 text-center">
-                                {imageUrl ? (
-                                    <Image src={imageUrl} alt="Preview" width={200} height={200} className="rounded-lg mx-auto" />
-                                ) : (
-                                    <>
-                                        <div className="mx-auto h-12 w-12 text-gray-400 flex items-center justify-center">
-                                            <Plus size={32} />
-                                        </div>
-                                        <p className="text-sm text-gray-600">Unggah Foto</p>
-                                    </>
-                                )}
-                                <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleImageChange} accept="image/*" />
-                            </div>
-                        </label>
-                    </div>
-
-                    <div>
-                        <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                            Deskripsi Foto
-                        </label>
-                        <div className="mt-1">
-                            <textarea
-                                id="description"
-                                name="description"
-                                rows={4}
-                                className="shadow-sm focus:ring-orange-500 focus:border-orange-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md p-2"
-                                placeholder="Tulis deskripsi fotomu di sini..."
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                            ></textarea>
-                        </div>
-                    </div>
-                    <div>
-                        <label htmlFor="category" className="block text-sm font-medium text-gray-700">
-                            Kategori
-                        </label>
-                        <div className="mt-1">
-                            <textarea
-                                id="category"
-                                name="category"
-                                rows={4}
-                                className="shadow-sm focus:ring-orange-500 focus:border-orange-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md p-2"
-                                placeholder="Tulis category postmu di sini..."
-                                value={category}
-                                onChange={(e) => setCategory(e.target.value)}
-                            ></textarea>
-                        </div>
-                    </div>
-                </div>
-
-                {error && <p className="text-red-500 text-xs text-center mt-4">{error}</p>}
-
-                <div className="mt-8">
-                    <button
-                        onClick={handlePost}
-                        disabled={loading}
-                        className="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:bg-gray-400"
-                    >
-                        {loading ? 'Membagikan...' : 'Bagikan'}
-                    </button>
-                </div>
-            </div>
+        {/* Header */}
+        <div className="text-center mb-6">
+          <h1 className="text-lg font-semibold text-[var(--black)]">Postingan Baru</h1>
+          <p className="text-sm text-[var(--dark-grey)]">Bagikan momen terbaikmu 🌸</p>
         </div>
-    );
+
+        <div className="space-y-4">
+          {/* Upload Foto */}
+          <div>
+            <label className="block text-sm font-medium text-[var(--black)] mb-2">Foto</label>
+            <label
+              htmlFor="file-upload"
+              className="flex flex-col justify-center items-center px-6 pt-5 pb-6 border-2 border-dashed border-[var(--medium-grey)] rounded-xl cursor-pointer hover:bg-gray-50 transition-colors"
+            >
+              {imageUrl ? (
+                <Image
+                  src={imageUrl}
+                  alt="Preview"
+                  width={200}
+                  height={200}
+                  className="rounded-lg mx-auto object-cover"
+                />
+              ) : (
+                <>
+                  <div className="mx-auto h-12 w-12 text-[var(--dark-grey)] flex items-center justify-center">
+                    <Plus size={28} />
+                  </div>
+                  <p className="text-xs text-[var(--dark-grey)]">Unggah Foto</p>
+                </>
+              )}
+              <input
+                id="file-upload"
+                name="file-upload"
+                type="file"
+                className="hidden"
+                onChange={handleImageChange}
+                accept="image/*"
+              />
+            </label>
+          </div>
+
+          {/* Deskripsi */}
+          <div>
+            <label htmlFor="description" className="block text-sm font-medium text-[var(--black)] mb-2">
+              Deskripsi Foto
+            </label>
+            <textarea
+              id="description"
+              rows={3}
+              className="w-full px-3 py-2 border border-[var(--medium-grey)] rounded-lg text-sm"
+              placeholder="Tulis deskripsi fotomu di sini..."
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </div>
+
+          {/* Kategori */}
+          <div>
+            <label htmlFor="category" className="block text-sm font-medium text-[var(--black)] mb-2">
+              Kategori
+            </label>
+            <input
+              id="category"
+              type="text"
+              className="w-full px-3 py-2 border border-[var(--medium-grey)] rounded-lg text-sm"
+              placeholder="Misal: Seni, Kerajinan, Festival"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+            />
+          </div>
+        </div>
+
+        {/* Error */}
+        {error && <p className="text-red-500 text-xs text-center mt-3">{error}</p>}
+
+        {/* Tombol Aksi */}
+        <div className="flex gap-3 mt-6">
+          <button
+            onClick={() => router.back()}
+            className="flex-1 py-2 px-4 border border-[var(--black)] rounded-full text-sm font-medium text-[var(--black)] cursor-pointer hover:bg-gray-50 transition-colors"
+          >
+            Batal
+          </button>
+          <button
+            onClick={handlePost}
+            disabled={loading}
+            className="flex-1 py-2 px-4 bg-black text-white rounded-full text-sm font-medium border border-transparent cursor-pointer hover:bg-[var(--dark-grey)] transition-colors disabled:bg-gray-400"
+          >
+            {loading ? 'Membagikan...' : 'Bagikan'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default PostPage;

@@ -8,7 +8,7 @@ import { Home, Compass, BookOpen, ShoppingBag, LogOut, Hamburger } from 'lucide-
 import { supabase } from '../lib/supabase'
 import { User } from '@supabase/supabase-js'
 import { RxHamburgerMenu } from "react-icons/rx";
-import { IoMdClose } from "react-icons/io";
+import { X } from "lucide-react"
 
 interface Profile {
   username: string
@@ -55,18 +55,19 @@ const Sidebar = () => {
     <div className='w-fit h-fit'>
       
       {/*Sidebar Desktop */}
-      <div className={`lg:flex lg:flex ${isOpen ? "flex" : "hidden"}  w-64 z-20 flex-none bg-[var(--white)] h-screen p-4 fixed flex-col shadow-[4px_0_10px_rgba(0,0,0,0.1)] lg:border-r border-[var(--medium-grey)] z-10`}>
+      <div className={`lg:flex lg:flex ${isOpen ? "flex" : "hidden"}  w-64 z-20 flex-none bg-[var(--white)] h-screen p-4 fixed flex-col shadow-[4px_0_10px_rgba(0,0,0,0.1)] lg:shadow-none lg:border-r border-[var(--medium-grey)] z-10`}>
         <div className="mb-10 w-full flex justify-between items-center">
           {/*logo*/}
           <Image src="/logo-leluri.png" alt="Leluri Logo" width={70} height={70} className=""/>
-          <IoMdClose className='flex lg:hidden text-2xl  text-[var(--dark-grey)] absolute top-5 right-5 cursor-pointer' onClick={() => setIsOpen(!isOpen)}/>
-
+          <button onClick={() => setIsOpen(!isOpen)} className="p-1 hover:bg-[var(--medium-grey)] rounded-full transition-colors lg:hidden flex ">
+            <X className="w-5 h-5" />
+          </button>
         </div>
         <nav className="flex-grow">
           <ul>
             {navItems.map((item) => (
               <li key={item.href}>
-                <Link href={item.href} className={`flex items-center p-3 my-2 rounded-lg transition-colors ${pathname === item.href ? 'bg-gray-100 text-[var(--yellow)]' : 'hover:bg-gray-100'}`}>
+                <Link href={item.href} className={`flex items-center p-3 my-2 rounded-lg transition-colors ${pathname === item.href ? 'bg-[var(--light-grey)] text-[var(--yellow)]' : 'hover:bg-[var(--light-grey)]'}`}>
                   <item.icon className="w-5 h-5" />
                   <span className="ml-4 font-medium">{item.label}</span>
                 </Link>
@@ -75,7 +76,7 @@ const Sidebar = () => {
           </ul>
         </nav>
         <div className="mt-auto">
-          <div className="p-3 hover:bg-gray-100 rounded-lg cursor-pointer" onClick={() => router.push('/profile')}>
+          <div className="p-3 hover:bg-[var(--light-grey)] rounded-lg cursor-pointer" onClick={() => router.push('/profile')}>
               <div className="flex items-center">
               {profile?.image_url ? (
                   <Image src={profile.image_url} alt={profile.username} width={40} height={40} className="rounded-full" />
@@ -91,7 +92,7 @@ const Sidebar = () => {
       </div>
           
       {/*Sidebar Mobile */}
-      <div className="lg:hidden flex z-10 fixed h-fit w-fit  p-3 bg-[var(--white)]  rounded-lg  hover:bg-gray-100 hover:text-[var(--yellow)]"  onClick={() => setIsOpen(!isOpen)} >
+      <div className="lg:hidden flex z-10 fixed h-fit w-fit  p-3 bg-[var(--white)]  rounded-lg  hover:bg-[var(--light-grey)] hover:text-[var(--yellow)]"  onClick={() => setIsOpen(!isOpen)} >
             <RxHamburgerMenu className='w-5 h-5'/>
       </div>
 

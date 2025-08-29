@@ -240,17 +240,17 @@ const ProfilePage: React.FC = () => {
   }
 
   return (
-    <div className={`  relative min-h-screen bg-white overflow-x-hidden`}>
-      <div className={`${isEditMode ? "fixed" : ""}  flex flex-col lg:flex-row  h-full w-full `}>
+    <div className={`top-0 left-0 w-full relative min-h-screen bg-white overflow-x-hidden`}>
+      <div className={`${isEditMode || showAddModal ? "fixed" : ""}  flex flex-col lg:flex-row  h-full w-full `}>
 
         {/*Sidebar */}
           <Sidebar />
 
         {/*Profile */}
-        <div className="w-screen min-h-[30vh] min-h-[60vh] ml-0 lg:w-80  border-b lg:border-r border-[var(--medium-grey)] lg:ml-64 bg-white lg:h-screen p-6 ">
+        <div className="w-full min-h-[30vh]  lg:min-h-[60vh] ml-0 lg:w-80 border-b lg:border-b-transparent lg:border-r border-[var(--medium-grey)] lg:ml-64 bg-white   p-6 ">
           <div className="w-full flex flex-col items-center text-center">
             <div className="justify-items items-center relative mb-4">
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-orange-300 to-orange-500 p-1">
+              <div className="w-24 h-24 rounded-full  p-1  bg-gradient-to-br bg-[var(--yellow)]">
                 <Image
                   src={displayProfile.image_url || "/placeholder.svg?height=88&width=88&query=profile avatar"}
                   alt="Profile"
@@ -267,30 +267,30 @@ const ProfilePage: React.FC = () => {
 
             <button
               onClick={() => setIsEditMode(true)}
-              className="w-full max-w-[20em] py-2 px-4 border border-[var(--black)] cursor-pointer rounded-full text-sm  text-[var(--black)] transition-colors mb-6"
+              className="w-full max-w-[20em] py-2 px-4 border border-[var(--black)] cursor-pointer rounded-full text-sm  text-[var(--black)]  hover:bg-[var(--light-grey)] hover:border-transparent transition-colors mb-6"
 
             >
               Edit Profile
             </button>
 
             {(hasProduct || hasClass) && (
-              <div className="w-full flex flex-col gap-2 mb-4">
+              <div className="w-full flex justify-center items-center flex-col gap-2 mb-4">
                 {hasProduct && (
                   <button
                     onClick={() => router.push('/toko/saya')}
-                    className="w-full py-2 px-4 border border-gray-300 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                    className="w-full max-w-[20em] py-2 px-4 border border-[var(--black)] cursor-pointer rounded-full text-sm font-medium text-[var(--black)]  hover:bg-[var(--light-grey)] hover:border-transparent transition-colors"
                   >Toko Saya</button>
                 )}
                 {hasClass && (
                   <button
                     onClick={() => router.push('/kelas/saya')}
-                    className="w-full py-2 px-4 border border-gray-300 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                    className="w-full max-w-[20em] py-2 px-4 border border-[var(--black)] cursor-pointer rounded-full text-sm font-medium text-[var(--black)]  hover:bg-[var(--light-grey)]  hover:border-transparent  transition-colors"
                   >Kelas Saya</button>
                 )}
               </div>
             )}
 
-            <div className="flex justify-center gap-8 mb-2">
+            <div className="flex  justify-center gap-8 mb-6">
               <div className="text-center">
                 <p className="font-semibold text-[var(--black)]">{displayProfile.followers.length}</p>
                 <p className="text-sm text-[var(--dark-grey)]">pengikut</p>
@@ -302,22 +302,22 @@ const ProfilePage: React.FC = () => {
             </div>
             
 
-            <div className="flex items-center gap-2 text-sm  ">
+            <div className="flex items-center gap-2 text-sm   mb-2">
               <IoLocationOutline className="w-4 h-4" />
               <span>{displayProfile.location}</span>
             </div>
-            <div className="flex items-center gap-2 text-sm text-gray-600 mb-6">
+            <div className="flex items-center gap-2 text-sm  text-[var(--black)] mb-6">
               <IoLogoWhatsapp className="w-4 h-4 text-green-500" />
               <span>{displayProfile.phone_number || 'Tambah nomor'}</span>
             </div>
             <p
-              className="text-xs text-gray-400 mb-4 cursor-pointer hover:text-gray-600 underline"
+              className="  text-[var(--dark-grey)] mb-4 cursor-pointer hover:text-[var(--black)] underline"
               onClick={() => { setShowAddModal(true); setCreatingType(null); }}
             >
-              + Tambah toko / kelas
+              + Tambah produk / kelas
             </p>
-            <div>
-                <button onClick={handleLogout} className="flex items-center p-3 my-2 w-full text-left hover:text-[var(--medium-grey)] rounded-lg transition-colors">
+            <div className='flex w-full justify-center'>
+                <button onClick={handleLogout} className="flex items-center p-3 my-2 w-full max-w-[20em] bg-[var(--light-grey)] justify-center text-left  cursor-pointer rounded-lg transition-colors">
                   <LogOut className="w-5 h-5" />
                   <span className="ml-4 font-medium">Logout</span>
                 </button>
@@ -379,7 +379,7 @@ const ProfilePage: React.FC = () => {
 
       {isEditMode && (
         <div className="absolute flex top-0 left-0 min-w-full min-h-full bg-black/70  items-center justify-center z-50 ">
-          <div className="bg-white rounded-2xl  grid gap-4 min-h-[50%] lg:min-w-[40%] min-w-[60%]  p-6  lg:my-10 ">
+          <div className="bg-white rounded-2xl  grid gap-4 min-h-[50%] lg:min-w-[40%] min-w-[80%]   p-6  my-10 ">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-semibold">Edit Profile</h2>
               <button
@@ -393,7 +393,7 @@ const ProfilePage: React.FC = () => {
             <div className="space-y-4">
               <div className="flex justify-center mb-6">
                 <div className="relative">
-                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-orange-300 to-orange-500 p-1">
+                  <div className="w-24 h-24 rounded-full bg-gradient-to-br bg-[var(--yellow)] p-1">
                     <Image
                       src={
                         avatarFile
@@ -470,12 +470,12 @@ const ProfilePage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Nomor WhatsApp</label>
+                <label className="block text-sm font-medium text-[var(--black)] mb-2">Nomor WhatsApp</label>
                 <input
                   type="text"
                   value={displayProfile.phone_number || ''}
                   onChange={(e) => setProfile({ ...displayProfile, phone_number: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                  className="w-full px-3 py-2 border border-[var(--medium-grey)] rounded-lg "
                   placeholder="0812xxxxxxxx"
                 />
               </div>
@@ -501,57 +501,81 @@ const ProfilePage: React.FC = () => {
       )}
 
       {showAddModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl w-full max-w-md p-6 relative">
-            <button
-              onClick={() => setShowAddModal(false)}
-              className="absolute top-3 right-3 p-1 rounded-full hover:bg-gray-100"
-              aria-label="Tutup"
-            >
-              <X className="w-5 h-5" />
-            </button>
+        <div className="absolute  flex top-0 left-0 min-w-full min-h-full bg-black/70  items-center justify-center z-50">
+          <div className="bg-white rounded-2xl  grid gap-4 min-h-[50%] lg:min-w-[40%] lg:max-w-[50%] min-w-[70%] max-w-[95%] p-6  my-10 ">
+            
             {!creatingType && (
-              <div>
-                <h2 className="text-lg font-semibold mb-6">Pilih Tipe</h2>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="relative">
+                  {/* Tombol X */}
                   <button
-                    onClick={() => setCreatingType('product')}
-                    className="border rounded-xl p-4 hover:bg-gray-50 flex flex-col items-center gap-2"
+                    onClick={() => setShowAddModal(false)}
+                    className="absolute top-0 right-0 p-1 rounded-full  hover:bg-[var(--medium-grey)] transition-colors"
+                    aria-label="Tutup"
                   >
-                    <span className="text-sm font-medium">Produk</span>
-                    <span className="text-[11px] text-gray-500 text-center">Tambahkan produk baru</span>
+                    <X className="w-5 h-5 " />
                   </button>
-                  <button
-                    onClick={() => setCreatingType('class')}
-                    className="border rounded-xl p-4 hover:bg-gray-50 flex flex-col items-center gap-2"
-                  >
-                    <span className="text-sm font-medium">Kelas</span>
-                    <span className="text-[11px] text-gray-500 text-center">Buat kelas baru</span>
-                  </button>
+
+                  {/* Konten Modal */}
+                  <h2 className="text-lg font-semibold mb-6 text-[var(--black)]">Pilih Tipe</h2>
+                  <div className="grid grid-cols-2 gap-4">
+                    <button
+                      onClick={() => setCreatingType('product')}
+                      className="border border-[var(--medium-grey)] rounded-xl p-4 hover:bg-[var(--light-grey)] flex flex-col items-center gap-2"
+                    >
+                      <Image
+                        src={"/buat-produk-baru.png"}
+                        alt="Tambah Produk Baru"
+                        width={200}
+                        height={200}
+                        className="object-cover w-full h-full rounded-lg"
+                      />
+                      <span className="text-sm font-medium text-[var(--black)] font-semibold">Produk</span>
+                      <span className="text-xs text-center text-[var(--black)]">
+                        Tambahkan produk baru
+                      </span>
+                    </button>
+
+                    <button
+                      onClick={() => setCreatingType('class')}
+                      className="border border-[var(--medium-grey)] rounded-xl p-4 hover:bg-[var(--light-grey)] flex flex-col items-center gap-2"
+                    >
+                      <Image
+                        src={"/buat-kelas-baru.png"}
+                        alt="Tambah Kelas Baru"
+                        width={200}
+                        height={200}
+                        className="object-cover w-full h-full rounded-lg"
+                      />
+                      <span className="text-sm font-medium text-[var(--black)] font-semibold">Kelas</span>
+                      <span className="text-xs text-center text-[var(--black)]">
+                        Buat kelas baru
+                      </span>
+                    </button>
+                  </div>
                 </div>
-              </div>
+
             )}
             {creatingType === 'product' && (
-              <div>
-                <h2 className="text-lg font-semibold mb-4">Produk Baru</h2>
-                <div className="space-y-4 text-sm">
+              <div className=''>
+                <h2 className="text-lg font-semibold mb-4 w-full">Produk Baru</h2>
+                <div className="space-y-4 text-sm w-full">
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">Gambar Produk</label>
-                    <div className="flex items-center gap-3">
-                      <div className="w-16 h-16 rounded-lg border flex items-center justify-center overflow-hidden bg-gray-50 text-[10px] text-gray-400">
+                    <label className="block   font-medium  text-[var(--black)] mb-1">Gambar Produk</label>
+                    <div className="flex items-center gap-3 ">
+                      <div className="w-25 h-25 rounded-lg border flex items-center justify-center overflow-hidden bg-[var(--light-grey)] text-(var[--dark-grey])">
                         {newProductImageFile ? (
                           <Image
                             src={URL.createObjectURL(newProductImageFile)}
                             alt="Preview"
-                            width={64}
-                            height={64}
+                            width={200}
+                            height={200}
                             className="object-cover w-full h-full"
                           />
                         ) : (
-                          <span>Preview</span>
+                          <p>Preview</p>
                         )}
                       </div>
-                      <label className="text-xs px-3 py-2 border rounded-full cursor-pointer hover:bg-gray-50">
+                      <label className="  px-3 py-2 border rounded-full cursor-pointer hover:bg-[var(--light-grey)]">
                         Pilih File
                         <input
                           type="file"
@@ -565,41 +589,41 @@ const ProfilePage: React.FC = () => {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">Nama Produk</label>
+                    <label className="block   font-medium  text-[var(--black)] mb-1">Nama Produk</label>
                     <input value={newProductName} onChange={e => setNewProductName(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm" placeholder="Contoh: Tas Batik" />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-medium text-gray-600 mb-1">Harga (Rp)</label>
+                      <label className="block   font-medium  text-[var(--black)] mb-1">Harga (Rp)</label>
                       <input type="number" value={newProductPrice} onChange={e => setNewProductPrice(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm" placeholder="50000" />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-600 mb-1">Stok</label>
+                      <label className="block   font-medium  text-[var(--black)] mb-1">Stok</label>
                       <input type="number" value={newProductStock} onChange={e => setNewProductStock(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm" placeholder="10" />
                     </div>
                   </div>
                   <div className="grid grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-xs font-medium text-gray-600 mb-1">Panjang (cm)</label>
+                      <label className="block   font-medium  text-[var(--black)] mb-1">Panjang (cm)</label>
                       <input type="number" value={newProductLength} onChange={e => setNewProductLength(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm" placeholder="20" />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-600 mb-1">Lebar (cm)</label>
+                      <label className="block   font-medium  text-[var(--black)] mb-1">Lebar (cm)</label>
                       <input type="number" value={newProductWidth} onChange={e => setNewProductWidth(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm" placeholder="15" />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-600 mb-1">Ketebalan (cm)</label>
+                      <label className="block   font-medium  text-[var(--black)] mb-1">Ketebalan (cm)</label>
                       <input type="number" value={newProductThickness} onChange={e => setNewProductThickness(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm" placeholder="2" />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">Deskripsi</label>
+                    <label className="block  font-medium  text-[var(--black)] mb-1">Deskripsi</label>
                     <textarea value={newProductDescription} onChange={e => setNewProductDescription(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm resize-none h-24" placeholder="Jelaskan produk kamu" />
                   </div>
-                  <p className="text-[10px] text-gray-400">Semua field wajib diisi.</p>
+                  <p className="text-center w-full text-[var(--red)]">Semua field wajib diisi.</p>
                 </div>
                 <div className="flex gap-3 mt-6 text-sm">
-                  <button onClick={() => setCreatingType(null)} className="flex-1 border rounded-full py-2 hover:bg-gray-50">Kembali</button>
+                  <button onClick={() => setCreatingType(null)} className="flex-1 border rounded-full py-2 hover:bg-[var(--light-grey)] border  hover:border-transparent">Kembali</button>
                   <button
                     disabled={savingNew || !newProductImageFile || !newProductName || !newProductPrice || !newProductDescription || !newProductStock || !newProductLength || !newProductWidth || !newProductThickness}
                     onClick={async () => {
@@ -632,7 +656,7 @@ const ProfilePage: React.FC = () => {
                         setSavingNew(false);
                       }
                     }}
-                    className="flex-1 bg-black text-white rounded-full py-2 disabled:opacity-50 hover:bg-gray-800"
+                    className="flex-1 bg-[var(--black)] text-white rounded-full py-2 hover:bg-[var(--dark-grey)]"
                   >{savingNew ? 'Menyimpan...' : 'Simpan'}</button>
                 </div>
               </div>
@@ -642,16 +666,16 @@ const ProfilePage: React.FC = () => {
                 <h2 className="text-lg font-semibold mb-4">Kelas Baru</h2>
                 <div className="space-y-4 text-sm">
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">Nama / Judul Kelas</label>
+                    <label className="block   font-medium  text-[var(--black)] mb-1">Nama / Judul Kelas</label>
                     <input value={newClassName} onChange={e => setNewClassName(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm" placeholder="Contoh: Belajar Batik" />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">Deskripsi</label>
+                    <label className="block   font-medium  text-[var(--black)] mb-1">Deskripsi</label>
                     <textarea value={newClassDescription} onChange={e => setNewClassDescription(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm resize-none h-24" placeholder="Jelaskan kelas kamu" />
                   </div>
                 </div>
                 <div className="flex gap-3 mt-6 text-sm">
-                  <button onClick={() => setCreatingType(null)} className="flex-1 border rounded-full py-2 hover:bg-gray-50">Kembali</button>
+                  <button onClick={() => setCreatingType(null)} className="flex-1 border rounded-full py-2 hover:bg-[var(--light-grey)] border  hover:border-transparent">Kembali</button>
                   <button
                     disabled={savingNew || !newClassName}
                     onClick={async () => {
@@ -661,7 +685,7 @@ const ProfilePage: React.FC = () => {
                       setSavingNew(false); setShowAddModal(false);
                       setNewClassName(''); setNewClassDescription('');
                     }}
-                    className="flex-1 bg-black text-white rounded-full py-2 disabled:opacity-50 hover:bg-gray-800"
+                    className="flex-1 bg-[var(--black)] text-white rounded-full py-2 hover:bg-[var(--dark-grey)]"
                   >{savingNew ? 'Menyimpan...' : 'Simpan'}</button>
                 </div>
               </div>
