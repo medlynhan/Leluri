@@ -343,10 +343,24 @@ const ProfilePage: React.FC = () => {
             </div>
             <div className="w-full max-w-[20em] mt-2 pt-4 border-t border-[var(--medium-grey)] text-left">
               <div className="flex items-center justify-between mb-2">
-                <h1 className="text-base font-semibold flex items-center gap-1 text-[var(--black)]">Pencapaian</h1>
+                <button
+                  type="button"
+                  onClick={() => achievements.length && setShowAchievementsModal(true)}
+                  className={`text-base font-semibold flex items-center gap-1 text-[var(--black)] ${achievements.length ? 'hover:underline' : ''}`}
+                  aria-label="Lihat semua pencapaian"
+                >
+                  Pencapaian
+                </button>
+                {achievements.length > 6 && (
+                  <button
+                    type="button"
+                    onClick={() => setShowAchievementsModal(true)}
+                    className="text-[10px] text-[var(--dark-grey)] hover:underline"
+                  >Lihat semua</button>
+                )}
               </div>
               {achievements.length === 0 ? (
-                <p className="text-[10px] text-[var(--dark-grey)]">Belum ada badge.</p>
+                <p className="text-[10px] text-[var(--dark-grey)]">Belum ada pencapaian.</p>
               ) : (
                 <div className="flex flex-wrap gap-2">
                   {achievements.slice(0,6).map((a,i) => {
@@ -548,7 +562,7 @@ const ProfilePage: React.FC = () => {
           <div className="bg-white rounded-2xl w-full max-w-lg p-6 relative" onClick={e => e.stopPropagation()}>
             <button onClick={() => setShowAchievementsModal(false)} className="absolute top-3 right-3 p-1 rounded-full hover:bg-[var(--light-grey)]" aria-label="Tutup"><X className="w-5 h-5"/></button>
             <h2 className="text-lg font-semibold mb-4 flex items-center gap-2"> Pencapaian</h2>
-            {achievements.length === 0 ? <p className="text-sm text-[var(--dark-grey)]">  paian.</p> : (
+            {achievements.length === 0 ? <p className="text-sm text-[var(--dark-grey)]">Belum ada pencapaian.</p> : (
               <ul className="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
                 {achievements.map((a,i) => {
                   const color = getBadgeColor(i)
@@ -793,15 +807,6 @@ const ProfilePage: React.FC = () => {
           onPostDeleted={(deletedId) => {
             setPosts(p => p.filter(pt => pt.id !== deletedId));
             setSelectedPost(null);
-          }}
-          onAchievementsUnlocked={(list) => {
-            setAchievements(prev => {
-              const additions = list
-                .filter(n => !prev.some(p => p.id === n.id))
-                .map(n => ({ ...n, condition: {} as any }));
-              return [...prev, ...additions];
-            });
-            setUnlockQueue(prev => [...prev, ...list.map(n => ({ ...n, condition: {} as any }))]);
           }}
         />
       )}
