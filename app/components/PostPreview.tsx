@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import { supabase } from '../lib/supabase';
 import { X, MoreHorizontal, Edit2, Trash2, Heart, Send, MessageSquare } from 'lucide-react';
+import { recordAction, evaluateAchievements } from '../lib/achievements';
 
 interface Post {
     id: string;
@@ -31,9 +32,10 @@ interface PostPreviewProps {
     onClose: () => void;
     onPostUpdated?: (post: Post) => void;
     onPostDeleted?: (postId: string) => void;
+    onAchievementsUnlocked?: (ach: { id: string; name: string; description: string; badge_icon: string | null }[]) => void;
 }
 
-const PostPreview: React.FC<PostPreviewProps> = ({ post, onClose, onPostUpdated, onPostDeleted }) => {
+const PostPreview: React.FC<PostPreviewProps> = ({ post, onClose, onPostUpdated, onPostDeleted, onAchievementsUnlocked }) => {
     const [currentUserId, setCurrentUserId] = useState<string | null>(null);
     const [comments, setComments] = useState<Comment[]>([]);
     const [loadingComments, setLoadingComments] = useState(true);
@@ -46,17 +48,20 @@ const PostPreview: React.FC<PostPreviewProps> = ({ post, onClose, onPostUpdated,
     const [error, setError] = useState<string | null>(null);
         const [liked, setLiked] = useState(false);
         const [likeAnimating, setLikeAnimating] = useState(false);
-        const [likes, setLikes] = useState(post.likes);
+    const [likes, setLikes] = useState(post.likes);
         const [showMenu, setShowMenu] = useState(false);
         const menuRef = useRef<HTMLDivElement | null>(null);
         const menuButtonRef = useRef<HTMLButtonElement | null>(null);
         const [postUser, setPostUser] = useState<{ username: string; image_url: string | null } | null>(null);
+    const [showLikers, setShowLikers] = useState(false);
+    const [likers, setLikers] = useState<{ user_id: string; users: { username: string; image_url: string | null } | null }[]>([]);
+    const [loadingLikers, setLoadingLikers] = useState(false);
 
     useEffect(() => {
         const init = async () => {
             const { data: { user } } = await supabase.auth.getUser();
             if (user) setCurrentUserId(user.id);
-        await Promise.all([fetchComments(), fetchLikeStatus(), fetchPostUser()]);
+    await Promise.all([fetchComments(), fetchLikeStatus(), fetchLikeCount(), fetchPostUser()]);
         };
         init();
     }, [post.id]);
@@ -100,21 +105,42 @@ const PostPreview: React.FC<PostPreviewProps> = ({ post, onClose, onPostUpdated,
             if (!error && data) setLiked(true); else setLiked(false);
         };
 
+        const fetchLikeCount = async () => {
+            const { count, error } = await supabase
+                .from('post_likes')
+                .select('*', { count: 'exact', head: true })
+                .eq('post_id', post.id);
+            if (!error) setLikes(count || 0);
+        };
+
+        const fetchLikers = async () => {
+            setLoadingLikers(true);
+            const { data, error } = await supabase
+                .from('post_likes')
+                .select('user_id, users ( username, image_url )')
+                .eq('post_id', post.id)
+                .order('created_at', { ascending: false });
+            if (!error && data) setLikers(data as any);
+            setLoadingLikers(false);
+        };
+
         useEffect(() => { if (currentUserId) fetchLikeStatus(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [currentUserId]);
 
-        const toggleLike = async () => {
+                const toggleLike = async () => {
             if (!currentUserId) return;
             if (liked) {
                 await supabase.from('post_likes').delete().eq('post_id', post.id).eq('user_id', currentUserId);
                 setLiked(false);
-                setLikes(l => Math.max(0, l - 1));
-                await supabase.from('posts').update({ likes: likes - 1 }).eq('id', post.id);
             } else {
                 await supabase.from('post_likes').insert([{ post_id: post.id, user_id: currentUserId }]);
                 setLiked(true);
-                setLikes(l => l + 1);
-                await supabase.from('posts').update({ likes: likes + 1 }).eq('id', post.id);
+                try {
+                    await recordAction(currentUserId, 'like_post', post.id);
+                    const newly = await evaluateAchievements(currentUserId);
+                    if (newly.length) onAchievementsUnlocked?.(newly);
+                } catch {}
             }
+            fetchLikeCount();
         };
 
         const handleDoubleClick = () => {
@@ -140,7 +166,7 @@ const PostPreview: React.FC<PostPreviewProps> = ({ post, onClose, onPostUpdated,
             const y = Math.floor(d / 365); return `${y}y`;
         };
 
-    const handleAddComment = async () => {
+                const handleAddComment = async () => {
         if (!newComment.trim() || !currentUserId) return;
         const content = newComment.trim();
         setNewComment('');
@@ -149,6 +175,11 @@ const PostPreview: React.FC<PostPreviewProps> = ({ post, onClose, onPostUpdated,
             setError(error.message);
         } else {
             fetchComments();
+                                    try {
+                                        await recordAction(currentUserId, 'comment', post.id);
+                                        const newly = await evaluateAchievements(currentUserId);
+                                        if (newly.length) onAchievementsUnlocked?.(newly);
+                                    } catch {}
         }
     };
 
@@ -197,7 +228,7 @@ const PostPreview: React.FC<PostPreviewProps> = ({ post, onClose, onPostUpdated,
     const isOwner = currentUserId === post.user_id;
 
         const commentCount = comments.length;
-        return (
+    return (
             <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50" onClick={onClose}>
                 <div className="w-full max-w-5xl h-[82vh] bg-white rounded-2xl overflow-hidden flex" onClick={e => e.stopPropagation()}>
                     <div className="flex flex-col w-full md:w-[640px] h-full border-r">
@@ -267,7 +298,11 @@ const PostPreview: React.FC<PostPreviewProps> = ({ post, onClose, onPostUpdated,
                                     <div className="flex items-center gap-6 text-sm">
                                         <button onClick={toggleLike} aria-label="like" className="group flex items-center gap-1">
                                             <Heart className={`w-6 h-6 transition-colors ${liked ? 'fill-red-500 text-red-500' : 'text-gray-700 group-hover:text-black'}`} />
-                                            <span className="font-medium text-gray-800">{likes}</span>
+                                            <span
+                                                onClick={() => { setShowLikers(true); fetchLikers(); }}
+                                                className="font-medium text-gray-800 cursor-pointer hover:underline">
+                                                {likes}
+                                            </span>
                                         </button>
                                         <div className="flex items-center gap-1 text-gray-700">
                                             <MessageSquare className="w-5 h-5" />
@@ -339,7 +374,36 @@ const PostPreview: React.FC<PostPreviewProps> = ({ post, onClose, onPostUpdated,
                             </div>
                         )}
                         {error && <p className="px-5 pb-3 text-xs text-red-500">{error}</p>}
+
                     </div>
+                    {showLikers && (
+                        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50" onClick={() => setShowLikers(false)}>
+                            <div className="bg-white w-80 max-h-[60vh] rounded-xl overflow-hidden flex flex-col" onClick={e => e.stopPropagation()}>
+                                <div className="flex items-center justify-between px-4 py-3 border-b">
+                                    <h5 className="text-sm font-semibold">Disukai oleh</h5>
+                                    <button onClick={() => setShowLikers(false)} className="p-1 rounded-full hover:bg-gray-100" aria-label="Tutup"><X className="w-4 h-4"/></button>
+                                </div>
+                                <div className="flex-1 overflow-y-auto">
+                                    {loadingLikers ? (
+                                        <p className="text-xs text-gray-500 p-4">Memuat...</p>
+                                    ) : likers.length === 0 ? (
+                                        <p className="text-xs text-gray-400 p-4">Belum ada like</p>
+                                    ) : (
+                                        <ul className="divide-y">
+                                            {likers.map(l => (
+                                                <li key={l.user_id} className="flex items-center gap-3 px-4 py-3">
+                                                    <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden">
+                                                        {l.users?.image_url && <Image src={l.users.image_url} alt={l.users.username} width={32} height={32} className="object-cover w-full h-full" />}
+                                                    </div>
+                                                    <span className="text-sm font-medium">{l.users?.username || 'Pengguna'}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         );

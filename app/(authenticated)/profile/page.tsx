@@ -7,7 +7,9 @@ import Image from 'next/image';
 import { FaPlus } from "react-icons/fa6";
 import { IoLocationOutline, IoLogoWhatsapp } from "react-icons/io5";
 import PostPreview from '../../components/PostPreview';
-import { LogOut, X } from "lucide-react"
+import { LogOut, X, Award } from "lucide-react"
+import { fetchUnlockedAchievements, evaluateAchievements, AchievementRow, recordAction } from '../../lib/achievements';
+import AchievementUnlockModal from '../../components/AchievementUnlockModal';
 import Sidebar from '../../components/Sidebar';
 
 
@@ -60,6 +62,13 @@ const ProfilePage: React.FC = () => {
   const [newClassName, setNewClassName] = useState('')
   const [newClassDescription, setNewClassDescription] = useState('')
   const [savingNew, setSavingNew] = useState(false)
+  const [achievements, setAchievements] = useState<AchievementRow[]>([])
+  const [showAchievementsModal, setShowAchievementsModal] = useState(false)
+  const [unlockQueue, setUnlockQueue] = useState<AchievementRow[]>([])
+
+  // Simple color palette for achievement badge borders (cycled)
+  const badgeColors = ['#F5C518', '#C084FC', '#3B82F6', '#10B981', '#FB7185', '#F59E0B']
+  const getBadgeColor = (index: number) => badgeColors[index % badgeColors.length]
 
   useEffect(() => {
   const fetchUserAndPosts = async () => {
@@ -102,6 +111,13 @@ const ProfilePage: React.FC = () => {
           .limit(1)
         if (!classError) {
           setHasClass(!!classCheck && classCheck.length > 0)
+        }
+        const unlocked = await fetchUnlockedAchievements(user.id)
+        setAchievements(unlocked)
+        const newly = await evaluateAchievements(user.id)
+        if (newly.length) {
+          setAchievements(prev => [...prev, ...newly])
+          setUnlockQueue(prev => [...prev, ...newly])
         }
       } else {
         router.push("/Login")
@@ -243,10 +259,8 @@ const ProfilePage: React.FC = () => {
     <div className={`top-0 left-0 w-full relative min-h-screen bg-white overflow-x-hidden`}>
       <div className={`${isEditMode || showAddModal ? "fixed" : ""}  flex flex-col lg:flex-row  h-full w-full `}>
 
-        {/*Sidebar */}
           <Sidebar />
 
-        {/*Profile */}
         <div className="w-full min-h-[30vh]  lg:min-h-[60vh] ml-0 lg:w-80 border-b lg:border-b-transparent lg:border-r border-[var(--medium-grey)] lg:ml-64 bg-white   p-6 ">
           <div className="w-full flex flex-col items-center text-center">
             <div className="justify-items items-center relative mb-4">
@@ -326,10 +340,34 @@ const ProfilePage: React.FC = () => {
                   <span className="ml-4 font-medium">Logout</span>
                 </button>
             </div>
+            <div className="w-full max-w-[20em] mt-2 pt-4 border-t border-[var(--medium-grey)] text-left">
+              <div className="flex items-center justify-between mb-2">
+                <h1 className="text-base font-semibold flex items-center gap-1 text-[var(--black)]">Pencapaian</h1>
+              </div>
+              {achievements.length === 0 ? (
+                <p className="text-[10px] text-[var(--dark-grey)]">Belum ada badge.</p>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {achievements.slice(0,6).map((a,i) => {
+                    const color = getBadgeColor(i)
+                    return (
+                      <div key={a.id} title={a.name} className="w-10 h-10 flex items-center justify-center">
+                        {a.badge_icon ? (
+                          <Image src={a.badge_icon.trim()} alt={a.name} width={40} height={40} className="object-contain" />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full border-2 flex items-center justify-center bg-white overflow-hidden shadow-sm" style={{ borderColor: color }}>
+                            <span className="text-[9px] px-1 leading-tight text-center font-medium" style={{ color }}>{a.name.split(' ').slice(0,2).join(' ')}</span>
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        {/*Postingan */}
         <div className="flex-1 min-h-screen p-6 ">
 
           {posts.length > 0 ? (
@@ -381,7 +419,7 @@ const ProfilePage: React.FC = () => {
         </div>
       </div>
 
-      {isEditMode && (
+  {isEditMode && (
         <div className="absolute flex top-0 left-0 min-w-full min-h-full bg-black/70  items-center justify-center z-50 ">
           <div className="bg-white rounded-2xl  grid gap-4 min-h-[50%] lg:min-w-[40%] min-w-[80%]   p-6  my-10 ">
             <div className="flex items-center justify-between mb-6">
@@ -504,13 +542,42 @@ const ProfilePage: React.FC = () => {
         </div>
       )}
 
-      {showAddModal && (
+  {showAchievementsModal && (
+        <div className="absolute inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={() => setShowAchievementsModal(false)}>
+          <div className="bg-white rounded-2xl w-full max-w-lg p-6 relative" onClick={e => e.stopPropagation()}>
+            <button onClick={() => setShowAchievementsModal(false)} className="absolute top-3 right-3 p-1 rounded-full hover:bg-[var(--light-grey)]" aria-label="Tutup"><X className="w-5 h-5"/></button>
+            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2"> Pencapaian</h2>
+            {achievements.length === 0 ? <p className="text-sm text-[var(--dark-grey)]">  paian.</p> : (
+              <ul className="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
+                {achievements.map((a,i) => {
+                  const color = getBadgeColor(i)
+                  return (
+                    <li key={a.id} className="flex gap-3 items-center border border-[var(--medium-grey)] rounded-lg p-3">
+                      {a.badge_icon ? (
+                        <Image src={a.badge_icon.trim()} alt={a.name} width={48} height={48} className="object-contain" />
+                      ) : (
+                        <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center overflow-hidden border-2 shadow-sm" style={{ borderColor: color }}>
+                          <span className="text-[10px] text-center px-1 leading-tight font-medium" style={{ color }}>{a.name}</span>
+                        </div>
+                      )}
+                      <div className="flex-1 text-left">
+                        <p className="text-sm font-medium" style={{ color }}>{a.name}</p>
+                        <p className="text-[11px] text-[var(--dark-grey)] leading-snug">{a.description}</p>
+                      </div>
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
+          </div>
+        </div>
+      )}
+
+  {showAddModal && (
         <div className="absolute  flex top-0 left-0 min-w-full min-h-full bg-black/70  items-center justify-center z-50">
           <div className="bg-white rounded-2xl  grid gap-4 min-h-[50%] lg:min-w-[40%] lg:max-w-[50%] min-w-[70%] max-w-[95%] p-6  my-10 ">
-            
-            {!creatingType && (
-                <div className="relative">
-                  {/* Tombol X */}
+    {!creatingType && (
+        <div className="relative">
                   <button
                     onClick={() => setShowAddModal(false)}
                     className="absolute top-0 right-0 p-1 rounded-full  hover:bg-[var(--medium-grey)] transition-colors"
@@ -518,8 +585,6 @@ const ProfilePage: React.FC = () => {
                   >
                     <X className="w-5 h-5 " />
                   </button>
-
-                  {/* Konten Modal */}
                   <h2 className="text-lg font-semibold mb-6 text-[var(--black)]">Pilih Tipe</h2>
                   <div className="grid grid-cols-2 gap-4">
                     <button
@@ -651,6 +716,12 @@ const ProfilePage: React.FC = () => {
                           thickness: Number(newProductThickness)
                         });
                         setHasProduct(true);
+                        try {
+                          await recordAction(user.id, 'add_product');
+                          if (!hasProduct && !hasClass) await recordAction(user.id, 'open_store');
+                          const newly2 = await evaluateAchievements(user.id);
+                          if (newly2.length) { setAchievements(prev => [...prev, ...newly2]); setUnlockQueue(prev => [...prev, ...newly2]); }
+                        } catch {}
                         setNewProductName(''); setNewProductPrice(''); setNewProductDescription('');
                         setNewProductImageFile(null); setNewProductStock(''); setNewProductLength(''); setNewProductWidth(''); setNewProductThickness('');
                         setShowAddModal(false);
@@ -686,6 +757,12 @@ const ProfilePage: React.FC = () => {
                       if (!user) return; setSavingNew(true);
                       await supabase.from('kelas').insert({ name: newClassName, title: newClassName, description: newClassDescription, user_id: user.id });
                       setHasClass(true);
+                      try {
+                        await recordAction(user.id, 'create_class');
+                        if (!hasProduct && !hasClass) await recordAction(user.id, 'open_store');
+                        const newly3 = await evaluateAchievements(user.id);
+                        if (newly3.length) { setAchievements(prev => [...prev, ...newly3]); setUnlockQueue(prev => [...prev, ...newly3]); }
+                      } catch {}
                       setSavingNew(false); setShowAddModal(false);
                       setNewClassName(''); setNewClassDescription('');
                     }}
@@ -698,8 +775,13 @@ const ProfilePage: React.FC = () => {
         </div>
       )}
 
+      <AchievementUnlockModal
+        queue={unlockQueue.map(a => ({ id: a.id, name: a.name, description: a.description, badge_icon: a.badge_icon }))}
+        onClose={(id) => setUnlockQueue(q => q.filter(x => x.id !== id))}
+      />
 
-      {selectedPost && (
+
+  {selectedPost && (
         <PostPreview
           post={selectedPost}
           onClose={() => setSelectedPost(null)}
@@ -710,6 +792,15 @@ const ProfilePage: React.FC = () => {
           onPostDeleted={(deletedId) => {
             setPosts(p => p.filter(pt => pt.id !== deletedId));
             setSelectedPost(null);
+          }}
+          onAchievementsUnlocked={(list) => {
+            setAchievements(prev => {
+              const additions = list
+                .filter(n => !prev.some(p => p.id === n.id))
+                .map(n => ({ ...n, condition: {} as any }));
+              return [...prev, ...additions];
+            });
+            setUnlockQueue(prev => [...prev, ...list.map(n => ({ ...n, condition: {} as any }))]);
           }}
         />
       )}
