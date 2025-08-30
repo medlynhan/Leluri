@@ -136,7 +136,7 @@ const StorePage: React.FC = () => {
             
             
             
-            <div className=" w-full h-full ">
+            <div className="relative w-full h-full ">
                 
                 {/*Navbar*/}
                 <div className='flex gap-4 justify-center bg-[var(--white)] w-full z-20 fixed  max-w-screen p-2'>
@@ -169,7 +169,7 @@ const StorePage: React.FC = () => {
 
 
                 {/*List of Products */}
-                <div className="ml-3 mr-3 lg:ml-68 grid grid-cols-[repeat(auto-fill,minmax(15em,1fr))] p-3 gap-6 mt-20">
+                <div className="ml-3 mr-3 lg:ml-68 grid grid-cols-[repeat(auto-fill,minmax(15em,1fr))] p-3 gap-3 lg:gap-6 mt-20">
                     {products.map(product => (
                         <div key={product.id} className="bg-[var(--white)] w-full rounded-2xl overflow-hidden border border-[var(--medium-grey)] cursor-pointer transition-transform duration-300 hover:-translate-y-1" onClick={() => router.push(`/toko/${product.id}`)}>
                             <div className="relative aspect-square ">

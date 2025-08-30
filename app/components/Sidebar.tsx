@@ -55,7 +55,7 @@ const Sidebar = () => {
     <div className='w-fit h-fit'>
       
       {/*Sidebar Desktop */}
-      <div className={`lg:flex lg:flex ${isOpen ? "flex" : "hidden"}  w-64 z-20 flex-none bg-[var(--white)] h-screen p-4 fixed flex-col shadow-[2px_0_2px_rgba(0,0,0,0.1)] lg:shadow-none lg:border-r border-[var(--medium-grey)] z-10`}>
+      <div className={`top-0 absolute left-0  lg:flex lg:flex ${isOpen ? "flex" : "hidden"}  w-64 z-20 flex-none bg-[var(--white)] h-screen p-4 fixed flex-col shadow-[2px_0_2px_rgba(0,0,0,0.1)] lg:shadow-none lg:border-r border-[var(--medium-grey)] z-10`}>
         <div className="mb-10 w-full flex justify-between items-center">
           {/*logo*/}
           <Image src="/logo-leluri.png" alt="Leluri Logo" width={70} height={70} className=""/>
