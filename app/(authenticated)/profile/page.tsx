@@ -277,8 +277,9 @@ const ProfilePage: React.FC = () => {
 
             <p className="text-sm text-[var(--dark-grey)] mb-1">{displayProfile.role}</p>
             <h1 className="text-lg font-semibold text-[var(--black)] mb-3">{displayProfile.username}</h1>
-            <p className="text-sm  mb-4 leading-relaxed text-justify w-full max-w-[20em]">{displayProfile.biography}</p>
-
+            {(displayProfile.biography) && (
+              <p className="text-sm  mb-4 leading-relaxed text-justify w-full max-w-[20em]">{displayProfile.biography}</p>
+            )}
             <button
               onClick={() => setIsEditMode(true)}
               className="w-full max-w-[20em] py-2 px-4 border border-[var(--black)] cursor-pointer rounded-full text-sm  text-[var(--black)]  hover:bg-[var(--light-grey)] hover:border-transparent transition-colors mb-6"
