@@ -301,15 +301,19 @@ const ProfilePage: React.FC = () => {
               </div>
             </div>
             
+            {(displayProfile.location) && (
+              <div className="flex items-center gap-2 text-sm   mb-2">
+                <IoLocationOutline className="w-4 h-4" />
+                <span>{displayProfile.location}</span>
+              </div>
+            )}
 
-            <div className="flex items-center gap-2 text-sm   mb-2">
-              <IoLocationOutline className="w-4 h-4" />
-              <span>{displayProfile.location}</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm  text-[var(--black)] mb-6">
-              <IoLogoWhatsapp className="w-4 h-4 text-green-500" />
-              <span>{displayProfile.phone_number || 'Tambah nomor'}</span>
-            </div>
+            {(displayProfile.phone_number) && (
+              <div className="flex items-center gap-2 text-sm  text-[var(--black)] mb-6">
+                <IoLogoWhatsapp className="w-4 h-4 text-green-500" />
+                <span>{displayProfile.phone_number }</span>
+              </div>
+            )}
             <p
               className="  text-[var(--dark-grey)] mb-4 cursor-pointer hover:text-[var(--black)] underline"
               onClick={() => { setShowAddModal(true); setCreatingType(null); }}

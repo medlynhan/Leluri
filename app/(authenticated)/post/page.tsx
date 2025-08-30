@@ -5,11 +5,14 @@ import { supabase } from '../../lib/supabase';
 import { User } from '@supabase/supabase-js';
 import Image from 'next/image';
 import { X, Plus } from 'lucide-react';
+import { RiArrowDropDownLine } from "react-icons/ri";
+
 
 const PostPage = () => {
     const [user, setUser] = useState<User | null>(null);
     const [description, setDescription] = useState('');
-    const [category, setCategory] = useState('');
+    const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("");
     const [image, setImage] = useState<File | null>(null);
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
@@ -36,8 +39,13 @@ const PostPage = () => {
         }
     };
 
+      const handleCategorySelect = (category: string) => {
+        setSelectedCategory(category);
+        setIsCategoryOpen(false);
+      };
+
     const handlePost = async () => {
-        if (!category || !description || !image || !user) {
+        if (!selectedCategory || !description || !image || !user) {
             setError('Please fill all fields and select an image.');
             return;
         }
@@ -66,7 +74,7 @@ const PostPage = () => {
             .insert([{
                 user_id: user.id,
                 description,
-                category,
+                selectedCategory,
                 image_url: publicUrl,
                 likes: 0,
             }]);
@@ -81,8 +89,8 @@ const PostPage = () => {
     };
 
     return (
-    <div className="absolute flex top-0 left-0 min-w-full min-h-full bg-black/70 items-center justify-center z-50">
-      <div className="bg-white rounded-2xl grid gap-4 min-h-[50%] lg:min-w-[40%] min-w-[80%] p-6 my-10">
+    <div className="fixed overflow-y-scroll min-h-screen flex top-0 left-0 min-w-full min-h-screen  bg-black/70 items-center justify-center z-50">
+      <div className="bg-white rounded-2xl grid gap-4 min-h-[50%] lg:min-w-[40%] min-w-[80%] p-6 ">
         
         {/* Tombol Close */}
         <button
@@ -150,19 +158,57 @@ const PostPage = () => {
           </div>
 
           {/* Kategori */}
-          <div>
+          <div className="relative">
             <label htmlFor="category" className="block text-sm font-medium text-[var(--black)] mb-2">
               Kategori
             </label>
-            <input
-              id="category"
-              type="text"
-              className="w-full px-3 py-2 border border-[var(--medium-grey)] rounded-lg text-sm"
-              placeholder="Misal: Seni, Kerajinan, Festival"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-            />
-          </div>
+
+            {/* Trigger Dropdown */}
+            <div
+              onClick={() => setIsCategoryOpen(!isCategoryOpen)}
+              className="w-full px-3 py-2 border border-[var(--medium-grey)] rounded-lg text-sm flex justify-between"
+            >
+              <p>{selectedCategory || "Pilih Kategori"}</p>
+              <RiArrowDropDownLine className="text-2xl" />
+            </div>
+
+            {/* Dropdown Options */}
+              {isCategoryOpen && (
+                <div className="text-sm absolute mt-1 bg-white w-full  border border-[var(--medium-grey)] rounded-xl shadow-md z-10 ">
+                  <div
+                    onClick={() => handleCategorySelect("Kerajinan Tangan")}
+                    className="p-2 rounded-t-xl cursor-pointer hover:bg-[var(--light-grey)]"
+                  >
+                    Kerajinan Tangan
+                  </div>
+                  <div
+                    onClick={() => handleCategorySelect("Seni Rupa")}
+                    className="p-2 cursor-pointer hover:bg-[var(--light-grey)]"
+                  >
+                    Seni Rupa
+                  </div>
+                  <div
+                    onClick={() => handleCategorySelect("Pakaian Tradisional")}
+                    className="p-2 cursor-pointer hover:bg-[var(--light-grey)]"
+                  >
+                    Pakaian Tradisional
+                  </div>
+                  <div
+                    onClick={() => handleCategorySelect("Seni Pertunjukan")}
+                    className="p-2 cursor-pointer hover:bg-[var(--light-grey)]"
+                  >
+                    Seni Pertunjukan
+                  </div>
+                  <div
+                    onClick={() => handleCategorySelect("Kuliner Tradisional")}
+                    className="p-2 rounded-b-xl cursor-pointer hover:bg-[var(--light-grey)]"
+                  >
+                    Kuliner Tradisional
+                  </div>
+                </div>
+              )}
+            </div>
+
         </div>
 
         {/* Error */}
