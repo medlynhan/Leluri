@@ -198,11 +198,25 @@ const PostPreview: React.FC<PostPreviewProps> = ({ post, onClose, onPostUpdated,
 
         const commentCount = comments.length;
         return (
-            <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50" onClick={onClose}>
-                <div className="w-full max-w-5xl h-[82vh] bg-white rounded-2xl overflow-hidden flex" onClick={e => e.stopPropagation()}>
-                    <div className="flex flex-col w-full md:w-[640px] h-full border-r">
+            <div className="absolute flex top-0 left-0 min-w-full min-h-full bg-black/70  items-center justify-center z-50 " onClick={onClose}>
+                
+                {/* Tombol Close */}
+                <button
+                    onClick={onClose}
+                    className="md:hidden flex absolute top-3 right-5 p-1 rounded-full hover:bg-[var(--medium-grey)] transition-colors"
+                    aria-label="Tutup"
+                >
+                    <X className="w-5 h-5 text-[var(--dark-grey)]" />
+                </button>
+                
+
+                <div className="w-fit h-fit bg-white rounded-2xl overflow-hidden flex flex-col md:flex-row " onClick={e => e.stopPropagation()}>
+                    
+                    
+                    {/*Kolom Pertama */}
+                    <div className=" h-fit w-fit flex flex-col w-full  md:border-r border-[var(--dark-gre)] ">
                         {/* Header */}
-                        <div className="flex items-center justify-between px-5 py-4">
+                        <div className="flex items-center justify-between px-5 py-4 w-70 lg:w-90 2xl:w-100 ">
                             <div className="flex items-center gap-3">
                                 <div className="w-11 h-11 rounded-full bg-gray-200 overflow-hidden">
                                     {postUser?.image_url && <Image src={postUser.image_url} alt={postUser.username} width={44} height={44} className="object-cover w-full h-full" />}
@@ -215,7 +229,7 @@ const PostPreview: React.FC<PostPreviewProps> = ({ post, onClose, onPostUpdated,
                                     </p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 ">
                                 {isOwner && (
                                     <div className="relative">
                                         <button ref={menuButtonRef} onClick={() => setShowMenu(s => !s)} className="p-2 hover:bg-gray-100 rounded-full" title="Menu">
@@ -231,16 +245,19 @@ const PostPreview: React.FC<PostPreviewProps> = ({ post, onClose, onPostUpdated,
                                 )}
                             </div>
                         </div>
+
                         {/* Image */}
-                        <div className="relative flex-1 bg-black flex items-center justify-center select-none" onDoubleClick={handleDoubleClick}>
-                            <Image src={post.image_url} alt={post.description} fill className="object-contain" />
+                        <div className="w-fit relative flex-1 bg-black  flex items-center justify-center select-none aspect" onDoubleClick={handleDoubleClick}>
+                            <Image src={post.image_url} alt={post.description} width={300} height={300} className="object-contain aspect-square w-70 lg:w-90 2xl:w-100" />
                             {likeAnimating && (
                                 <div className="absolute inset-0 flex items-center justify-center animate-pulse">
                                     <Heart className="w-32 h-32 text-white/90 fill-white/90 drop-shadow-[0_0_10px_rgba(0,0,0,0.4)]" />
                                 </div>
                             )}
                         </div>
-                        <div className="px-5 py-4 space-y-4 border-t bg-white">
+
+
+                        <div className="px-5 py-4 space-y-4 md:border-t border-[var(--dark-grey)]  bg-white  w-70 lg:w-90 2xl:w-100">
                             {isEditing ? (
                                 <div className="space-y-3">
                                     <p className="text-xs font-medium">Kategori</p>
@@ -264,7 +281,7 @@ const PostPreview: React.FC<PostPreviewProps> = ({ post, onClose, onPostUpdated,
                                 </div>
                             ) : (
                                 <>
-                                    <div className="flex items-center gap-6 text-sm">
+                                    <div className="flex items-center gap-6 text-sm ">
                                         <button onClick={toggleLike} aria-label="like" className="group flex items-center gap-1">
                                             <Heart className={`w-6 h-6 transition-colors ${liked ? 'fill-red-500 text-red-500' : 'text-gray-700 group-hover:text-black'}`} />
                                             <span className="font-medium text-gray-800">{likes}</span>
@@ -280,12 +297,15 @@ const PostPreview: React.FC<PostPreviewProps> = ({ post, onClose, onPostUpdated,
                             )}
                         </div>
                     </div>
-                    <div className="flex flex-col w-[360px] h-full">
-                        <div className="flex items-center justify-between px-5 py-4 border-b">
+
+
+                    {/*Kolom Kedua */}
+                    <div className="flex flex-col  flex-1 ">
+                        <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--dark-grey)] w-70 lg:w-90 2xl:w-100">
                             <h4 className="text-sm font-semibold">Komentar ({commentCount})</h4>
-                            <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full" aria-label="Close"><X className="w-5 h-5" /></button>
+                            <button onClick={onClose} className="md:flex hidden p-2 hover:bg-gray-100 rounded-full" aria-label="Close"><X className="w-5 h-5" /></button>
                         </div>
-                        <div className="flex-1 overflow-y-auto px-5 py-4">
+                        <div className="flex-1 overflow-y-auto px-5 py-4 w-70 lg:w-90 2xl:w-100">
                             {loadingComments ? (
                                 <p className="text-xs text-gray-500">Memuat komentar...</p>
                             ) : commentCount === 0 ? (
@@ -317,9 +337,9 @@ const PostPreview: React.FC<PostPreviewProps> = ({ post, onClose, onPostUpdated,
                             )}
                         </div>
                         {currentUserId && !isEditing && (
-                            <div className="border-t px-5 py-3 flex items-center gap-3">
+                            <div className="border-t border-[var(--dark-grey)] px-5 py-3 flex items-center gap-3 w-70 lg:w-90 2xl:w-100">
                                 <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden shrink-0">
-                                    {postUser?.image_url && <Image src={postUser.image_url} alt={postUser.username} width={32} height={32} className="object-cover w-full h-full" />}
+                                    {postUser?.image_url && <Image src={postUser.image_url} alt={postUser.username} width={32} height={32} className="object-cover aspect-square w-full h-full" />}
                                 </div>
                                 <input
                                     type="text"
