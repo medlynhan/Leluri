@@ -614,6 +614,7 @@ const BerandaPage = () => {
         </div>
       </div>}
     </div>
+      
   );
 };
 

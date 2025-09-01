@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { FaSearch } from 'react-icons/fa';
 import { Star, ShoppingCart } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-
+import Sidebar from '../../components/Sidebar';
 
 interface Product {
     id: string;
@@ -29,11 +29,11 @@ const StarRating = ({ rating }: { rating: number }) => {
                 return (
                     <Star
                         key={i}
-                        className={`w-4 h-4 ${filled ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
+                        className={`w-4 h-4 ${filled ? 'text-yellow-400 fill-yellow-400' : 'text-[var(--medium-grey)]'}`}
                     />
                 );
             })}
-            <span className="ml-2 text-sm text-gray-600">{value.toFixed(1)}</span>
+            <span className="ml-2 text-sm text-[var(--black)]">{value.toFixed(1)}</span>
         </div>
     );
 };
@@ -84,36 +84,36 @@ const StorePage: React.FC = () => {
     if (loading) {
         return (
             <div className="p-4">
-                <div className="flex justify-between items-center mb-6">
+                <div className="flex justify-between items-center mb-6 ">
                     <div className="relative w-full max-w-lg">
-                        <div className="h-12 bg-gray-200 rounded-full animate-pulse" />
+                        <div className="h-12 bg-[var(--light-grey)] rounded-full animate-pulse" />
                     </div>
                     <div className="flex items-center gap-6">
-                        <div className="h-12 w-32 bg-gray-200 rounded-full animate-pulse" />
-                        <div className="w-6 h-6 bg-gray-200 rounded-full animate-pulse" />
+                        <div className="h-12 w-32 bg-[var(--light-grey)] rounded-full animate-pulse" />
+                        <div className="w-6 h-6 bg-[var(--light-grey)] rounded-full animate-pulse" />
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 lg:grid-cols-4 gap-6">
                     {[...Array(8)].map((_, i) => (
-                        <div key={i} className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100">
-                            <div className="relative h-72 bg-gray-200 animate-pulse" />
+                        <div key={i} className="bg-[var(--white)] rounded-2xl  overflow-hidden border border-[var(--dark-grey)]">
+                            <div className="relative h-72 bg-[var(--light-grey)] animate-pulse" />
                             <div className="p-4 w-64">
-                                <div className="h-5 bg-gray-200 rounded w-3/4 mb-2 animate-pulse" />
+                                <div className="h-5 bg-[var(--light-grey)] rounded w-3/4 mb-2 animate-pulse" />
                                 <div className="mt-2">
-                                    <div className="h-5 bg-gray-200 rounded w-1/2 mb-2 animate-pulse" />
+                                    <div className="h-5 bg-[var(--light-grey)] rounded w-1/2 mb-2 animate-pulse" />
                                     <div className="flex items-center gap-1">
                                         {[...Array(5)].map((_, s) => (
-                                            <div key={s} className="w-4 h-4 bg-gray-200 rounded animate-pulse" />
+                                            <div key={s} className="w-4 h-4 bg-[var(--light-grey)] rounded animate-pulse" />
                                         ))}
-                                        <div className="h-4 w-8 bg-gray-200 rounded ml-2 animate-pulse" />
+                                        <div className="h-4 w-8 bg-[var(--light-grey)] rounded ml-2 animate-pulse" />
                                     </div>
                                 </div>
-                                <div className="flex items-center mt-4 pt-4 border-t border-gray-100">
-                                    <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse" />
+                                <div className="flex items-center mt-4 pt-4 border-r border-[var(--light-grey)]">
+                                    <div className="w-8 h-8 bg-[var(--light-grey)] rounded-full animate-pulse" />
                                     <div className="ml-3 flex-1">
-                                        <div className="h-4 bg-gray-200 rounded w-24 mb-1 animate-pulse" />
-                                        <div className="h-3 bg-gray-200 rounded w-16 animate-pulse" />
+                                        <div className="h-4 bg-[var(--light-grey)] rounded w-24 mb-1 animate-pulse" />
+                                        <div className="h-3 bg-[var(--light-grey)] rounded w-16 animate-pulse" />
                                     </div>
                                 </div>
                             </div>
@@ -129,75 +129,102 @@ const StorePage: React.FC = () => {
     }
 
     return (
-        <div className="p-4">
-            <div className="flex justify-between items-center mb-6">
-                <div className="relative w-full max-w-lg">
-                    <input
-                        type="text"
-                        placeholder="Apa yang ingin kamu temukan?"
-                        className="w-full py-3 pl-12 pr-4 border border-gray-500 rounded-full bg-gray-50 focus:outline-none focus:ring-2 focus:ring-orange-400"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                    />
-                    <FaSearch className="absolute top-1/2 left-4 -translate-y-1/2 text-gray-400" />
-                </div>
-                <div className="flex items-center gap-6">
-                    <button onClick={handleSearch} className="bg-orange-500 text-white py-3 px-8 rounded-full font-semibold hover:bg-orange-600 transition-colors">Cari</button>
-                    <button onClick={() => router.push('/keranjang')} aria-label="Keranjang" className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                        <ShoppingCart className="w-6 h-6" />
-                    </button>
-                </div>
-            </div>
+        
+        <div className='flex min-h-screen bg-[var(--white)] overflow-x-hidden '>
+            
+            
+            
+            
+            
+            <div className="relative w-full h-full ">
+                
+                {/*Navbar*/}
+                <div className='flex gap-4 justify-center bg-[var(--white)] w-full z-20 fixed  max-w-screen p-2'>
+                    {/*Sidebar */}
+                    <Sidebar />
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {products.map(product => (
-                    <div key={product.id} className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100 cursor-pointer transition-transform duration-300 hover:-translate-y-1" onClick={() => router.push(`/toko/${product.id}`)}>
-                        <div className="relative h-72">
-                            <Image
-                                src={product.image_url}
-                                alt={product.name}
-                                layout="fill"
-                                objectFit="cover"
-                                className="rounded-t-2xl"
-                            />
-                        </div>
-                        <div className="p-4 w-64">
-                            <h3 className="text-base font-semibold text-gray-800 truncate">
-                                {product.name}
-                            </h3>
-
-                            <div className="mt-2">
-                                <p className="text-lg font-bold text-gray-900">
-                                Rp {product.price.toLocaleString('id-ID')}
-                                </p>
-                                <div className="mt-1">
-                                <StarRating rating={product.rating} />
-                                </div>
-                            </div>
-
-                            <div className="flex items-center mt-4 pt-4 border-t border-gray-100">
-                                <Image
-                                src={product.user.image_url || '/placeholder.svg'}
-                                alt={product.user.username}
-                                width={32}
-                                height={32}
-                                className="w-8 h-8 rounded-full object-cover"
-                                />
-                                <div className="ml-3">
-                                <p className="text-sm font-semibold text-gray-800">
-                                    {product.user.username}
-                                </p>
-                                <p className="text-xs text-gray-500 capitalize">
-                                    {product.user.role}
-                                </p>
-                                </div>
-                            </div>
-                        </div>
+                    {/*Search Bar */}
+                    <div className="flex  justify-center items-center ml-10 lg:ml-64 flex relative flex-1 ">
+                        <input
+                            type="text"
+                            placeholder="Apa yang ingin kamu temukan?"
+                            className="w-full py-3 pl-12 pr-4 border border-[var(--black)] rounded-full  h-[80%] border"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                        />
+                        <FaSearch className="absolute top-1/2 left-4 -translate-y-1/2 text-[var(--dark-grey)]" />
                     </div>
-                ))}
+
+                    {/*Icon */}
+                    <div className="w-30  lg:col-span-1  flex items-center justify-end  gap-6 mr-3">
+                        <button onClick={handleSearch} className="bg-[var(--yellow)] text-white  h-[80%] rounded-full flex-1 font-semibold hover:bg-transparent hover:border-[var(--yellow)] border border-transparent font-semibold hover:text-[var(--black)]  transition-colors">Cari</button>
+                        <button onClick={() => router.push('/keranjang')} aria-label="Keranjang" className=" h-[80%] rounded-full  transition-colors">
+                            <ShoppingCart className="w-6 h-6 hover:text-[var(--yellow)]" />
+                        </button>
+                    </div>
+                    
+                </div>
+
+
+
+                {/*List of Products */}
+                <div className="ml-3 mr-3 lg:ml-68 grid grid-cols-[repeat(auto-fill,minmax(15em,1fr))] p-3 gap-3 lg:gap-6 mt-20">
+                    {products.map(product => (
+                        <div key={product.id} className="bg-[var(--white)] w-full rounded-2xl overflow-hidden border border-[var(--medium-grey)] cursor-pointer transition-transform duration-300 hover:-translate-y-1" onClick={() => router.push(`/toko/${product.id}`)}>
+                            <div className="relative aspect-square ">
+                                <Image
+                                    src={product.image_url}
+                                    alt={product.name}
+                                    layout="fill"
+                                    objectFit="cover"
+                                    className="rounded-t-2xl "
+                                />
+                            </div>
+                            <div className="w-full grid p-4 w-64">
+                                <h3 className=" w-full text-lg font-semibold truncate">
+                                    {product.name}
+                                </h3>
+
+                                <div className="my-2 ">
+                                    <p className="text-sm font-semibold ">
+                                    Rp {product.price.toLocaleString('id-ID')}
+                                    </p>
+                                    <div className="mt-1">
+                                    <StarRating rating={product.rating} />
+                                    </div>
+                                </div>
+
+                                {/*Information Profile*/}
+                                <div className="  flex items-center pt-4 border-t border-[var(--medium-grey)] ">
+                                    <Image
+                                    src={product.user.image_url || '/placeholder.svg'}
+                                    alt={product.user.username}
+                                    width={32}
+                                    height={32}
+                                    className="w-8 h-8 rounded-full object-cover"
+                                    />
+                                    <div className="ml-3">
+                                    <p className="text-xs font-semibold text-[var(--dark-grey)]text-[var(--dark-grey)]">
+                                        {product.user.username}
+                                    </p>
+                                    <p className="text-xs  text-[var(--dark-grey)] capitalize">
+                                        {product.user.role}
+                                    </p>
+                                    </div>
+                                </div>
+
+
+                                
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
             </div>
         </div>
+
+        
     );
 };
 

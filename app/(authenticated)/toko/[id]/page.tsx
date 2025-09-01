@@ -140,7 +140,8 @@ const ProductDetailPage: React.FC = () => {
   const outOfStock = product.stock === 0;
 
   return (
-    <div className="w-full p-4">
+    <div className="w-full p-4 ">
+      
       <header className={`flex justify-between items-center mb-6 w-full ${containerWidth} mx-auto`}>
         <button onClick={() => router.back()} className="p-2 hover:bg-gray-100 rounded-full">
           <ArrowLeft className="w-6 h-6" />
