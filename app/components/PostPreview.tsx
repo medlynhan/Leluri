@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import { supabase } from '../lib/supabase';
 import { X, MoreHorizontal, Edit2, Trash2, Heart, Send, MessageSquare } from 'lucide-react';
+import { RiArrowDropDownLine } from "react-icons/ri";
 
 interface Post {
     id: string;
@@ -51,7 +52,8 @@ const PostPreview: React.FC<PostPreviewProps> = ({ post, onClose, onPostUpdated,
     // Edit state
     const [isEditing, setIsEditing] = useState(false);
     const [editDescription, setEditDescription] = useState(post.description);
-    const [editCategory, setEditCategory] = useState(post.category);
+    const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState(post.category || "");
     const [savingEdit, setSavingEdit] = useState(false);
     const [deleting, setDeleting] = useState(false);
 
@@ -73,6 +75,13 @@ const PostPreview: React.FC<PostPreviewProps> = ({ post, onClose, onPostUpdated,
         };
         init();
     }, [post.id]);
+
+
+
+    const handleCategorySelect = (category: string) => {
+        setSelectedCategory(category);
+        setIsCategoryOpen(false);
+    };
 
     // Close menu on outside click
     useEffect(() => {
@@ -197,12 +206,12 @@ const PostPreview: React.FC<PostPreviewProps> = ({ post, onClose, onPostUpdated,
         setSavingEdit(true);
         const { error } = await supabase
             .from('posts')
-            .update({ description: editDescription, category: editCategory })
+            .update({ description: editDescription, category: selectedCategory })
             .eq('id', post.id);
         if (error) {
             setError(error.message);
         } else {
-            const updated: Post = { ...post, description: editDescription, category: editCategory };
+            const updated: Post = { ...post, description: editDescription, category: selectedCategory };
             onPostUpdated?.(updated);
             setIsEditing(false);
         }
@@ -237,18 +246,18 @@ const PostPreview: React.FC<PostPreviewProps> = ({ post, onClose, onPostUpdated,
 
     return (
         <div
-            className="absolute flex top-0 left-0 min-w-full min-h-full bg-black/70 items-center justify-center z-50"
+            className="absolute flex top-0 left-0 min-w-full min-h-full bg-black/70 items-center justify-center z-50 "
             onClick={onClose}
         >
             <button
                 onClick={onClose}
-                className="md:hidden flex absolute top-3 right-5 p-1 rounded-full hover:bg-[var(--medium-grey)] transition-colors"
+                className="md:hidden fixed flex absolute top-3 right-5 p-1 rounded-full hover:bg-[var(--medium-grey)] transition-colors"
                 aria-label="Tutup"
             >
                 <X className="w-5 h-5 text-[var(--dark-grey)]" />
             </button>
             <div
-                className="w-fit h-fit bg-white rounded-2xl overflow-hidden flex flex-col md:flex-row"
+                className="w-fit h-fit bg-white rounded-2xl overflow-hidden flex flex-col md:flex-row m-10"
                 onClick={e => e.stopPropagation()}
             >
                 {/* Left column */}
@@ -335,14 +344,52 @@ const PostPreview: React.FC<PostPreviewProps> = ({ post, onClose, onPostUpdated,
                     </div>
                     <div className="px-5 py-4 space-y-4 md:border-t border-[var(--dark-grey)] bg-white w-70 lg:w-90 2xl:w-100">
                         {isEditing ? (
-                            <div className="space-y-3">
+                            <div className="space-y-3 relative">
                                 <p className="text-xs font-medium">Kategori</p>
-                                <input
-                                    value={editCategory}
-                                    onChange={e => setEditCategory(e.target.value)}
-                                    className="w-full border rounded-md px-3 py-2 text-sm"
-                                    placeholder="Kategori"
-                                />
+                                    {/* Trigger Dropdown */}
+                                    <div
+                                    onClick={() => setIsCategoryOpen(!isCategoryOpen)}
+                                    className="w-full px-3 py-2 border border-[var(--black)] rounded-lg text-sm flex justify-between"
+                                    >
+                                    <p>{selectedCategory || "Pilih Kategori"}</p>
+                                    <RiArrowDropDownLine className="text-2xl" />
+                                    </div>
+
+                                    {/* Dropdown Options */}
+                                    {isCategoryOpen && (
+                                        <div className="text-sm absolute mt-1 bg-white w-full  border border-[var(--black)] rounded-xl shadow-md z-10 ">
+                                            <div
+                                                onClick={() => handleCategorySelect("Kerajinan Tangan")}
+                                                className="p-2 rounded-t-xl cursor-pointer hover:bg-[var(--light-grey)]"
+                                            >
+                                                Kerajinan Tangan
+                                            </div>
+                                            <div
+                                                onClick={() => handleCategorySelect("Seni Rupa")}
+                                                className="p-2 cursor-pointer hover:bg-[var(--light-grey)]"
+                                            >
+                                                Seni Rupa
+                                            </div>
+                                            <div
+                                                onClick={() => handleCategorySelect("Pakaian Tradisional")}
+                                                className="p-2 cursor-pointer hover:bg-[var(--light-grey)]"
+                                            >
+                                                Pakaian Tradisional
+                                            </div>
+                                            <div
+                                                onClick={() => handleCategorySelect("Seni Pertunjukan")}
+                                                className="p-2 cursor-pointer hover:bg-[var(--light-grey)]"
+                                            >
+                                                Seni Pertunjukan
+                                            </div>
+                                            <div
+                                                onClick={() => handleCategorySelect("Kuliner Tradisional")}
+                                                className="p-2 rounded-b-xl cursor-pointer hover:bg-[var(--light-grey)]"
+                                            >
+                                                Kuliner Tradisional
+                                            </div>
+                                        </div>
+                                    )}
                                 <p className="text-xs font-medium">Deskripsi</p>
                                 <textarea
                                     value={editDescription}
@@ -362,7 +409,6 @@ const PostPreview: React.FC<PostPreviewProps> = ({ post, onClose, onPostUpdated,
                                         onClick={() => {
                                             setIsEditing(false);
                                             setEditDescription(post.description);
-                                            setEditCategory(post.category);
                                         }}
                                         className="flex-1 border py-2 rounded-full text-sm font-medium"
                                     >

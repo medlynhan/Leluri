@@ -7,6 +7,7 @@ import { MdOutlineMuseum } from "react-icons/md";
 import { GiDramaMasks } from "react-icons/gi";
 
 
+
 interface CommunityMemberCardProps {
   username: string;
   role: "pelajar budaya" | "pengrajin" | "kolektor" | "sanggar seni";
@@ -15,6 +16,7 @@ interface CommunityMemberCardProps {
 
 export default function CommunityMemberCard({ username, role, imageSrc }: CommunityMemberCardProps) {
   const [isActive, setIsActive] = useState(false);
+
 
   const renderIcon = () => {
     switch (role) {
@@ -33,10 +35,13 @@ export default function CommunityMemberCard({ username, role, imageSrc }: Commun
 
 
   return (
-    <div className="flex flex-col justify-center items-center  w-[10em]">
+    <div  className="flex flex-col justify-center items-center  w-[10em]">
       <div className="relative cursor-pointer"   onMouseEnter={() => setIsActive(true)} onMouseLeave={() => setIsActive(false)} >
         <Image src={imageSrc} alt={username} width={100} height={100} className="rounded-full w-full h-full" />
-        <div className={`w-full h-full bg-[var(--yellow)] absolute top-0 left-0 rounded-full ${isActive ? "opacity-90" : "opacity-0"} flex justify-center items-center`}>
+        <div
+          className={`w-full h-full bg-[var(--yellow)] absolute top-0 left-0 rounded-full transition-all duration-500 ease-in-out 
+            ${isActive ? "opacity-90 scale-100" : "opacity-0 scale-95"} flex justify-center items-center`}
+        >
           {renderIcon()}
         </div>
       </div>

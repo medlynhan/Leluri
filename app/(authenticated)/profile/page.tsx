@@ -11,7 +11,7 @@ import { LogOut, X, Award } from "lucide-react"
 import { fetchUnlockedAchievements, evaluateAchievements, AchievementRow, recordAction } from '../../lib/achievements';
 import AchievementUnlockModal from '../../components/AchievementUnlockModal';
 import Sidebar from '../../components/Sidebar';
-
+import { Home, Compass, BookOpen, ShoppingBag, Hamburger } from 'lucide-react'
 
 
 interface Post {
@@ -257,14 +257,14 @@ const ProfilePage: React.FC = () => {
 
   return (
     <div className={`top-0 left-0 w-full relative min-h-screen bg-white overflow-x-hidden`}>
-      <div className={`${isEditMode || showAddModal ? "fixed" : ""}  flex flex-col lg:flex-row  h-full w-full `}>
+      <div className={`${isEditMode || showAddModal || selectedPost ? "fixed" : ""}  flex flex-col lg:flex-row  h-full w-full `}>
 
           <Sidebar />
 
         <div className="w-full min-h-[30vh]  lg:min-h-[60vh] ml-0 lg:w-80 border-b lg:border-b-transparent lg:border-r border-[var(--medium-grey)] lg:ml-64 bg-white   p-6 ">
           <div className="w-full flex flex-col items-center text-center">
             <div className="justify-items items-center relative mb-4">
-              <div className="w-24 h-24 rounded-full  p-1  bg-gradient-to-br bg-[var(--yellow)]">
+              <div className="w-24 h-24 rounded-full  p-1 ">
                 <Image
                   src={displayProfile.image_url || "/placeholder.svg?height=88&width=88&query=profile avatar"}
                   alt="Profile"
@@ -293,14 +293,14 @@ const ProfilePage: React.FC = () => {
                 {hasProduct && (
                   <button
                     onClick={() => router.push('/toko/saya')}
-                    className="w-full max-w-[20em] py-2 px-4 border border-[var(--black)] cursor-pointer rounded-full text-sm font-medium text-[var(--black)]  hover:bg-[var(--light-grey)] hover:border-transparent transition-colors"
-                  >Toko Saya</button>
+                    className="w-full max-w-[20em] flex items-center justify-center gap-2 py-2 px-4 border border-[var(--black)] cursor-pointer rounded-full text-sm font-medium text-[var(--black)]  hover:bg-[var(--light-grey)] hover:border-transparent transition-colors"
+                  > <ShoppingBag/> Produk Saya</button>
                 )}
                 {hasClass && (
                   <button
                     onClick={() => router.push('/kelas/saya')}
-                    className="w-full max-w-[20em] py-2 px-4 border border-[var(--black)] cursor-pointer rounded-full text-sm font-medium text-[var(--black)]  hover:bg-[var(--light-grey)]  hover:border-transparent  transition-colors"
-                  >Kelas Saya</button>
+                    className="w-full max-w-[20em] flex items-center justify-center py-2 px-4 border border-[var(--black)] cursor-pointer rounded-full text-sm font-medium text-[var(--black)]  hover:bg-[var(--light-grey)]  hover:border-transparent  transition-colors"
+                  ><BookOpen/>  Kelas Saya</button>
                 )}
               </div>
             )}
@@ -355,12 +355,12 @@ const ProfilePage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setShowAchievementsModal(true)}
-                    className="text-[10px] text-[var(--dark-grey)] hover:underline"
+                    className="text-xs text-[var(--dark-grey)] hover:underline"
                   >Lihat semua</button>
                 )}
               </div>
               {achievements.length === 0 ? (
-                <p className="text-[10px] text-[var(--dark-grey)]">Belum ada pencapaian.</p>
+                <p className="text-xs text-[var(--dark-grey)]">Belum ada pencapaian.</p>
               ) : (
                 <div className="flex flex-wrap gap-2">
                   {achievements.slice(0,6).map((a,i) => {
@@ -450,7 +450,7 @@ const ProfilePage: React.FC = () => {
             <div className="space-y-4">
               <div className="flex justify-center mb-6">
                 <div className="relative">
-                  <div className="w-24 h-24 rounded-full bg-gradient-to-br bg-[var(--yellow)] p-1">
+                  <div className="w-24 h-24 rounded-full bg-gradient-to-br  p-1">
                     <Image
                       src={
                         avatarFile

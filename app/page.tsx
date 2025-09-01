@@ -1,14 +1,21 @@
 'use client'
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter,  } from "next/navigation";
 import Button from "./components/Button";
 import CommunityMemberCard from "./components/CommunityMemberCard";
 import LandingPageSection from "./components/LandingPageSection";
 import { FaInstagram, FaTwitter, FaFacebook } from "react-icons/fa"; 
+import { useEffect } from "react";
+import "aos/dist/aos.css";
+import AOS from "aos";
 
 
 export default function Home() {
+
+  useEffect(() => {
+    AOS.init({ duration: 800, once: true });
+  }, []);
 
   const router  = useRouter();
 
@@ -22,24 +29,24 @@ export default function Home() {
 
   return (
     
-    <div className="container md:p-15 md:gap-30 relative">
+    <div  className="animate-fadeIn container md:p-15 md:gap-30 relative">
       {/*logo*/}
       <Image src="/logo-leluri.png" alt="Leluri Logo" width={70} height={70} className="absolute top-5 left-5 fixed "/>
       
       
       {/*landing section*/}
       <div className="grid grid-rows-1 md:grid-rows-1 md:grid-cols-2 gap-4  w-full portrait:min-h-[50vh] landscape:min-h-[70vh] ">
-        <div className="flex flex-col  gap-6 text-left justify-center p-5 md:p-10 ">
+        <div data-aos="fade-up" data-aos-duration="2000" className="flex flex-col  gap-6 text-left justify-center p-5 md:p-10 ">
           <h1 className="text-2xl md:text-3xl 2xl:text-4xl font-semibold w-full">Komunitas Budaya Untuk Generasi Kreatif!</h1>
-          <p className="w-full text-sm md:text-md 2xl:text-base text-justify">Daftar atau login sekarang untuk mulai berkarya, bergabung, dan dukung budaya Indonesia!</p>
+          <p  className="w-full text-sm md:text-md 2xl:text-base text-justify">Daftar atau login sekarang untuk mulai berkarya, bergabung, dan dukung budaya Indonesia!</p>
           
           <div className="flex gap-4 w-full">
-              <Button onClick={goToLoginPage} text={"Masuk"} additional_styles="bg-[var(--yellow)] md:px-8 border-transparent text-[var(--white)] hover:bg-[var(--white)] hover:text-[var(--yellow)] hover:border-[var(--yellow)]"/>
-              <Button onClick={goToSignUpPage} text={"Daftar"} additional_styles="md:px-8 hover:bg-[var(--black)] hover:text-[var(--white)]"/>
+              <Button onClick={goToLoginPage} text={"Masuk"} additional_styles="bg-[var(--yellow)] md:px-8 border-transparent text-[var(--white)]  hover:scale-105  transition-all duration-300 hover:bg-[var(--white)] hover:text-[var(--yellow)] hover:border-[var(--yellow)]"/>
+              <Button onClick={goToSignUpPage} text={"Daftar"} additional_styles="md:px-8 hover:bg-[var(--black)]   hover:text-[var(--white)]   hover:scale-105 hover:bg-[var(--black)] transition-all duration-300"/>
           </div>
 
         </div>
-        <div className="w-full hidden md:flex justify-center items-center ">
+        <div data-aos="fade-left" data-aos-delay="500" data-aos-duration="2000"  className="w-full hidden md:flex justify-center items-center ">
           <Image src="/komunitas-budaya.png" alt="Komunitas Budaya" width={500} height={500} className="w-[70%] h-auto "/>
         </div>
         
@@ -47,8 +54,8 @@ export default function Home() {
 
       {/*siapa aja membernya*/}
       <div className="flex gap-10 flex-col w-full  p-5 md:p-10">
-          <h1 className="text-xl md:text-2xl 2xl:text-3xl font-semibold w-full">Bersama Kita Menjaga Warisan Budaya</h1>
-          <div className="w-full overflow-hidden py-3">
+          <h1 data-aos="fade-up" data-aos-duration="2000" className="text-xl md:text-2xl 2xl:text-3xl font-semibold w-full">Bersama Kita Menjaga Warisan Budaya</h1>
+          <div data-aos="fade-up" data-aos-delay="500" data-aos-duration="2000" className="w-full overflow-hidden py-3">
               <div className="flex gap-6 justify-center items-center w-fit overflow-y-hidden animate-marquee">
                   <CommunityMemberCard 
                     username="aisyahnur_" 
@@ -136,7 +143,7 @@ export default function Home() {
 
 
       {/*apa yang bisa dilakuin di web nya*/}
-      <div className="flex flex-col gap-6 md:gap-20 py-10 ">
+      <div  className="flex flex-col gap-6 md:gap-20 py-10 ">
         
         <LandingPageSection order1={"order-2 md:order-1"} order2={"order-1 md:order-2"} title={"Explorasi Budaya Indonesia"} description={"Temukan beragam budaya Indonesia dalam format yang seru dan interaktif. Jelajahi seni, kerajinan, dan tradisi yang belum pernah kamu lihat sebelumnya !"} image={"explorasi-budaya"}/>
         <LandingPageSection order1={"order-2"} order2={"order-1"} title={"Belajar Langsung dari Pengrajin Asli"} description={"Ikut kelas budaya yang diadakan oleh pengrajin-pengrajin asli Indonesia. Dari menari bali hingga bermain wayang, semua bisa kamu pelajari !"} image={"belajar-dari-pengrajin"}/>
@@ -146,25 +153,25 @@ export default function Home() {
 
 
     {/*ajakan terakhir*/}
-      <div className="flex flex-col  gap-10 justify-center p-5 md:p-10 w-full">
-          <h1 className="text-xl md:text-2xl 2xl:text-4xl font-semibold w-full text-center w-full">Tunggu Apa Lagi ? Yuk Bergabung Sekarang Juga !</h1>
-          <div className="flex justify-center w-full">
-            <Button onClick={goToLoginPage} text={"Bergabung ke Komunitas"} additional_styles="bg-[var(--yellow)] md:px-8 border-transparent text-[var(--white)] hover:bg-[var(--white)] hover:text-[var(--yellow)] hover:border-[var(--yellow)]"/>
+      <div  className="flex flex-col  gap-10 justify-center p-5 md:p-10 w-full mb-100">
+          <h1   className="text-xl md:text-2xl 2xl:text-4xl font-semibold w-full text-center w-full">Tunggu Apa Lagi ? Yuk Bergabung Sekarang Juga !</h1>
+          <div  className="flex justify-center w-full">
+            <Button onClick={goToLoginPage} text={"Bergabung ke Komunitas"} additional_styles="bg-[var(--yellow)] md:px-8 border-transparent text-[var(--white)] hover:scale-105 transition-all duration-300 hover:bg-[var(--white)] hover:text-[var(--yellow)] hover:border-[var(--yellow)]"/>
           </div>
       </div>
 
 
 
     {/*footer */}
-      <div className="flex flex-col text-left gap-10 justify-start p-5 md:p-10 w-full ">
-          <div className="flex flex-col gap-10 justify-start p-5 md:p-10 w-full  text-[var(--black)]">
+      <div  className="absolute w-screen left-0 bottom-0  fixed flex flex-col text-left gap-10 justify-start w-full ">
+          <div className="flex w-full flex-col gap-10 justify-start  w-full   p-5 md:p-10  text-[var(--black)]">
               
               <div className="flex flex-row w-full gap-10 justify-start items-center">
                 <Image
                   src="/logo-leluri.png"
                   alt="Leluri Logo"
-                  width={150}
-                  height={150}
+                  width={120}
+                  height={120}
                   priority
                   className="w-[5em] md:w-[10em]"
                 />

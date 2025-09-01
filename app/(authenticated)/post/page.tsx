@@ -12,7 +12,7 @@ const PostPage = () => {
     const [user, setUser] = useState<User | null>(null);
     const [description, setDescription] = useState('');
     const [isCategoryOpen, setIsCategoryOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState("");
+    const [selectedCategory, setSelectedCategory] = useState("");
     const [image, setImage] = useState<File | null>(null);
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
@@ -74,7 +74,7 @@ const PostPage = () => {
             .insert([{
                 user_id: user.id,
                 description,
-                selectedCategory,
+                category : selectedCategory,
                 image_url: publicUrl,
                 likes: 0,
             }]);
@@ -89,13 +89,13 @@ const PostPage = () => {
     };
 
     return (
-    <div className="fixed overflow-y-scroll min-h-screen flex top-0 left-0 min-w-full min-h-screen  bg-black/70 items-center justify-center z-50">
-      <div className="bg-white rounded-2xl grid gap-4 min-h-[50%] lg:min-w-[40%] min-w-[80%] p-6 ">
+    <div className="relative overflow-y-scroll min-h-[screen] flex top-0 left-0 min-w-full min-h-screen  bg-black/70 items-center justify-center z-50">
+      <div className="bg-white rounded-2xl grid gap-4 min-h-[50%] lg:min-w-[40%] min-w-[80%] p-6 my-15 md:my-25">
         
         {/* Tombol Close */}
         <button
           onClick={() => router.back()}
-          className="absolute top-3 right-3 p-1 rounded-full hover:bg-[var(--medium-grey)] transition-colors"
+          className="absolute fixed top-3 right-3 p-1 rounded-full hover:bg-[var(--medium-grey)] transition-colors"
           aria-label="Tutup"
         >
           <X className="w-5 h-5 text-[var(--dark-grey)]" />
