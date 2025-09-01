@@ -24,10 +24,10 @@ const Sidebar = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const { data: { user } } = await supabaseClient.auth.getUser()
+      const { data: { user } } = await supabase.auth.getUser()
       if (user) {
         setUser(user)
-        const { data: profileData } = await supabaseClient.from('users').select('username, image_url').eq('id', user.id).single()
+        const { data: profileData } = await supabase.from('users').select('username, image_url').eq('id', user.id).single()
         setProfile(profileData)
       } else {
         router.push('/Login')
@@ -37,7 +37,7 @@ const Sidebar = () => {
   }, [router])
 
   const handleLogout = async () => {
-    await supabaseClient.auth.signOut()
+    await supabase.auth.signOut()
     router.push('/Login')
   }
 
@@ -47,9 +47,6 @@ const Sidebar = () => {
     { href: '/kelas', icon: BookOpen, label: 'Kelas' },
     { href: '/toko', icon: ShoppingBag, label: 'Toko' },
   ]
-
-
-
 
   return (
     <div className='w-fit h-fit'>
@@ -94,35 +91,6 @@ const Sidebar = () => {
       {/*Sidebar Mobile */}
       <div className={`lg:hidden flex z-10 fixed h-10 flex justify-center items-center w-10   rounded-lg bg-[var(--white)] hover:bg-[var(--light-grey)] hover:text-[var(--yellow)]`}  onClick={() => setIsOpen(!isOpen)} >
             <RxHamburgerMenu className='w-5 h-5'/>
-      </div>
-
-    <div className="sticky flex flex-col w-1/4 max-w-84 min-w-48 top-0 bg-white h-screen p-4 border-r">
-      <Image src="/logo-leluri.png" alt="Leluri Logo" width={70} height={70}/>
-      <nav className="flex-grow">
-        <ul>
-          {navItems.map((item) => (
-            <li key={item.href}>
-              <Link href={item.href} className={`flex items-center p-3 my-2 rounded-lg transition-colors ${pathname === item.href ? 'bg-gray-100 text-orange-600' : 'hover:bg-gray-100'}`}>
-                <item.icon className="w-5 h-5" />
-                <span className="ml-4 font-medium">{item.label}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </nav>
-      <div className="mt-auto">
-        <div className="p-3 hover:bg-gray-100 rounded-lg cursor-pointer" onClick={() => router.push('/profile')}>
-            <div className="flex items-center">
-            {profile?.image_url ? (
-                <Image src={profile.image_url} alt={profile.username} width={40} height={40} className="rounded-full" />
-            ) : (
-                <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
-            )}
-            <div className="ml-3">
-                <p className="font-semibold text-sm">{profile?.username || 'Loading...'}</p>
-            </div>
-            </div>
-        </div>
       </div>
     </div>
   )
