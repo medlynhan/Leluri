@@ -6,9 +6,9 @@ export default function AuthenticatedLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex">
+    <div className="flex w-screen relative">
       <Sidebar />
-      <main className="flex-1 p-6 bg-white">{children}</main>
+      <main className="bg-white w-full">{children}</main>
     </div>
   );
 }

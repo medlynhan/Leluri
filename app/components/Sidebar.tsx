@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Home, Compass, BookOpen, ShoppingBag, LogOut } from 'lucide-react'
-import { supabase } from '../lib/supabase'
+import { supabaseClient } from '../lib/supabaseClient'
 import { User } from '@supabase/supabase-js'
 
 interface Profile {
@@ -21,10 +21,10 @@ const Sidebar = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
+      const { data: { user } } = await supabaseClient.auth.getUser()
       if (user) {
         setUser(user)
-        const { data: profileData } = await supabase.from('users').select('username, image_url').eq('id', user.id).single()
+        const { data: profileData } = await supabaseClient.from('users').select('username, image_url').eq('id', user.id).single()
         setProfile(profileData)
       } else {
         router.push('/Login')
@@ -34,7 +34,7 @@ const Sidebar = () => {
   }, [router])
 
   const handleLogout = async () => {
-    await supabase.auth.signOut()
+    await supabaseClient.auth.signOut()
     router.push('/Login')
   }
 
@@ -46,11 +46,8 @@ const Sidebar = () => {
   ]
 
   return (
-    <div className="w-64 bg-white h-screen p-4 flex flex-col border-r">
-      <div className="mb-10">
-        {/*logo*/}
-        <Image src="/logo-leluri.png" alt="Leluri Logo" width={70} height={70} className="absolute top-5 left-5 fixed border"/>
-      </div>
+    <div className="sticky flex flex-col w-1/4 max-w-84 min-w-48 top-0 bg-white h-screen p-4 border-r">
+      <Image src="/logo-leluri.png" alt="Leluri Logo" width={70} height={70}/>
       <nav className="flex-grow">
         <ul>
           {navItems.map((item) => (
