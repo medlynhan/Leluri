@@ -1,6 +1,14 @@
 'use client'
 import React from 'react';
 import Sidebar from '../../components/Sidebar';
+import { Button } from '@/components/ui/button';
+import PostCard from '@/components/PostCard';
+import { DetailedPostWithComments } from '@/lib/types/posts';
+import { Send, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import CommentCard from '@/components/CommentCard';
+import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
+import { Input } from '@/components/ui/input';
 
 const BerandaPage = () => {
   return (

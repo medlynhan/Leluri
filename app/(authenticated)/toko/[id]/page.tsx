@@ -91,12 +91,12 @@ const ProductDetailPage: React.FC = () => {
     if (buyNow) router.push('/pembayaran'); else router.push('/keranjang');
   };
 
-  const containerWidth = 'max-w-[1100px]';
+  const containerWidth = 'min-w-screen';
   const gridCols = 'grid grid-cols-1 xl:grid-cols-[520px_540px] gap-10 w-full';
 
   if (loading) {
     return (
-      <div className="w-full p-4 animate-pulse">
+      <div className="w-full p-4 animate-pulse ">
         <header className={`flex justify-between items-center mb-6 w-full ${containerWidth} mx-auto`}>
           <div className="w-10 h-10 bg-gray-200 rounded-full" />
           <div className="w-10 h-10 bg-gray-200 rounded-full" />
@@ -140,86 +140,94 @@ const ProductDetailPage: React.FC = () => {
   const outOfStock = product.stock === 0;
 
   return (
-    <div className="w-full p-4 ">
+    <div className="overflow-x-hidden flex w-screen min-h-screen">
       
-      <header className={`flex justify-between items-center mb-6 w-full ${containerWidth} mx-auto`}>
-        <button onClick={() => router.back()} className="p-2 hover:bg-gray-100 rounded-full">
+      {/*Header */}
+      <header className={`top-0 left-0 fixed w-[100vw] z-50 bg-[var(--white)] flex justify-between items-center md:px-6 py-3 ${containerWidth} `}>
+        <button onClick={() => router.back()} className="p-2 hover:bg-[var(--light-grey)] hover:text-[var(--yellow)] rounded-full ml-4">
           <ArrowLeft className="w-6 h-6" />
         </button>
-        <button onClick={() => router.push('/keranjang')} aria-label="Keranjang" className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+        <button onClick={() => router.push('/keranjang')} aria-label="Keranjang" className="p-2 hover:text-[var(--yellow)] mr-4 rounded-full transition-colors">
             <ShoppingCart className="w-6 h-6" />
         </button>
       </header>
 
-      <div className={`${gridCols} ${containerWidth} mx-auto`}>
-        <div className="flex flex-col gap-5 w-full max-w-[520px]">
-          <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-gray-100">
-            <Image src={product.image_url} alt={product.name} fill className="object-cover" />
-          </div>
-
-          <div>
-            <p className="text-sm text-gray-600 mb-2">Stok Barang: {product.stock}</p>
-            {outOfStock ? (
-              <div className="text-sm font-semibold text-red-500 py-3">Stok habis</div>
-            ) : (
-              <div className="flex">
-                <div className="flex items-center border rounded-full px-2 py-1 w-full max-w-md">
-                  <button
-                    onClick={() => handleQuantityChange(-1)}
-                    className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-40"
-                    disabled={quantity <= 1}
-                  >
-                    <Minus className="w-4 h-4" />
-                  </button>
-                  <span className="flex-1 text-center font-semibold select-none">{quantity}</span>
-                  <button
-                    onClick={() => handleQuantityChange(1)}
-                    className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-40"
-                    disabled={quantity >= product.stock}
-                  >
-                    <Plus className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="flex gap-5 w-full max-w-md">
-            <button onClick={() => addToCart(false)} disabled={adding || outOfStock} className="flex-1 py-3 border border-black rounded-full font-semibold hover:bg-gray-50 disabled:opacity-50 transition-colors">{outOfStock ? 'Tidak Tersedia' : (adding ? '...' : 'Keranjang')}</button>
-            <button onClick={() => addToCart(true)} disabled={adding || outOfStock} className="flex-1 py-3 bg-black text-white rounded-full font-semibold hover:bg-gray-800 disabled:opacity-50 transition-colors">{outOfStock ? 'Habis' : (adding ? '...' : 'Beli Langsung')}</button>
-          </div>
+    <div className={` flex flex-col md:flex-row gap-10 mt-16 p-6 md:px-12`}> 
+        
+      {/*Kolom pertama */}
+      <div className="flex  w-full md:w-[40%] flex flex-col gap-5 ">
+        <h1 className="leading-tight break-words text-2xl font-semibold md:hidden">{product.name}</h1>
+        <p className='text-xl  font-semibold  md:hidden'>{formatPrice(product.price)}</p>
+        <div className="relative aspect-square w-full rounded-xl overflow-hidden">
+          <Image src={product.image_url} alt={product.name} fill className="object-cover aspect-square" />
         </div>
 
-        <div className="flex flex-col gap-8 w-full">
-          <h1 className="text-4xl font-semibold leading-tight break-words">{product.name}</h1>
-          <p className="text-3xl font-bold text-gray-900">{formatPrice(product.price)}</p>
-
-          <section className="space-y-2">
-            <h2 className="text-lg font-semibold">Deskripsi Produk</h2>
-            <p className="text-gray-600 leading-relaxed whitespace-pre-line break-words">{product.description}</p>
-          </section>
-
-          <section className="space-y-2">
-            <h2 className="text-lg font-semibold">Ukuran</h2>
-            <ul className="text-gray-600 space-y-1">
-              <li>Panjang: {product.length} cm</li>
-              <li>Lebar: {product.width} cm</li>
-              <li>Tebal: {product.thickness} cm</li>
-            </ul>
-          </section>
-
-          <section className="space-y-3">
-            <h2 className="text-lg font-semibold">Penjual</h2>
-            <div className="flex items-center gap-3">
-              <Image src={product.user.image_url || '/default-avatar.png'} alt={product.user.username} width={48} height={48} className="rounded-full object-cover" />
-              <div>
-                <p className="font-semibold">{product.user.username}</p>
-                <p className="text-sm text-gray-500 capitalize">{product.user.role}</p>
+        <div>
+          <p className="mb-2">Stok Barang: {product.stock}</p>
+          {outOfStock ? (
+            <div className="py-3">Stok habis</div>
+          ) : (
+            <div className="flex w-full ">
+              <div className="flex items-center border rounded-full px-2 py-1 w-full ">
+                <button
+                  onClick={() => handleQuantityChange(-1)}
+                  className="p-2 rounded-full hover:bg-[var(--light-grey)] trans hover:text-[var(--yellow)] disabled:text-[var(--dark-grey)] disabled:cursor-not-allowed"
+                  disabled={quantity <= 1}
+                >
+                  <Minus className="w-4 h-4" />
+                </button>
+                <span className="flex-1 text-center select-none">{quantity}</span>
+                <button
+                  onClick={() => handleQuantityChange(1)}
+                  className="p-2 rounded-full hover:bg-[var(--light-grey)] hover:text-[var(--yellow)] disabled:text-[var(--dark-grey)] disabled:cursor-not-allowed"
+                  disabled={quantity >= product.stock}
+                >
+                  <Plus className="w-4 h-4" />
+                </button>
               </div>
             </div>
-          </section>
+          )}
         </div>
+        {(!outOfStock ) && (          
+          <div className="flex gap-5 w-full ">
+            <button onClick={() => addToCart(false)} disabled={adding || outOfStock} className="w-full transition duration-300 flex-1 py-3 border rounded-full hover:border-[var(--light-grey)] font-semibold hover:bg-[var(--light-grey)]">{(adding ? '...' : 'Keranjang')}</button>
+            <button onClick={() => addToCart(true)} disabled={adding || outOfStock} className="w-full transition duration-300 flex-1 py-3 rounded-full bg-[var(--black)] font-semibold text-[var(--white)] hover:bg-[var(--dark-grey)]">{(adding ? '...' : 'Beli Langsung')}</button>
+          </div>
+        )}
       </div>
+
+      {/*Kolom kedua */}
+      <div className="w-full md:w-[60%] flex flex-col gap-8 ">
+        <h1 className="leading-tight break-words text-3xl font-semibold hidden md:flex">{product.name}</h1>
+        <p className='text-2xl  font-semibold hidden md:flex'>{formatPrice(product.price)}</p>
+
+        <section className="space-y-2">
+          <h2 className='text-base  font-semibold'>Deskripsi Produk</h2>
+          <p className="leading-relaxed whitespace-pre-line break-words text-justify">{product.description}</p>
+        </section>
+
+        <section className="space-y-2">
+          <h2 className='text-base  font-semibold'>Ukuran</h2>
+          <ul className="space-y-1">
+            <li>Panjang: {product.length} cm</li>
+            <li>Lebar: {product.width} cm</li>
+            <li>Tebal: {product.thickness} cm</li>
+          </ul>
+        </section>
+
+        <section className="space-y-3">
+          <h2 className='text-base  font-semibold'>Penjual</h2>
+          <div className="flex items-center gap-3">
+            <Image src={product.user.image_url || '/default-avatar.png'} alt={product.user.username} width={48} height={48} className="rounded-full object-cover" />
+            <div>
+              <p className='font-semibold'>{product.user.username}</p>
+              <p className="capitalize text-[var(--dark-grey)]">{product.user.role}</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
     </div>
   );
 };
