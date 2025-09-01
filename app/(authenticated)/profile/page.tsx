@@ -120,7 +120,7 @@ const ProfilePage: React.FC = () => {
           setUnlockQueue(prev => [...prev, ...newly])
         }
       } else {
-        router.push("/Login")
+        router.push("/login")
       }
       setLoading(false)
     }
@@ -136,7 +136,7 @@ const ProfilePage: React.FC = () => {
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
-    router.push('/Login')
+    router.push('/login')
   }
 
   const handleUpdateProfile = async () => {

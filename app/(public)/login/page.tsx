@@ -2,8 +2,9 @@
 import React, { useState } from 'react';
 import { useRouter } from "next/navigation";
 import Button from "../../components/Button";
-import { supabaseClient } from '../../lib/supabaseClient';
+import { supabase } from '../../lib/supabase';
 import { IoMdClose } from "react-icons/io";
+
 
 export default function Login() {
     const router = useRouter();
@@ -22,14 +23,13 @@ export default function Login() {
         }
         setError('');
 
-        const { error } = await supabaseClient.auth.signInWithPassword({
+        const { error } = await supabase.auth.signInWithPassword({
             email: email,
             password: password,
         });
 
         if (error) {
             setError(error.message);
-            console.log("3")
             return;
         }
 

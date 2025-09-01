@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '../../components/Button';
-import { supabaseClient } from '../../lib/supabaseClient'; 
+import { supabase } from '../../lib/supabase'; 
 import { IoMdClose } from "react-icons/io";
 import { RiArrowDropDownLine } from "react-icons/ri";
 
@@ -38,23 +38,21 @@ const SignUp: React.FC = () => {
       setState({ ...state, error: '' });
 
       // Sign up with email and password using Supabase Auth
-      const { data, error } = await supabaseClient.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
           email: state.email,
           password: state.password,
       });
 
       if (error) {
           setState({ ...state, error: error.message });
-          console.log("1")
           return;
       }
 
       // Jika user berhasil sign-up, kita simpan data ke tabel 'users'
       const user = data?.user;
-      console.log(data)
 
       if (user) {
-          const { error: dbError } = await supabaseClient
+          const { error: dbError } = await supabase
               .from('users')
               .insert([{
                   id: user.id,
@@ -65,7 +63,6 @@ const SignUp: React.FC = () => {
 
           if (dbError) {
               setState({ ...state, error: dbError.message });
-              console.log("2")
               return;
           }
           router.push('/login');
