@@ -299,7 +299,7 @@ const ProfilePage: React.FC = () => {
                 {hasClass && (
                   <button
                     onClick={() => router.push('/kelas/saya')}
-                    className="w-full max-w-[20em] flex items-center justify-center py-2 px-4 border border-[var(--black)] cursor-pointer rounded-full text-sm font-medium text-[var(--black)]  hover:bg-[var(--light-grey)]  hover:border-transparent  transition-colors"
+                    className="w-full max-w-[20em] flex items-center justify-center gap-2 py-2 px-4 border border-[var(--black)] cursor-pointer rounded-full text-sm font-medium text-[var(--black)]  hover:bg-[var(--light-grey)]  hover:border-transparent  transition-colors"
                   ><BookOpen/>  Kelas Saya</button>
                 )}
               </div>
