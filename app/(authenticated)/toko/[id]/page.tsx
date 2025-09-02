@@ -152,15 +152,11 @@ const ProductDetailPage: React.FC = () => {
         </button>
       </header>
 
-    <div className={` flex flex-col md:flex-row gap-10 mt-16 p-6 md:px-12`}> 
-        
-      {/*Kolom pertama */}
-      <div className="flex  w-full md:w-[40%] flex flex-col gap-5 ">
-        <h1 className="leading-tight break-words text-2xl font-semibold md:hidden">{product.name}</h1>
-        <p className='text-xl  font-semibold  md:hidden'>{formatPrice(product.price)}</p>
-        <div className="relative aspect-square w-full rounded-xl overflow-hidden">
-          <Image src={product.image_url} alt={product.name} fill className="object-cover aspect-square" />
-        </div>
+      <div className={`${gridCols} ${containerWidth} mx-auto`}>
+        <div className="flex flex-col gap-5 w-full max-w-[520px]">
+          <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-gray-100">
+            <Image src={product.image_url} alt={product.name} fill className="object-cover" />
+          </div>
 
         <div>
           <p className="mb-2">Stok Barang: {product.stock}</p>
@@ -196,38 +192,36 @@ const ProductDetailPage: React.FC = () => {
         )}
       </div>
 
-      {/*Kolom kedua */}
-      <div className="w-full md:w-[60%] flex flex-col gap-8 ">
-        <h1 className="leading-tight break-words text-3xl font-semibold hidden md:flex">{product.name}</h1>
-        <p className='text-2xl  font-semibold hidden md:flex'>{formatPrice(product.price)}</p>
+        <div className="flex flex-col gap-8 w-full">
+          <h1 className="text-4xl font-semibold leading-tight break-words">{product.name}</h1>
+          <p className="text-3xl font-bold text-gray-900">{formatPrice(product.price)}</p>
 
-        <section className="space-y-2">
-          <h2 className='text-base  font-semibold'>Deskripsi Produk</h2>
-          <p className="leading-relaxed whitespace-pre-line break-words text-justify">{product.description}</p>
-        </section>
+          <section className="space-y-2">
+            <h2 className="text-lg font-semibold">Deskripsi Produk</h2>
+            <p className="text-gray-600 leading-relaxed whitespace-pre-line break-words">{product.description}</p>
+          </section>
 
-        <section className="space-y-2">
-          <h2 className='text-base  font-semibold'>Ukuran</h2>
-          <ul className="space-y-1">
-            <li>Panjang: {product.length} cm</li>
-            <li>Lebar: {product.width} cm</li>
-            <li>Tebal: {product.thickness} cm</li>
-          </ul>
-        </section>
+          <section className="space-y-2">
+            <h2 className="text-lg font-semibold">Ukuran</h2>
+            <ul className="text-gray-600 space-y-1">
+              <li>Panjang: {product.length} cm</li>
+              <li>Lebar: {product.width} cm</li>
+              <li>Tebal: {product.thickness} cm</li>
+            </ul>
+          </section>
 
-        <section className="space-y-3">
-          <h2 className='text-base  font-semibold'>Penjual</h2>
-          <div className="flex items-center gap-3">
-            <Image src={product.user.image_url || '/default-avatar.png'} alt={product.user.username} width={48} height={48} className="rounded-full object-cover" />
-            <div>
-              <p className='font-semibold'>{product.user.username}</p>
-              <p className="capitalize text-[var(--dark-grey)]">{product.user.role}</p>
+          <section className="space-y-3">
+            <h2 className="text-lg font-semibold">Penjual</h2>
+            <div className="flex items-center gap-3">
+              <Image src={product.user.image_url || '/default-avatar.png'} alt={product.user.username} width={48} height={48} className="rounded-full object-cover" />
+              <div>
+                <p className="font-semibold">{product.user.username}</p>
+                <p className="text-sm text-gray-500 capitalize">{product.user.role}</p>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
       </div>
-    </div>
-
     </div>
   );
 };

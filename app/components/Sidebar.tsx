@@ -48,9 +48,6 @@ const Sidebar = () => {
     { href: '/toko', icon: ShoppingBag, label: 'Toko' },
   ]
 
-
-
-
   return (
     <div className='w-fit h-fit'>
       
@@ -95,7 +92,6 @@ const Sidebar = () => {
       <div className={`lg:hidden flex z-10 fixed h-10 flex justify-center items-center w-10   rounded-lg bg-[var(--white)] hover:bg-[var(--light-grey)] hover:text-[var(--yellow)]`}  onClick={() => setIsOpen(!isOpen)} >
             <RxHamburgerMenu className='w-5 h-5'/>
       </div>
-
     </div>
   )
 }
