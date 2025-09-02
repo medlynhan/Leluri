@@ -107,15 +107,18 @@ const SelfStorePage: React.FC = () => {
 
   return (
     <div className="p-6 w-full">
-      <button onClick={() => router.back()} className="p-2 rounded-full hover:bg-gray-100 mb-4" aria-label="Kembali">
-        <ArrowLeft className="w-5 h-5" />
-      </button>
-      <div className="flex items-center justify-between mb-6">
+        <header className={`top-0 left-0 fixed w-[100vw] z-50 bg-[var(--white)] flex justify-between items-center md:px-6 py-3 `}>
+          <button onClick={() => router.back()} className="p-2 hover:bg-[var(--light-grey)] hover:text-[var(--yellow)] rounded-full ml-4">
+            <ArrowLeft className="w-6 h-6" />
+          </button>
+          
+        </header>
+      <div className="flex items-center mt-10 mb-10 justify-between  md:px-6">
         <h1 className="text-lg font-semibold">Produk ({products.length})</h1>
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="ml-3 mr-3 grid grid-cols-[repeat(auto-fill,minmax(15em,1fr))] p-3 gap-3 lg:gap-6 mt-20 ">
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="h-72 bg-gray-100 animate-pulse rounded-2xl" />
           ))}
@@ -123,22 +126,44 @@ const SelfStorePage: React.FC = () => {
       ) : products.length === 0 ? (
         <div className="py-20 text-center text-gray-500">Belum ada produk.</div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {products.map(p => (
-            <div key={p.id} className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100 group">
-              <div className="relative h-56">
-                {p.image_url && (
-                  <Image src={p.image_url} alt={p.name} fill className="object-cover" />
-                )}
-              </div>
-              <div className="p-4 space-y-2">
-                <h3 className="text-sm font-semibold line-clamp-2 min-h-[2.25rem]">{p.name}</h3>
-                <p className="text-sm font-bold">Rp {Number(p.price).toLocaleString('id-ID', { minimumFractionDigits: 2 })}</p>
-                <StarRating rating={p.rating} />
-                <div className="flex gap-2 pt-2">
-                  <button onClick={() => { setEditing(p); setEditFields({ name:'', price:'', description:'', stock:'', length:'', width:'', thickness:'' }); }} className="flex-1 flex items-center justify-center gap-1 text-xs px-2 py-1 border rounded-full hover:bg-gray-50"><Edit className="w-3 h-3"/>Edit</button>
-                  <button onClick={() => handleDelete(p.id)} className="flex-1 flex items-center justify-center gap-1 text-xs px-2 py-1 border rounded-full text-red-600 hover:bg-red-50"><Trash2 className="w-3 h-3"/>Hapus</button>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:px-6 ">
+          {products.map(product => (
+            <div key={product.id} className="bg-[var(--white)] w-full rounded-2xl overflow-hidden border border-[var(--medium-grey)] cursor-pointer transition-transform duration-300 hover:-translate-y-1" >
+                <div className="relative aspect-square ">
+                    <Image
+                        src={product.image_url}
+                        alt={product.name}
+                        layout="fill"
+                        objectFit="cover"
+                        className="rounded-t-2xl "
+                    />
                 </div>
+                <div className="w-full grid p-4 w-64">
+                    <h3 className=" w-full text-lg font-semibold truncate">
+                        {product.name}
+                    </h3>
+
+                    <div className="my-2 ">
+                        <p className="text-sm font-semibold ">
+                        Rp {product.price.toLocaleString('id-ID')}
+                        </p>
+                        <div className="mt-1">
+                        <StarRating rating={product.rating} />
+                        </div>
+                    </div>
+
+                    {/*Information Profile*/}
+                    <div className="  flex items-center pt-4 border-t border-[var(--medium-grey)] ">
+                          <div className="flex gap-2 pt-2">
+                            <button onClick={() => { setEditing(product); setEditFields({ name:'', price:'', description:'', stock:'', length:'', width:'', thickness:'' }); }} className="flex-1 flex items-center justify-center gap-1 text-xs px-2 py-1 border rounded-full hover:bg-gray-50"><Edit className="w-3 h-3"/>Edit</button>
+                            <button onClick={() => handleDelete(product.id)} className="flex-1 flex items-center justify-center gap-1 text-xs px-2 py-1 border rounded-full text-red-600 hover:bg-red-50"><Trash2 className="w-3 h-3"/>Hapus</button>
+                          </div>
+                    </div>
+
+            
+
+                              
+
               </div>
             </div>
           ))}

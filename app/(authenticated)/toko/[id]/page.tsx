@@ -152,7 +152,7 @@ const ProductDetailPage: React.FC = () => {
         </button>
       </header>
 
-    <div className={` flex flex-col md:flex-row gap-10 mt-16 p-6 md:px-12`}> 
+    <div className={` flex flex-col md:flex-row gap-10 mt-16 p-6 md:px-12 w-full`}> 
         
       {/*Kolom pertama */}
       <div className="flex  w-full md:w-[40%] flex flex-col gap-5 ">
@@ -197,16 +197,16 @@ const ProductDetailPage: React.FC = () => {
       </div>
 
       {/*Kolom kedua */}
-      <div className="w-full md:w-[60%] flex flex-col gap-8 ">
+      <div className="w-full md:w-[60%] min-w-[60%] flex flex-col gap-8 ">
         <h1 className="leading-tight break-words text-3xl font-semibold hidden md:flex">{product.name}</h1>
         <p className='text-2xl  font-semibold hidden md:flex'>{formatPrice(product.price)}</p>
 
-        <section className="space-y-2">
-          <h2 className='text-base  font-semibold'>Deskripsi Produk</h2>
+        <section className="space-y-2 w-full">
+          <h2 className='text-base  font-semibold w-full'>Deskripsi Produk</h2>
           <p className="leading-relaxed whitespace-pre-line break-words text-justify">{product.description}</p>
         </section>
 
-        <section className="space-y-2">
+        <section className="space-y-2 w-full">
           <h2 className='text-base  font-semibold'>Ukuran</h2>
           <ul className="space-y-1">
             <li>Panjang: {product.length} cm</li>
@@ -215,7 +215,7 @@ const ProductDetailPage: React.FC = () => {
           </ul>
         </section>
 
-        <section className="space-y-3">
+        <section className="space-y-3 w-full">
           <h2 className='text-base  font-semibold'>Penjual</h2>
           <div className="flex items-center gap-3">
             <Image src={product.user.image_url || '/default-avatar.png'} alt={product.user.username} width={48} height={48} className="rounded-full object-cover" />
