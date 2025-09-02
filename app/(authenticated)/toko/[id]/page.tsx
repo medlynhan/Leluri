@@ -91,12 +91,12 @@ const ProductDetailPage: React.FC = () => {
     if (buyNow) router.push('/pembayaran'); else router.push('/keranjang');
   };
 
-  const containerWidth = 'max-w-[1100px]';
+  const containerWidth = 'min-w-screen';
   const gridCols = 'grid grid-cols-1 xl:grid-cols-[520px_540px] gap-10 w-full';
 
   if (loading) {
     return (
-      <div className="w-full p-4 animate-pulse">
+      <div className="w-full p-4 animate-pulse ">
         <header className={`flex justify-between items-center mb-6 w-full ${containerWidth} mx-auto`}>
           <div className="w-10 h-10 bg-gray-200 rounded-full" />
           <div className="w-10 h-10 bg-gray-200 rounded-full" />
@@ -140,13 +140,14 @@ const ProductDetailPage: React.FC = () => {
   const outOfStock = product.stock === 0;
 
   return (
-    <div className="w-full p-4 ">
+    <div className="overflow-x-hidden flex w-screen min-h-screen">
       
-      <header className={`flex justify-between items-center mb-6 w-full ${containerWidth} mx-auto`}>
-        <button onClick={() => router.back()} className="p-2 hover:bg-gray-100 rounded-full">
+      {/*Header */}
+      <header className={`top-0 left-0 fixed w-[100vw] z-50 bg-[var(--white)] flex justify-between items-center md:px-6 py-3 ${containerWidth} `}>
+        <button onClick={() => router.back()} className="p-2 hover:bg-[var(--light-grey)] hover:text-[var(--yellow)] rounded-full ml-4">
           <ArrowLeft className="w-6 h-6" />
         </button>
-        <button onClick={() => router.push('/keranjang')} aria-label="Keranjang" className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+        <button onClick={() => router.push('/keranjang')} aria-label="Keranjang" className="p-2 hover:text-[var(--yellow)] mr-4 rounded-full transition-colors">
             <ShoppingCart className="w-6 h-6" />
         </button>
       </header>
@@ -157,38 +158,39 @@ const ProductDetailPage: React.FC = () => {
             <Image src={product.image_url} alt={product.name} fill className="object-cover" />
           </div>
 
-          <div>
-            <p className="text-sm text-gray-600 mb-2">Stok Barang: {product.stock}</p>
-            {outOfStock ? (
-              <div className="text-sm font-semibold text-red-500 py-3">Stok habis</div>
-            ) : (
-              <div className="flex">
-                <div className="flex items-center border rounded-full px-2 py-1 w-full max-w-md">
-                  <button
-                    onClick={() => handleQuantityChange(-1)}
-                    className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-40"
-                    disabled={quantity <= 1}
-                  >
-                    <Minus className="w-4 h-4" />
-                  </button>
-                  <span className="flex-1 text-center font-semibold select-none">{quantity}</span>
-                  <button
-                    onClick={() => handleQuantityChange(1)}
-                    className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-40"
-                    disabled={quantity >= product.stock}
-                  >
-                    <Plus className="w-4 h-4" />
-                  </button>
-                </div>
+        <div>
+          <p className="mb-2">Stok Barang: {product.stock}</p>
+          {outOfStock ? (
+            <div className="py-3">Stok habis</div>
+          ) : (
+            <div className="flex w-full ">
+              <div className="flex items-center border rounded-full px-2 py-1 w-full ">
+                <button
+                  onClick={() => handleQuantityChange(-1)}
+                  className="p-2 rounded-full hover:bg-[var(--light-grey)] trans hover:text-[var(--yellow)] disabled:text-[var(--dark-grey)] disabled:cursor-not-allowed"
+                  disabled={quantity <= 1}
+                >
+                  <Minus className="w-4 h-4" />
+                </button>
+                <span className="flex-1 text-center select-none">{quantity}</span>
+                <button
+                  onClick={() => handleQuantityChange(1)}
+                  className="p-2 rounded-full hover:bg-[var(--light-grey)] hover:text-[var(--yellow)] disabled:text-[var(--dark-grey)] disabled:cursor-not-allowed"
+                  disabled={quantity >= product.stock}
+                >
+                  <Plus className="w-4 h-4" />
+                </button>
               </div>
-            )}
-          </div>
-
-          <div className="flex gap-5 w-full max-w-md">
-            <button onClick={() => addToCart(false)} disabled={adding || outOfStock} className="flex-1 py-3 border border-black rounded-full font-semibold hover:bg-gray-50 disabled:opacity-50 transition-colors">{outOfStock ? 'Tidak Tersedia' : (adding ? '...' : 'Keranjang')}</button>
-            <button onClick={() => addToCart(true)} disabled={adding || outOfStock} className="flex-1 py-3 bg-black text-white rounded-full font-semibold hover:bg-gray-800 disabled:opacity-50 transition-colors">{outOfStock ? 'Habis' : (adding ? '...' : 'Beli Langsung')}</button>
-          </div>
+            </div>
+          )}
         </div>
+        {(!outOfStock ) && (          
+          <div className="flex gap-5 w-full ">
+            <button onClick={() => addToCart(false)} disabled={adding || outOfStock} className="w-full transition duration-300 flex-1 py-3 border rounded-full hover:border-[var(--light-grey)] font-semibold hover:bg-[var(--light-grey)]">{(adding ? '...' : 'Keranjang')}</button>
+            <button onClick={() => addToCart(true)} disabled={adding || outOfStock} className="w-full transition duration-300 flex-1 py-3 rounded-full bg-[var(--black)] font-semibold text-[var(--white)] hover:bg-[var(--dark-grey)]">{(adding ? '...' : 'Beli Langsung')}</button>
+          </div>
+        )}
+      </div>
 
         <div className="flex flex-col gap-8 w-full">
           <h1 className="text-4xl font-semibold leading-tight break-words">{product.name}</h1>
