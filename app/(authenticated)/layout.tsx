@@ -8,7 +8,7 @@ export default function AuthenticatedLayout({ children }: { children: React.Reac
   return (
     <div className="flex w-screen relative min-h-screen">
       <SideBar />
-      <main className={`bg-white w-screen ${isCartPage ? 'overflow-hidden' : ' overflow-y-auto'}`}>{children}</main>
+      <main className={`bg-white w-screen ${isCartPage && 'overflow-hidden'}`}>{children}</main>
     </div>
   );
 }

@@ -134,8 +134,8 @@ export interface UserAchievement {
 export interface PostMedia {
   id: string;
   post_id: string;
-  url: string;
   media_type: string;
+  media_url: string;
   created_at: string;
   is_main: boolean;
 }

@@ -256,11 +256,8 @@ const ProfilePage: React.FC = () => {
   }
 
   return (
-    <div className={`top-0 left-0 w-full relative min-h-screen bg-white overflow-x-hidden`}>
+    <div className="flex w-full relative min-h-screen bg-red-500 overflow-x-hidden">
       <div className={`${isEditMode || showAddModal || selectedPost ? "fixed" : ""}  flex flex-col lg:flex-row  h-full w-full `}>
-
-          <Sidebar />
-
         <div className="w-full min-h-[30vh]  lg:min-h-[60vh] ml-0 lg:w-80 border-b lg:border-b-transparent lg:border-r border-[var(--medium-grey)] lg:ml-64 bg-white   p-6 ">
           <div className="w-full flex flex-col items-center text-center">
             <div className="justify-items items-center relative mb-4">

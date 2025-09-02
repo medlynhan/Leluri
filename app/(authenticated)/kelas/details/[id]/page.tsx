@@ -6,6 +6,7 @@ import Image from "next/image"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { ClassWithCreator } from "@/lib/types/class"
+import RegistrationModal from "@/components/RegistrationModal"
 
 export default function BaliDanceClass() {
 
@@ -38,13 +39,27 @@ export default function BaliDanceClass() {
     setClassData(temp_class)
   }, [])
 
+  useEffect(() => {
+    if (isRegistrationModalOpened === true) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isRegistrationModalOpened]);
+
   if(!classData) return <div>Loading...</div>
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
 
       {isRegistrationModalOpened && 
-      <RegistrationModal/>}
+      <RegistrationModal 
+      classId={id ? (Array.isArray(id) ? id[0] : id) : ''}
+      showRegistrationModal={isRegistrationModalOpened}
+      setShowRegistrationModal={setIsRegistrationModalOpened}/>}
 
       <div className="sticky top-0 bg-white p-4">
         <ArrowLeft className="h-6 w-6 text-gray-700" onClick={() => router.back()}/>
@@ -92,7 +107,10 @@ export default function BaliDanceClass() {
           </Button> */}
           <Button
           className="w-full rounded-full py-3 bg-black text-white hover:bg-gray-800"
-          onClick={() => setIsRegistrationModalOpened(true)}>
+          onClick={() => {
+            console.log("clicked")
+            setIsRegistrationModalOpened(true)
+          }}>
             Daftar Kelas
           </Button>
         </div>

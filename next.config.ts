@@ -1,15 +1,14 @@
 import type { NextConfig } from "next";
 
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+
+if (!supabaseUrl) {
+  throw new Error('Supabase URL must be provided in .env');
+}
+
 const nextConfig: NextConfig = {
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'vbartwjkvbinxhagncjf.supabase.co',
-        port: '',
-        pathname: '/storage/v1/object/public/**',
-      },
-    ],
+    domains: [supabaseUrl.replace(/^https?:\/\//, '')],
   },
 };
 

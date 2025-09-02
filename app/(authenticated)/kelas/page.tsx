@@ -129,7 +129,7 @@ const Kelas = () => {
   return (
     <div className="flex flex-col w-full h-full">
       <div className="sticky top-0 flex flex-row items-center gap-4 p-4 z-1 bg-white">
-        <div className="relative w-full">
+        <div className="relative w-full ml-20">
           <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
           <Input
             placeholder="Apa yang ingin kamu temukan ?"

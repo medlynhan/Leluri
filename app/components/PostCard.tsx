@@ -1,11 +1,11 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar"
 import { Card, CardContent } from "./ui/card"
 import { Heart, MessageSquare, Play } from "lucide-react"
-import { DetailedPost } from "@/lib/types/posts"
+import { DetailedPostWithMedia } from "@/lib/types/posts"
 import MediaCarousel from "./MediaCarousel"
 
 interface PostCard {
-  post: DetailedPost,
+  post: DetailedPostWithMedia,
   onClick?: (...args: any[]) => void
 }
 

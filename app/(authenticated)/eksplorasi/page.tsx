@@ -6,269 +6,31 @@ import { Input } from "@/components/ui/input"
 import { CategoryFiltering } from '@/components/CategoryFilter';
 import { Category, Post } from '@/lib/types';
 import { useGetPosts } from '@/lib/client-queries/posts';
-import { DetailedPost } from '@/lib/types/posts';
+import { DetailedPostWithMedia } from '@/lib/types/posts';
 import { FaX } from 'react-icons/fa6';
 import Image from 'next/image'
 import PostCard from '@/components/PostCard';
 import DetailedPostModal from '@/components/DetailedPostModal';
 import { MinimalInfoUser } from '@/lib/types/user';
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
+import { useGetPostCategories } from '@/lib/client-queries/postcategories';
+import LoadingComponent from '@/components/LoadingComponent';
 
 const EksplorasiPage = () => {
 
-  const temp_categories = [
-    { id: "a1b2c3d4", name: "Kerajinan Tangan" },
-    { id: "e5f6g7h8", name: "Seni Rupa" },
-    { id: "i9j0k1l2", name: "Pakaian Tradisional" },
-    { id: "m3n4o5p6", name: "Seni Pertunjukan" },
-    { id: "q7r8s9t0", name: "Kuliner Tradisional" }
-  ];
-  const temp_posts: DetailedPost[] = [
-    {
-      id: "1",
-      user_id: "anyaman_indonesia",
-      user: {
-        id: "anyaman_indonesia",
-        username: "anyaman_indonesia",
-        image_url: '/posts/1756376166448.png',
-        role: 'pengrajin'
-      },
-      title: "5 Tips Buat Anyaman utk pemula",
-      description: "5 Tips Buat Anyaman utk pemula",
-      created_at: "2025-08-30T14:00:00Z",
-      category_id: "e5f6g7h8",
-      like_count: 19,
-      comment_count: 3,
-      posts_media: [
-        {
-          id: '112233',
-          post_id: 'xxyyzz',
-          media_type: 'image',
-          created_at: new Date().toISOString(),
-          url: '/posts/1756485694500.png',
-          is_main: true
-        },
-        {
-          id: '112233',
-          post_id: 'xxyyzz',
-          media_type: 'image',
-          created_at: new Date().toISOString(),
-          url: '/posts/1756376166448.png',
-          is_main: true
-        },
-      ]
-    },
-    {
-      id: "3",
-      user_id: "anyaman_indonesia",
-      user: {
-        id: "anyaman_indonesia",
-        username: "anyaman_indonesia",
-        image_url: '/posts/1756376166448.png',
-        role: 'pengrajin'
-      },
-      title: "5 Tips Buat Anyaman utk pemula",
-      description: "Traditional Batik Crafting Techniques",
-      created_at: "2025-08-28T09:15:00Z",
-      category_id: "e5f6g7h8",
-      like_count: 19,
-      comment_count: 3,
-      posts_media: [
-        {
-          id: '112233',
-          post_id: 'xxyyzz',
-          media_type: 'video',
-          created_at: new Date().toISOString(),
-          url: '/posts/video 1.mp4',
-          is_main: true
-        }
-      ]
-    },
-    {
-      id: "2",
-      user_id: "anyaman_indonesia",
-      user: {
-        id: "anyaman_indonesia",
-        username: "anyaman_indonesia",
-        image_url: '/posts/1756376166448.png',
-        role: 'pengrajin'
-      },
-      title: "5 Tips Buat Anyaman utk pemula",
-      description: "Wayang Puppet Performance - Traditional Indonesian Art",
-      created_at: "2025-08-29T10:30:00Z",
-      category_id: "performance",
-      like_count: 19,
-      comment_count: 3,
-      posts_media: [
-        {
-          id: '112233',
-          post_id: 'xxyyzz',
-          media_type: 'video',
-          created_at: new Date().toISOString(),
-          url: '/posts/video 1.mp4',
-          is_main: true
-        },
-        {
-          id: '112233',
-          post_id: 'xxyyzz',
-          media_type: 'image',
-          created_at: new Date().toISOString(),
-          url: '/posts/1756376166448.png',
-          is_main: true
-        },
-        {
-          id: '112233',
-          post_id: 'xxyyzz',
-          media_type: 'image',
-          created_at: new Date().toISOString(),
-          url: '/posts/1756485694500.png',
-          is_main: true
-        }
-      ]
-    },
-    {
-      id: "4",
-      user_id: "anyaman_indonesia",
-      user: {
-        id: "anyaman_indonesia",
-        username: "anyaman_indonesia",
-        image_url: '/posts/1756376166448.png',
-        role: 'pengrajin'
-      },
-      title: "5 Tips Buat Anyaman utk pemula",
-      description: "Balinese Traditional Dance Performance",
-      created_at: "2025-08-27T13:45:00Z",
-      category_id: "performance",
-      like_count: 19,
-      comment_count: 3,
-      posts_media: [
-        {
-          id: '112233',
-          post_id: 'xxyyzz',
-          media_type: 'image',
-          created_at: new Date().toISOString(),
-          url: '/posts/1756376166448.png',
-          is_main: true
-        },
-        {
-          id: '112233',
-          post_id: 'xxyyzz',
-          media_type: 'image',
-          created_at: new Date().toISOString(),
-          url: '/posts/1756485694500.png',
-          is_main: true
-        },
-        {
-          id: '112233',
-          post_id: 'xxyyzz',
-          media_type: 'video',
-          created_at: new Date().toISOString(),
-          url: '/posts/video 1.mp4',
-          is_main: true
-        }
-      ]
-    },
-    {
-      id: "5",
-      user_id: "anyaman_indonesia",
-      user: {
-        id: "anyaman_indonesia",
-        username: "anyaman_indonesia",
-        image_url: '/posts/1756376166448.png',
-        role: 'pengrajin'
-      },
-      title: "5 Tips Buat Anyaman utk pemula",
-      description: "Cultural Education in Traditional Indonesian Crafts",
-      created_at: "2025-08-26T11:00:00Z",
-      category_id: "education",
-      like_count: 19,
-      comment_count: 3,
-      posts_media: [
-        {
-          id: '112233',
-          post_id: 'xxyyzz',
-          media_type: 'image',
-          created_at: new Date().toISOString(),
-          url: '/posts/1756376166448.png',
-          is_main: true
-        },
-        {
-          id: '112233',
-          post_id: 'xxyyzz',
-          media_type: 'image',
-          created_at: new Date().toISOString(),
-          url: '/posts/1756485694500.png',
-          is_main: true
-        },
-        {
-          id: '112233',
-          post_id: 'xxyyzz',
-          media_type: 'video',
-          created_at: new Date().toISOString(),
-          url: '/posts/video 1.mp4',
-          is_main: true
-        }
-      ]
-    },
-    {
-      id: "6",
-      user_id: "juliana_batik",
-      user: {
-        id: "anyaman_indonesia",
-        username: "anyaman_indonesia",
-        image_url: '/posts/1756376166448.png',
-        role: 'pengrajin'
-      },
-      title: "5 Tips Buat Anyaman utk pemula",
-      description: "7 Langkah Pembuatan Batik - A Detailed Guide",
-      created_at: "2025-08-25T16:00:00Z",
-      category_id: "Seni Rupa",
-      like_count: 0,
-      comment_count: 3,
-      posts_media: [
-        {
-          id: '112233',
-          post_id: 'xxyyzz',
-          media_type: 'image',
-          created_at: new Date().toISOString(),
-          url: '/posts/1756376166448.png',
-          is_main: true
-        },
-        {
-          id: '112233',
-          post_id: 'xxyyzz',
-          media_type: 'image',
-          created_at: new Date().toISOString(),
-          url: '/posts/1756485694500.png',
-          is_main: true
-        },
-        {
-          id: '112233',
-          post_id: 'xxyyzz',
-          media_type: 'video',
-          created_at: new Date().toISOString(),
-          url: '/posts/video 1.mp4',
-          is_main: true
-        }
-      ]
-    }
-  ];
+  const { data: posts = [], isLoading: isGetPostsLoading, isError: isGetPostsError, error: getPostsError } = useGetPosts()
+  const { data: postcategories, isLoading: isGetPostCategoriesLoading, isError: isGetPostCategoriesError, error: getPostCategoriesError} = useGetPostCategories()
 
-  const [posts, setPosts] = useState<DetailedPost[]>([])
   const [users, setUsers] = useState<MinimalInfoUser[]>([])
-  const [filteredPosts, setFilteredPosts] = useState<DetailedPost[]>([])
-
+  const [filteredPosts, setFilteredPosts] = useState<DetailedPostWithMedia[]>(posts)
   const [categoryFilterOpened, setCategoryFilterOpened] = useState<boolean>(false)
-  const [postcategories, setPostCategories] = useState<Category[]>([])
   const [selectedPostCategories, setSelectedPostCategories] = useState<string[]>([]);
-
   const [postModalId, setPostModalId] = useState<string | null>(null)
+  const [search, setSearch] = useState<string>('')
 
-  // const { data: posts, isLoading, isError, error } = useGetPosts()
-  useMemo(() => {
-    setPosts(temp_posts)
-    setPostCategories(temp_categories)
-  }, [])
+  useEffect(() => {
+    if(posts && posts.length > 0) setFilteredPosts(posts)
+  }, [posts])
 
   useMemo(() => {
     if (selectedPostCategories.length > 0) {
@@ -279,7 +41,7 @@ const EksplorasiPage = () => {
     } else {
       setFilteredPosts(posts);
     }
-  }, [selectedPostCategories, posts]);
+  }, [selectedPostCategories]);
 
   useEffect(() => {
     if (postModalId !== null) {
@@ -292,7 +54,6 @@ const EksplorasiPage = () => {
     };
   }, [postModalId]);
 
-  const [search, setSearch] = useState<string>('')
   const searchUser = (search : string) => {
     if(search === '') return
     setFilteredPosts(
@@ -306,6 +67,7 @@ const EksplorasiPage = () => {
       .filter((value, index, self) => index === self.findIndex((t) => t.id === value.id))
     )
   }
+
   const handleSearchChange = (input : string) => {
     setSearch(input)
     if(!input || input.length <= 0){
@@ -314,10 +76,13 @@ const EksplorasiPage = () => {
     }
   }
 
+  if(isGetPostCategoriesLoading) return <LoadingComponent message='Loading post categories options...'/>
+  if(isGetPostsLoading) return <LoadingComponent message='Loading all posts...'/>
+
   return (
     <div className="flex flex-col w-full h-full">
       <div className="sticky top-0 flex flex-row items-center gap-4 p-4 z-1 bg-white">
-        <div className="relative w-full">
+        <div className="relative w-full ml-20">
           <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
           <Input
             placeholder="Apa yang ingin kamu temukan ?"
@@ -332,7 +97,7 @@ const EksplorasiPage = () => {
           )}
         </div>
         <CategoryFiltering 
-        categories={postcategories}
+        categories={postcategories ?? []}
         selectedCategories={selectedPostCategories}
         setSelectedCategories={setSelectedPostCategories}
         open={categoryFilterOpened}
