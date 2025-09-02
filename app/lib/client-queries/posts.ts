@@ -3,6 +3,7 @@ import { supabase } from "../supabase";
 import { DetailedPostWithMedia, PostInput } from "../types/posts";
 import { toast } from 'sonner'
 
+// get all posts
 async function getPosts(): Promise<DetailedPostWithMedia[]> {
   const { data, error } = await supabase.from('posts')
     .select(`
@@ -21,6 +22,7 @@ export function useGetPosts() {
   });
 }
 
+// create new post
 async function createPost({
   posts_media,
   user_id,
