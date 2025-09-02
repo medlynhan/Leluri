@@ -6,9 +6,17 @@ if (!supabaseUrl) {
   throw new Error('Supabase URL must be provided in .env');
 }
 
+console.log(supabaseUrl.replace(/^https?:\/\//, ''))
+
 const nextConfig: NextConfig = {
   images: {
-    domains: [supabaseUrl.replace(/^https?:\/\//, '')],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: supabaseUrl.replace(/^https?:\/\//, '').replace(/^www\./, ''),
+        pathname: '/storage/v1/object/public/**',
+      },
+    ],
   },
 };
 

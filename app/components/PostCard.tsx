@@ -23,7 +23,7 @@ const PostCard = ({
       <CardContent className="flex py-2 px-4 items-center">
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center gap-3">
-            <Avatar className="w-8 h-8 border border-gray-500 rounded-full overflow-hidden justify-center items-center">
+            <Avatar className="flex w-8 h-8 border border-gray-500 rounded-full overflow-hidden justify-center items-center">
               <AvatarImage src={post.user.image_url || "/placeholder.svg"} />
               <AvatarFallback>{post.user.username[0].toUpperCase()}</AvatarFallback>
             </Avatar>

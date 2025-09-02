@@ -235,3 +235,90 @@
       ]
     }
   ];
+
+
+  const temp_post: DetailedPostWithComments = {
+      id: "1",
+      user_id: "anyaman_indonesia",
+      user: {
+        id: "anyaman_indonesia",
+        username: "anyaman_indonesia",
+        image_url: '/posts/1756376166448.png',
+        role: 'pengrajin'
+      },
+      title: "5 Tips Buat Anyaman utk pemula",
+      description: "5 Tips Buat Anyaman utk pemula",
+      created_at: "2025-08-30T14:00:00Z",
+      category_id: "e5f6g7h8",
+      like_count: 19,
+      comment_count: 3,
+      posts_media: [
+        {
+          id: '112233',
+          post_id: 'xxyyzz',
+          media_type: 'image',
+          created_at: new Date().toISOString(),
+          url: '/posts/1756376166448.png',
+          is_main: true
+        },
+        {
+          id: '112233',
+          post_id: 'xxyyzz',
+          media_type: 'image',
+          created_at: new Date().toISOString(),
+          url: '/posts/1756485694500.png',
+          is_main: true
+        },
+        {
+          id: '112233',
+          post_id: 'xxyyzz',
+          media_type: 'video',
+          created_at: new Date().toISOString(),
+          url: '/posts/video 1.mp4',
+          is_main: true
+        }
+      ],
+      posts_comments: [
+        {
+          id: "aabbcc",
+          post_id: "xxxxxx",
+          user_id: "111111",
+          user: {
+            id: "anyaman_indonesia",
+            username: "anyaman_indonesia",
+            image_url: '/posts/1756376166448.png',
+            role: 'pengrajin'
+          },
+          comment: "Bagus banget!!!",
+          created_at: new Date().toISOString(),
+          replies: [
+            {
+              id: "xxxxxx",
+              comment_id: "xxxxxx",
+              user_id: "111111",
+              user: {
+                id: "anyaman_indonesia",
+                username: "anyaman_indonesia",
+                image_url: '/posts/1756376166448.png',
+                role: 'pengrajin'
+              },
+              reply: "Bagus banget!!!",
+              created_at: new Date().toISOString(),
+            },
+            {
+              id: "xxxxxx",
+              comment_id: "xxxxxx",
+              user_id: "111111",
+              user: {
+                id: "anyaman_indonesia",
+                username: "anyaman_indonesia",
+                image_url: '/posts/1756376166448.png',
+                role: 'pengrajin'
+              },
+              reply: "Bagus banget!!!",
+              created_at: new Date().toISOString(),
+            }
+          ]
+        }
+      ]
+  }

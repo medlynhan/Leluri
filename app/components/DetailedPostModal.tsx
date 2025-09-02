@@ -1,183 +1,72 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar"
 import { Heart, MessageCircle, Send, X } from "lucide-react"
-import { Button } from "./ui/button"
-import { Input } from "./ui/input"
 import { DetailedPostWithComments } from "@/lib/types/posts"
 import { useEffect, useState } from "react"
 import { format } from 'date-fns'
-import CommentCard from "./CommentCard"
 import MediaCarousel from "./MediaCarousel"
+import SideCommentSection from "./SideCommentSection"
+import { useGetPostById } from "@/lib/client-queries/posts"
+import LoadingComponent from "./LoadingComponent"
 
 interface DetailedPostModal {
   postId: string,
   setPostModalId: React.Dispatch<React.SetStateAction<string|null>>,
+  userId: string
 }
 
 const DetailedPostModal = ({
   postId,
   setPostModalId,
+  userId
 } : DetailedPostModal) => {
 
-  const temp_post: DetailedPostWithComments = {
-      id: "1",
-      user_id: "anyaman_indonesia",
-      user: {
-        id: "anyaman_indonesia",
-        username: "anyaman_indonesia",
-        image_url: '/posts/1756376166448.png',
-        role: 'pengrajin'
-      },
-      title: "5 Tips Buat Anyaman utk pemula",
-      description: "5 Tips Buat Anyaman utk pemula",
-      created_at: "2025-08-30T14:00:00Z",
-      category_id: "e5f6g7h8",
-      like_count: 19,
-      comment_count: 3,
-      posts_media: [
-        {
-          id: '112233',
-          post_id: 'xxyyzz',
-          media_type: 'image',
-          created_at: new Date().toISOString(),
-          url: '/posts/1756376166448.png',
-          is_main: true
-        },
-        {
-          id: '112233',
-          post_id: 'xxyyzz',
-          media_type: 'image',
-          created_at: new Date().toISOString(),
-          url: '/posts/1756485694500.png',
-          is_main: true
-        },
-        {
-          id: '112233',
-          post_id: 'xxyyzz',
-          media_type: 'video',
-          created_at: new Date().toISOString(),
-          url: '/posts/video 1.mp4',
-          is_main: true
-        }
-      ],
-      posts_comments: [
-        {
-          id: "aabbcc",
-          post_id: "xxxxxx",
-          user_id: "111111",
-          user: {
-            id: "anyaman_indonesia",
-            username: "anyaman_indonesia",
-            image_url: '/posts/1756376166448.png',
-            role: 'pengrajin'
-          },
-          comment: "Bagus banget!!!",
-          created_at: new Date().toISOString(),
-          replies: [
-            {
-              id: "xxxxxx",
-              comment_id: "xxxxxx",
-              user_id: "111111",
-              user: {
-                id: "anyaman_indonesia",
-                username: "anyaman_indonesia",
-                image_url: '/posts/1756376166448.png',
-                role: 'pengrajin'
-              },
-              reply: "Bagus banget!!!",
-              created_at: new Date().toISOString(),
-            },
-            {
-              id: "xxxxxx",
-              comment_id: "xxxxxx",
-              user_id: "111111",
-              user: {
-                id: "anyaman_indonesia",
-                username: "anyaman_indonesia",
-                image_url: '/posts/1756376166448.png',
-                role: 'pengrajin'
-              },
-              reply: "Bagus banget!!!",
-              created_at: new Date().toISOString(),
-            }
-          ]
-        }
-      ]
-  }
-  
-  const [post, setPost] = useState<DetailedPostWithComments|null>(null)
-  useEffect(() => {
-    setPost(temp_post)
-  }, [])
+  const { data: post, isLoading, isError, error } = useGetPostById(postId)
 
-  if(!post) return null
+  if(isLoading) return <LoadingComponent message="Loading post details..."/>
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-101 p-4">
-      <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex z-1">
-        <span className="flex-1 flex flex-col overflow-scroll">
+    <div className="fixed h-screen inset-0 bg-black/50 flex items-center justify-center z-101 p-4">
+      <div className="relative bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] h-full overflow-hidden flex z-1">
+        <span className="flex-1 flex flex-col overflow-scroll w-3/4">
           <div className="py-3 px-4 border-b flex items-center gap-3">
             <Avatar className="flex w-10 h-10 border border-gray-500 rounded-full overflow-hidden justify-center items-center">
               <AvatarImage src="/simple-green-leaf-logo.png" />
-              <AvatarFallback>{post.user.username[0].toUpperCase()}</AvatarFallback>
+              <AvatarFallback>{post?.user.username[0].toUpperCase()}</AvatarFallback>
             </Avatar>
             <div>
-              <div className="font-semibold text-sm line-clamp-1">{post.user.username}</div>
-              <div className="text-gray-500 text-xs line-clamp-1">{post.user.role}</div>
+              <div className="font-semibold text-sm line-clamp-1">{post?.user.username}</div>
+              <div className="text-gray-500 text-xs line-clamp-1">{post?.user.role}</div>
             </div>
           </div>
           
-          <MediaCarousel posts_media={post.posts_media}/>
+          <MediaCarousel posts_media={post?.posts_media ?? []}/>
 
           <span className="p-4 border-t">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1">
                   <Heart className="w-5 h-5" />
-                  <span className="text-sm font-medium">{post.like_count}</span>
+                  <span className="text-sm font-medium">{post?.like_count}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <MessageCircle className="w-5 h-5" />
-                  <span className="text-sm font-medium">{post.comment_count}</span>
+                  <span className="text-sm font-medium">{post?.comment_count}</span>
                 </div>
               </div>
             </div>
-            <span className="text-sm">
-              <span className="font-semibold">{post.title.length > 0 && `${post.title} | `}</span>
-              {post.description}
+            <span className="text-sm text-left">
+              <span className="font-semibold text-left">{post && post.title && post?.title.length > 0 && `${post?.title} | `}</span>
+              {post?.description}
             </span>
-            <div className="text-xs text-gray-500 mt-2">Posted on {format(post.created_at, "dd/MM/yyyy HH:mm")}</div>
+            <div className="text-xs text-gray-500 mt-2">Posted on {post && format(post?.created_at, "dd/MM/yyyy HH:mm")}</div>
           </span>
         </span>
 
-        <div className="w-80 border-l flex flex-col">
-          <div className="p-4 border-b flex items-center justify-between">
-            <h3 className="font-semibold">Comments ({post.comment_count})</h3>
-            <Button variant="ghost" size="sm" onClick={() => setPostModalId(null)}>
-              <X className="w-5 h-5" />
-            </Button>
-          </div>
-
-          <div className="flex-1 overflow-y-auto">
-            {post.posts_comments.concat(post.posts_comments).concat(post.posts_comments).concat(post.posts_comments).concat(post.posts_comments).concat(post.posts_comments).map((comment) => (
-              <CommentCard comment={comment} user={post.user} key={comment.id}/>
-            ))}
-          </div>
-
-          <div className="p-4 border-t">
-            <div className="flex gap-2">
-              <Avatar className="flex w-8 h-8 border border-gray-500 rounded-full overflow-hidden justify-center items-center">
-                <AvatarImage src="/user-profile-illustration.png" />
-                <AvatarFallback>U</AvatarFallback>
-              </Avatar>
-              <div className="flex-1 flex gap-2">
-                <Input placeholder="Add comments..." className="flex-1 text-sm" />
-                <Button size="sm" className="px-3">
-                  <Send className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <SideCommentSection 
+        post_id={postId} 
+        closeCommentSection={() => setPostModalId(null)}
+        user_id={userId}
+        className="flex flex-col h-full border-l"/>
       </div>
     </div>
   )

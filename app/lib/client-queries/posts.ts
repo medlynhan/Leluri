@@ -8,7 +8,7 @@ async function getPosts(): Promise<DetailedPostWithMedia[]> {
   const { data, error } = await supabase.from('posts')
     .select(`
       *,
-      user:users!FK_Post_User ( id, username, image_url, role ),
+      user:users!posts_user_id_fkey ( id, username, image_url, role ),
       posts_media (*)
     `)
   if (error) throw new Error(error.message);
@@ -19,6 +19,28 @@ export function useGetPosts() {
   return useQuery<DetailedPostWithMedia[], Error>({
     queryKey: ["posts"],
     queryFn: getPosts,
+  });
+}
+
+// get post by id
+async function getPostById(post_id: string): Promise<DetailedPostWithMedia> {
+  const { data, error } = await supabase.from('posts')
+    .select(`
+      *,
+      user:users!posts_user_id_fkey ( id, username, image_url, role ),
+      posts_media (*)
+      `)
+    .eq('id', post_id)
+    .single();
+
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export function useGetPostById(post_id: string) {
+  return useQuery<DetailedPostWithMedia, Error>({
+    queryKey: ["post", post_id],
+    queryFn: () => getPostById(post_id),
   });
 }
 

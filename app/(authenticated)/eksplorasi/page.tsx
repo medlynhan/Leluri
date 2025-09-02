@@ -15,8 +15,15 @@ import { MinimalInfoUser } from '@/lib/types/user';
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import { useGetPostCategories } from '@/lib/client-queries/postcategories';
 import LoadingComponent from '@/components/LoadingComponent';
+import { FaPlus } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
+import { User } from '@supabase/supabase-js';
+import { supabase } from '@/lib/supabase';
 
 const EksplorasiPage = () => {
+
+  const router = useRouter()
+  const [user, setUser] = useState<User|null>(null)
 
   const { data: posts = [], isLoading: isGetPostsLoading, isError: isGetPostsError, error: getPostsError } = useGetPosts()
   const { data: postcategories, isLoading: isGetPostCategoriesLoading, isError: isGetPostCategoriesError, error: getPostCategoriesError} = useGetPostCategories()
@@ -27,6 +34,18 @@ const EksplorasiPage = () => {
   const [selectedPostCategories, setSelectedPostCategories] = useState<string[]>([]);
   const [postModalId, setPostModalId] = useState<string | null>(null)
   const [search, setSearch] = useState<string>('')
+
+  useEffect(() => {
+    const fetchUser = async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+            setUser(user);
+        } else {
+            router.push('/login');
+        }
+    };
+    fetchUser();
+  }, [router]);
 
   useEffect(() => {
     if(posts && posts.length > 0) setFilteredPosts(posts)
@@ -81,7 +100,7 @@ const EksplorasiPage = () => {
 
   return (
     <div className="flex flex-col w-full h-full">
-      <div className="sticky top-0 flex flex-row items-center gap-4 p-4 z-1 bg-white">
+      <div className="sticky top-0 flex flex-row items-center gap-4 p-6 z-1 bg-white">
         <div className="relative w-full ml-20">
           <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
           <Input
@@ -106,6 +125,11 @@ const EksplorasiPage = () => {
         className="px-8 py-3 bg-orange-400 hover:bg-orange-500 text-white font-medium"
         onClick={() => searchUser(search)}>
           Cari
+        </Button>
+        <Button
+          className="ml-auto px-8 py-3 bg-orange-400 hover:bg-orange-500 text-white font-medium shadow-md"
+          onClick={() => router.push("/post")}>
+            <FaPlus width={5} height={5}/> Create Post
         </Button>
       </div>
 
@@ -147,8 +171,8 @@ const EksplorasiPage = () => {
         </div>
       )}
 
-      {(postModalId !== null) &&
-      <DetailedPostModal postId={postModalId} setPostModalId={setPostModalId}/>}
+      {(postModalId !== null) && user &&
+      <DetailedPostModal postId={postModalId} setPostModalId={setPostModalId} userId={user.id}/>}
     </div>
   );
 };

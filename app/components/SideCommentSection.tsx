@@ -11,7 +11,8 @@ import { useCreateReply } from "@/lib/client-queries/commentreplies"
 interface SideCommentSectionInterface {
   post_id: string,
   user_id: string,
-  closeCommentSection: () => void
+  closeCommentSection: () => void,
+  className?: string;
 }
 
 interface Replying {
@@ -22,7 +23,8 @@ interface Replying {
 const SideCommentSection = ({
   post_id,
   user_id,
-  closeCommentSection
+  closeCommentSection,
+  className = ''
 } : SideCommentSectionInterface) => {
 
   const { data: comments = [], isLoading, isError: isGetPostCommentsError, error: getPostCommentsError } = useGetPostComments(post_id)
@@ -51,9 +53,9 @@ const SideCommentSection = ({
   }
 
   if(isLoading) return <LoadingComponent message="loading post comments..."/>
-
+  
   return (
-    <div className="sticky top-0 right-0 flex flex-col h-screen min-w-84 w-full max-w-128 border-l bg-white">
+    <div className={`${className}`}>
       <div className="p-4 border-b flex items-center justify-between">
         <h3 className="font-semibold">Comments ({comments.length})</h3>
         <Button variant="ghost" size="sm" onClick={closeCommentSection}>

@@ -2,14 +2,16 @@
 
 import { CategoryFiltering } from "@/components/CategoryFilter"
 import ClassCard, { ClassCardInterface } from "@/components/ClassCard"
+import LoadingComponent from "@/components/LoadingComponent"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Category } from "@/lib/types"
+import { useGetClassCategories } from "@/lib/client-queries/classcategories"
+import { useGetClasses } from "@/lib/client-queries/classes"
 import { MinimalInfoUser } from "@/lib/types/user"
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar"
 import { Search } from "lucide-react"
 import Image from "next/image"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { FaX } from "react-icons/fa6"
 
 const Kelas = () => {
@@ -75,18 +77,18 @@ const Kelas = () => {
     },
   ];
 
-  const [classes, setClasses] = useState<ClassCardInterface[]>([])
+  const { data: classes = [], isLoading: isGetClassesLoading, isError: isGetClassesError, error: getClassesError } = useGetClasses()
+  const { data: classcategories = [], isLoading: isGetClassCategoriesLoading, isError: isGetClassCategoriesError, error: getClassCategoriesError } = useGetClassCategories()
+
   const [users, setUsers] = useState<MinimalInfoUser[]>([])
   const [filteredClasses, setFilteredClasses] = useState<ClassCardInterface[]>([])
 
   const [categoryFilterOpened, setCategoryFilterOpened] = useState<boolean>(false)
-  const [classcategories, setClassCategories] = useState<Category[]>([])
   const [selectedClassCategories, setSelectedClassCategories] = useState<string[]>([]);
 
-  useMemo(() => {
-    setClasses(temp_classes)
-    setClassCategories(temp_categories)
-  }, [])
+  useEffect(() => {
+    if(classes && classes.length > 0) setFilteredClasses(classes)
+  }, [classes])
 
   useMemo(() => {
     if (selectedClassCategories.length > 0) {
@@ -97,7 +99,7 @@ const Kelas = () => {
     } else {
       setFilteredClasses(classes);
     }
-  }, [selectedClassCategories, classes]);
+  }, [selectedClassCategories]);
 
   const [search, setSearch] = useState<string>('')
   const searchClass = (search : string) => {
@@ -121,14 +123,15 @@ const Kelas = () => {
     }
   }
 
-  if(!classes || classes.length <= 0) return <div>Loading...</div>
+  if(isGetClassCategoriesLoading) return <LoadingComponent message="Loading class category options ..."/>
+  if(isGetClassesLoading) return <LoadingComponent message="Loading available classes ..."/>
 
   console.log(classes)
   console.log(filteredClasses)
 
   return (
     <div className="flex flex-col w-full h-full">
-      <div className="sticky top-0 flex flex-row items-center gap-4 p-4 z-1 bg-white">
+      <div className="sticky top-0 flex flex-row items-center gap-4 p-6 z-1 bg-white">
         <div className="relative w-full ml-20">
           <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
           <Input
