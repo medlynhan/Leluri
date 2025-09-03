@@ -168,3 +168,5 @@ const CreateClassModal = () => {
     </div>
   )
 }
+
+export default CreateClassModal

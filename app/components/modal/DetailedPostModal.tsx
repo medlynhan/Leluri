@@ -3,10 +3,10 @@ import { Heart, MessageCircle, Send, X } from "lucide-react"
 import { DetailedPostWithComments } from "@/lib/types/posts"
 import { useEffect, useState } from "react"
 import { format } from 'date-fns'
-import MediaCarousel from "./MediaCarousel"
-import SideCommentSection from "./SideCommentSection"
+import MediaCarousel from "../MediaCarousel"
+import SideCommentSection from "../SideCommentSection"
 import { useGetPostById } from "@/lib/client-queries/posts"
-import LoadingComponent from "./LoadingComponent"
+import LoadingComponent from "../LoadingComponent"
 
 interface DetailedPostModal {
   postId: string,

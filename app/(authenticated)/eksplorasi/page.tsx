@@ -10,7 +10,7 @@ import { DetailedPostWithMedia } from '@/lib/types/posts';
 import { FaX } from 'react-icons/fa6';
 import Image from 'next/image'
 import PostCard from '@/components/PostCard';
-import DetailedPostModal from '@/components/DetailedPostModal';
+import DetailedPostModal from '@/components/modal/DetailedPostModal';
 import { MinimalInfoUser } from '@/lib/types/user';
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import { useGetPostCategories } from '@/lib/client-queries/postcategories';

@@ -9,23 +9,24 @@ import { IoLocationOutline, IoLogoWhatsapp } from "react-icons/io5";
 import PostPreview from '../../components/PostPreview';
 import { LogOut, X, Award } from "lucide-react"
 import { fetchUnlockedAchievements, evaluateAchievements, AchievementRow, recordAction } from '../../lib/achievements';
-import AchievementUnlockModal from '../../components/AchievementUnlockModal';
+import AchievementUnlockModal from '../../components/modal/AchievementUnlockModal';
 import { Home, Compass, BookOpen, ShoppingBag, Hamburger } from 'lucide-react'
 import SelectDropdown from '@/components/SelectDropdown';
 import { useGetClassCategories } from '@/lib/client-queries/classcategories';
 import LoadingComponent from '@/components/LoadingComponent';
 import PostCard from '@/components/PostCard';
 import { DetailedPostWithMedia } from '@/lib/types/posts';
+import DetailedPostModal from '@/components/modal/DetailedPostModal';
 
-interface Post {
-  id: string
-  user_id: string
-  description: string
-  image_url: string
-  created_at: string
-  likes: number
-  category: string
-}
+// interface Post {
+//   id: string
+//   user_id: string
+//   description: string
+//   image_url: string
+//   created_at: string
+//   likes: number
+//   category: string
+// }
 
 interface ProfileState {
   username: string
@@ -46,8 +47,8 @@ const ProfilePage: React.FC = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
-  const [posts, setPosts] = useState<Post[]>([])
-  const [selectedPost, setSelectedPost] = useState<Post | null>(null)
+  const [posts, setPosts] = useState<DetailedPostWithMedia[]>([])
+  // const [selectedPost, setSelectedPost] = useState<DetailedPostWithMedia | null>(null)
   const [hasProduct, setHasProduct] = useState(false)
   const [hasClass, setHasClass] = useState(false) 
 
@@ -69,6 +70,8 @@ const ProfilePage: React.FC = () => {
   const [achievements, setAchievements] = useState<AchievementRow[]>([])
   const [showAchievementsModal, setShowAchievementsModal] = useState(false)
   const [unlockQueue, setUnlockQueue] = useState<AchievementRow[]>([])
+
+  const [postModalId, setPostModalId] = useState<string | null>(null)
 
   // Simple color palette for achievement badge borders (cycled)
   const badgeColors = ['#F5C518', '#C084FC', '#3B82F6', '#10B981', '#FB7185', '#F59E0B']
@@ -93,7 +96,11 @@ const ProfilePage: React.FC = () => {
 
   const { data: postsData, error: postsError } = await supabase
           .from("posts")
-          .select("*")
+          .select(`
+            *,
+            posts_media (*),
+            user:users!posts_user_id_fkey ( id, image_url, role, username )
+            `)
           .eq("user_id", user.id)
           .order("created_at", { ascending: false })
 
@@ -266,7 +273,12 @@ const ProfilePage: React.FC = () => {
 
   return (
     <div className="flex w-full relative min-h-screen overflow-x-hidden">
-      <div className={`${isEditMode || showAddModal || selectedPost ? "fixed" : ""}  flex flex-col lg:flex-row  h-full w-full `}>
+
+      {(postModalId !== null) && user &&
+      <DetailedPostModal postId={postModalId} setPostModalId={setPostModalId} userId={user.id}/>}
+
+      <div className={`${isEditMode || showAddModal ? "fixed" : ""}  flex flex-col lg:flex-row  h-full w-full `}>
+      {/* <div className={`${isEditMode || showAddModal || selectedPost ? "fixed" : ""}  flex flex-col lg:flex-row  h-full w-full `}> */}
         <div className="w-full min-h-[30vh] lg:min-h-[60vh] ml-0 lg:w-80 border-b lg:border-b-transparent lg:border-r border-[var(--medium-grey)] p-6 ">
           <div className="w-full flex flex-col items-center text-center">
             <div className="justify-items items-center relative mb-4">
@@ -395,20 +407,19 @@ const ProfilePage: React.FC = () => {
             <div className="relative">
               <div className="grid grid-cols-3 gap-4">
                 {posts.map((post) => (
-                  // <PostCard key={post.id} post={post}/>
-                  <div
-                    key={post.id}
-                    className="border border-black aspect-square cursor-pointer rounded-lg overflow-hidden hover:opacity-90 transition-opacity"
-                    onClick={() => setSelectedPost(post)}
-                  >
-                    <Image
-                      src={post.image_url || "/placeholder.svg"}
-                      alt={post.description}
-                      width={200}
-                      height={200}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                  <PostCard key={post.id} post={post} onClick={() => setPostModalId(post.id)}/>
+                  // <div
+                  // key={post.id}
+                  // className="border border-black aspect-square cursor-pointer rounded-lg overflow-hidden hover:opacity-90 transition-opacity"
+                  // onClick={() => setSelectedPost(post)}>
+                  //   <Image
+                  //     src={post.image_url || "/placeholder.svg"}
+                  //     alt={post.description}
+                  //     width={200}
+                  //     height={200}
+                  //     className="w-full h-full object-cover"
+                  //   />
+                  // </div>
                 ))}
               </div>
               <button
@@ -950,7 +961,7 @@ const ProfilePage: React.FC = () => {
       />
 
 
-  {selectedPost && (
+  {/* {selectedPost && (
         <PostPreview
           post={selectedPost}
           onClose={() => setSelectedPost(null)}
@@ -963,7 +974,7 @@ const ProfilePage: React.FC = () => {
             setSelectedPost(null);
           }}
         />
-      )}
+      )} */}
     </div>
   )
 }

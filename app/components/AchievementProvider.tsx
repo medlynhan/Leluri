@@ -2,7 +2,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { fetchUnlockedAchievements, evaluateAchievements, recordAction, AchievementRow } from '../lib/achievements';
-import AchievementUnlockModal from './AchievementUnlockModal';
+import AchievementUnlockModal from './modal/AchievementUnlockModal';
 
 interface AchievementContextValue {
   achievements: AchievementRow[];
