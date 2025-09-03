@@ -277,9 +277,9 @@ const ProfilePage: React.FC = () => {
       {(postModalId !== null) && user &&
       <DetailedPostModal postId={postModalId} setPostModalId={setPostModalId} userId={user.id}/>}
 
-      <div className={`${isEditMode || showAddModal ? "fixed" : ""}  flex flex-col lg:flex-row  h-full w-full `}>
+      <div className={`${isEditMode || showAddModal  || postModalId ? "fixed" : ""}  flex flex-col lg:flex-row  h-full w-full  max-w-screen`}>
       {/* <div className={`${isEditMode || showAddModal || selectedPost ? "fixed" : ""}  flex flex-col lg:flex-row  h-full w-full `}> */}
-        <div className="w-full min-h-[30vh] lg:min-h-[60vh] ml-0 lg:w-80 border-b lg:border-b-transparent lg:border-r border-[var(--medium-grey)] p-6 ">
+        <div className="w-full min-h-[30vh] lg:min-h-[60vh]   ml-0 lg:w-80 border-b lg:border-b-transparent lg:border-r border-[var(--medium-grey)] p-6 ">
           <div className="w-full flex flex-col items-center text-center">
             <div className="justify-items items-center relative mb-4">
               <div className="w-24 h-24 rounded-full  p-1 ">
@@ -405,9 +405,9 @@ const ProfilePage: React.FC = () => {
 
           {posts.length > 0 ? (
             <div className="relative">
-              <div className="grid grid-cols-[repeat(auto-fill,minmax(12em,1fr))] p-3 gap-2 lg:gap-4">
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(17em,1fr))] p-3 gap-2 lg:gap-4">
                 {posts.map((post) => (
-                  <PostCard key={post.id} post={post} onClick={() => setPostModalId(post.id)} hidden={" "}/>
+                  <PostCard key={post.id} post={post} onClick={() => setPostModalId(post.id)} hidden={"hidden"}/>
                   // <div
                   // key={post.id}
                   // className="border border-black aspect-square cursor-pointer rounded-lg overflow-hidden hover:opacity-90 transition-opacity"
@@ -424,7 +424,7 @@ const ProfilePage: React.FC = () => {
               </div>
               <button
                 onClick={() => router.push("/post")}
-                className="absolute top-0 right-0 w-12 h-12 bg-black text-white rounded-full flex items-center justify-center hover:bg-[var(--dark-grey)] transition-colors shadow-lg"
+                className="fixed absolute top-0 right-0 w-12 h-12 bg-black text-white rounded-full flex items-center justify-center hover:bg-[var(--dark-grey)] transition-colors shadow-lg"
               >
                 <FaPlus className="w-5 h-5" />
               </button>

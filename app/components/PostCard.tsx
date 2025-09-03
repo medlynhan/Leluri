@@ -49,7 +49,7 @@ const PostCard = ({
 
   return (
     <Card  
-    key={post.id} className="overflow-hidden border-0 shadow-sm p-0 gap-0 border-4  border-blue-200 "
+    key={post.id} className="overflow-hidden border-0 shadow-sm p-0 gap-0 min-w-60"
     onClick={() => onClick && onClick()}>
       <MediaCarousel posts_media={[post.posts_media[0]]} />
 
