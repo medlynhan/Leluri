@@ -10,7 +10,6 @@ import { useEffect } from "react";
 import "aos/dist/aos.css";
 import AOS from "aos";
 
-
 export default function Home() {
 
   useEffect(() => {
@@ -20,11 +19,11 @@ export default function Home() {
   const router  = useRouter();
 
   const goToLoginPage = () => {
-    router.push('/Login'); 
+    router.push('/login'); 
   };
 
   const goToSignUpPage = () => {
-    router.push('/SignUp'); 
+    router.push('/signup'); 
   };
 
   return (

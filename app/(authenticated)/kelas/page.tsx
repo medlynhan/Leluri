@@ -1,92 +1,34 @@
 "use client"
 
 import { CategoryFiltering } from "@/components/CategoryFilter"
-import ClassCard, { ClassCardInterface } from "@/components/ClassCard"
+import ClassCard from "@/components/ClassCard"
+import LoadingComponent from "@/components/LoadingComponent"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Category } from "@/lib/types"
+import { useGetClassCategories } from "@/lib/client-queries/classcategories"
+import { useGetClasses } from "@/lib/client-queries/classes"
+import { ClassCardInterface } from "@/lib/types/classes"
 import { MinimalInfoUser } from "@/lib/types/user"
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar"
 import { Search } from "lucide-react"
 import Image from "next/image"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { FaX } from "react-icons/fa6"
 
 const Kelas = () => {
 
-  const temp_categories = [
-    { id: "a1b2c3d4", name: "Kerajinan Tangan" },
-    { id: "e5f6g7h8", name: "Seni Rupa" },
-    { id: "i9j0k1l2", name: "Pakaian Tradisional" },
-    { id: "m3n4o5p6", name: "Seni Pertunjukan" },
-    { id: "q7r8s9t0", name: "Kuliner Tradisional" }
-  ];
-  const temp_classes = [
-    {
-      id: "xxxxx",
-      title: "Advanced React Development",
-      creator_id: "98765",
-      avg_rating: 4.8,
-      image_url: '/posts/1756376166448.png',
-      description: "An in-depth course on React, covering hooks, context, performance optimizations, and more.",
-      location: "Online",
-      created_at: "2023-08-01T14:30:00Z",
-      category_id: "programming",
-      creator: {
-        id: "98765",
-        username: "johndoe_dev",
-        role: "Instructor",
-        image_url: '/posts/1756376166448.png',
-      },
-    },
-    {
-      id: "yyy12",
-      title: "Mastering TypeScript",
-      creator_id: "11223",
-      avg_rating: 4.7,
-      image_url: '/posts/1756376166448.png',
-      description: "Learn TypeScript in depth with practical examples and advanced concepts.",
-      location: "Online",
-      created_at: "2023-07-15T10:00:00Z",
-      category_id: "programming",
-      creator: {
-        id: "11223",
-        username: "janedoe_dev",
-        role: "Instructor",
-        image_url: '/posts/1756376166448.png',
-      },
-    },
-    {
-      id: "54321",
-      title: "Mastering TypeScript Mastering TypeScript Mastering TypeScript Mastering TypeScript Mastering TypeScript",
-      creator_id: "11223",
-      avg_rating: 4.7,
-      image_url: '/posts/1756376166448.png',
-      description: "Learn TypeScript in depth with practical examples and advanced concepts.",
-      location: "Online",
-      created_at: "2023-07-15T10:00:00Z",
-      category_id: "programming",
-      creator: {
-        id: "55667",
-        username: "robertdoe_dev",
-        role: "Instructor",
-        image_url: '/posts/1756376166448.png',
-      },
-    },
-  ];
+  const { data: classes = [], isLoading: isGetClassesLoading, isError: isGetClassesError, error: getClassesError } = useGetClasses()
+  const { data: classcategories = [], isLoading: isGetClassCategoriesLoading, isError: isGetClassCategoriesError, error: getClassCategoriesError } = useGetClassCategories()
 
-  const [classes, setClasses] = useState<ClassCardInterface[]>([])
   const [users, setUsers] = useState<MinimalInfoUser[]>([])
   const [filteredClasses, setFilteredClasses] = useState<ClassCardInterface[]>([])
 
   const [categoryFilterOpened, setCategoryFilterOpened] = useState<boolean>(false)
-  const [classcategories, setClassCategories] = useState<Category[]>([])
   const [selectedClassCategories, setSelectedClassCategories] = useState<string[]>([]);
 
-  useMemo(() => {
-    setClasses(temp_classes)
-    setClassCategories(temp_categories)
-  }, [])
+  useEffect(() => {
+    if(classes && classes.length > 0) setFilteredClasses(classes)
+  }, [classes])
 
   useMemo(() => {
     if (selectedClassCategories.length > 0) {
@@ -97,13 +39,13 @@ const Kelas = () => {
     } else {
       setFilteredClasses(classes);
     }
-  }, [selectedClassCategories, classes]);
+  }, [selectedClassCategories]);
 
   const [search, setSearch] = useState<string>('')
   const searchClass = (search : string) => {
     if(search === '') return
     setFilteredClasses(
-      classes.filter((classData) => classData.title.toLowerCase().includes(search.toLowerCase()))
+      classes.filter((classData) => classData.name.toLowerCase().includes(search.toLowerCase()))
     )
     setUsers(
       classes
@@ -121,15 +63,13 @@ const Kelas = () => {
     }
   }
 
-  if(!classes || classes.length <= 0) return <div>Loading...</div>
-
-  console.log(classes)
-  console.log(filteredClasses)
+  if(isGetClassCategoriesLoading) return <LoadingComponent message="Loading class category options ..."/>
+  if(isGetClassesLoading) return <LoadingComponent message="Loading available classes ..."/>
 
   return (
     <div className="flex flex-col w-full h-full">
-      <div className="sticky top-0 flex flex-row items-center gap-4 p-4 z-1 bg-white">
-        <div className="relative w-full">
+      <div className="sticky top-0 flex flex-row items-center gap-4 p-6 z-1 bg-white">
+        <div className="relative w-full ml-20">
           <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
           <Input
             placeholder="Apa yang ingin kamu temukan ?"
@@ -162,7 +102,7 @@ const Kelas = () => {
         <div className="grid grid-cols-6 gap-3 overflow-hidden p-1">
           {users.map((user) => (
             <div className="flex flex-col items-center max-w-48 justify-center p-4 shadow-md rounded-md" key={user.id}>
-              <Avatar className="mb-2 w-18 h-18 border border-gray-500 rounded-full overflow-hidden justify-center items-center">
+              <Avatar className="flex mb-2 w-18 h-18 border border-gray-500 rounded-full overflow-hidden justify-center items-center">
                 <AvatarImage src={user.image_url || "/placeholder.svg"} />
                 <AvatarFallback>{user.username[0].toUpperCase()}</AvatarFallback>
               </Avatar>

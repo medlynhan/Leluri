@@ -78,8 +78,9 @@ export interface Post {
   description: string;
   created_at: string;
   category_id: string;
-  like_count: number;
+  likes: number;
   comment_count: number;
+  liked?: boolean
 }
 
 export interface PostLike {
@@ -106,7 +107,7 @@ export interface CommentReply {
 
 export interface Class {
   id: string;
-  title: string;
+  name: string;
   creator_id: string;
   avg_rating: number;
   image_url: string;
@@ -121,7 +122,7 @@ export interface ClassMentee {
   user_id: string;
   class_id: string;
   created_at: string;
-  is_verified: boolean;
+  is_verified?: boolean;
 }
 
 export interface UserAchievement {
@@ -134,8 +135,8 @@ export interface UserAchievement {
 export interface PostMedia {
   id: string;
   post_id: string;
-  url: string;
   media_type: string;
+  media_url: string;
   created_at: string;
   is_main: boolean;
 }

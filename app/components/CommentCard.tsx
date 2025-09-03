@@ -1,28 +1,39 @@
+import { useGetCommentReplies } from "@/lib/client-queries/commentreplies"
 import { CommentReply } from "@/lib/types"
-import { PostCommentWithReplies } from "@/lib/types/comments"
+import { PostCommentWithUser } from "@/lib/types/comments"
 import { MinimalInfoUser } from "@/lib/types/user"
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar"
 import { formatDistanceToNow } from "date-fns"
 import { useState } from "react"
+import LoadingComponent from "./LoadingComponent"
 
 interface CommentCard {
-  comment : PostCommentWithReplies
-  user : MinimalInfoUser
+  comment : PostCommentWithUser,
+  onReplyClicked: (id : string, username : string) => void
 }
 
 const CommentCard = ({ 
   comment,
-  user 
+  onReplyClicked
 } : CommentCard) => {
+
+  const { data: replies = [], isLoading, isError: isGetCommentRepliesError, error: getCommentRepliesError } = useGetCommentReplies(comment.id)
 
   const [isRepliesOpened, setIsRepliesOpened] = useState<boolean>(false)
 
+  const handleReplyClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onReplyClicked(comment.id, comment.user.username);
+  }
+
+  if(isLoading) return <LoadingComponent message=""/>
+
   return (
-    <div key={comment.id} className="p-4 border-b">
+    <div className="p-4 border-b">
       <div className="flex gap-3">
         <Avatar className="flex w-8 h-8 border border-gray-500 rounded-full overflow-hidden justify-center items-center">
           <AvatarImage src="/simple-green-leaf-logo.png" />
-          <AvatarFallback>{user.username[0].toUpperCase()}</AvatarFallback>
+          <AvatarFallback>{comment.user.username[0].toUpperCase()}</AvatarFallback>
         </Avatar>
         <div className="flex-1">
           <span className="flex flex-row">
@@ -32,12 +43,12 @@ const CommentCard = ({
           <div className="font-semibold text-xs mb-1">{comment.user.username}</div>
           <div className="text-xs mb-2">{comment.comment}</div>
           <div className="flex flex-row text-gray-400 text-xs gap-3">
-            <span className="cursor-pointer">reply</span>
+            <span className="cursor-pointer" onClick={(e) => handleReplyClick(e)}>reply</span>
             <span onClick={() => setIsRepliesOpened(!isRepliesOpened)} className="cursor-pointer">
               {isRepliesOpened ? `v hide` : '> see'} replies
             </span>
           </div>
-          {isRepliesOpened && comment.replies.map((reply) => (
+          {isRepliesOpened && replies.map((reply) => (
             <ReplyCard reply={reply} user={reply.user} key={reply.id}/>
           ))}
         </div>

@@ -18,12 +18,16 @@ const MediaCarousel = ({ posts_media } : { posts_media : PostMedia[] }) => {
   const handleVideoClick = () => {
     const videoElement = document.getElementById(`video-${mediaIdx}`) as HTMLVideoElement;
     if (videoElement) {
-      if (isVideoPlaying) {
-        videoElement.pause();
-      } else {
+      if (videoElement.paused && !videoElement.ended) {
         videoElement.play();
+        setIsVideoPlaying(true);
+        videoElement.onended = () => {
+          setIsVideoPlaying(false);
+        };
+      } else if (!videoElement.paused && !videoElement.ended) {
+        videoElement.pause();
+        setIsVideoPlaying(false);
       }
-      setIsVideoPlaying(!isVideoPlaying);
     }
   };
 
@@ -32,7 +36,7 @@ const MediaCarousel = ({ posts_media } : { posts_media : PostMedia[] }) => {
       <div className="w-full object-contain flex-1 relative bg-gray-100 overflow-auto">
         {posts_media && posts_media[mediaIdx].media_type === "image" && (
           <Image
-          src={posts_media[mediaIdx].url}
+          src={posts_media[mediaIdx].media_url}
           alt="Media not accessible..."
           height={480}
           width={480}
@@ -45,7 +49,7 @@ const MediaCarousel = ({ posts_media } : { posts_media : PostMedia[] }) => {
               className="object-contain w-full h-full bg-gray-200 cursor-pointer"
               loop
             >
-              <source src={posts_media[mediaIdx].url} type="video/mp4" />
+              <source src={posts_media[mediaIdx].media_url} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
             {!isVideoPlaying && <PauseCircle className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 text-white p-1" />}
