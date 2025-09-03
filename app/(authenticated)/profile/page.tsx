@@ -272,7 +272,7 @@ const ProfilePage: React.FC = () => {
   if(isGetClassCategoriesLoading) return <LoadingComponent message="Loading class categories options..."/>
 
   return (
-    <div className="flex w-full relative min-h-screen overflow-x-hidden">
+    <div className="flex  min-h-screen overflow-x-hidden lg:ml-64 min-h-screen">
 
       {(postModalId !== null) && user &&
       <DetailedPostModal postId={postModalId} setPostModalId={setPostModalId} userId={user.id}/>}
@@ -405,9 +405,9 @@ const ProfilePage: React.FC = () => {
 
           {posts.length > 0 ? (
             <div className="relative">
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(12em,1fr))] p-3 gap-2 lg:gap-4">
                 {posts.map((post) => (
-                  <PostCard key={post.id} post={post} onClick={() => setPostModalId(post.id)}/>
+                  <PostCard key={post.id} post={post} onClick={() => setPostModalId(post.id)} hidden={" "}/>
                   // <div
                   // key={post.id}
                   // className="border border-black aspect-square cursor-pointer rounded-lg overflow-hidden hover:opacity-90 transition-opacity"

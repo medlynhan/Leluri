@@ -6,7 +6,7 @@ export default function AuthenticatedLayout({ children }: { children: React.Reac
   const pathname = usePathname();
   const isCartPage = pathname === '/keranjang';
   return (
-    <div className="flex w-screen relative min-h-screen">
+    <div className="relative flex w-screen relative min-h-screen">
       <SideBar />
       <main className={`bg-white w-screen ${isCartPage && 'overflow-hidden'}`}>{children}</main>
     </div>

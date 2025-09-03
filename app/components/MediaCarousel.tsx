@@ -32,15 +32,15 @@ const MediaCarousel = ({ posts_media } : { posts_media : PostMedia[] }) => {
   };
 
   return (
-    <div className="flex flex-col min-h-72 h-5/6 max-h-108">
-      <div className="w-full object-contain flex-1 relative bg-gray-100 overflow-auto">
+    <div className="flex flex-col  aspect-square border-3 border-yellow-200">
+      <div className="w-full object-contain flex-1 relative  bg-gray-100 overflow-auto">
         {posts_media && posts_media[mediaIdx].media_type === "image" && (
           <Image
           src={posts_media[mediaIdx].media_url}
           alt="Media not accessible..."
           height={480}
           width={480}
-          className="object-contain w-full h-full bg-gray-200"/>
+          className="object-contain w-full h-full bg-gray-200 "/>
         )}
         {posts_media && posts_media[mediaIdx].media_type === "video" && (
           <div className="relative w-full h-full p-0 m-0" onClick={handleVideoClick}>
