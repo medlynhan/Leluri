@@ -102,7 +102,7 @@ const Kelas = () => {
         <div className="grid grid-cols-6 gap-3 overflow-hidden p-1">
           {users.map((user) => (
             <div className="flex flex-col items-center max-w-48 justify-center p-4 shadow-md rounded-md" key={user.id}>
-              <Avatar className="mb-2 w-18 h-18 border border-gray-500 rounded-full overflow-hidden justify-center items-center">
+              <Avatar className="flex mb-2 w-18 h-18 border border-gray-500 rounded-full overflow-hidden justify-center items-center">
                 <AvatarImage src={user.image_url || "/placeholder.svg"} />
                 <AvatarFallback>{user.username[0].toUpperCase()}</AvatarFallback>
               </Avatar>

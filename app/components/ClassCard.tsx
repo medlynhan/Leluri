@@ -27,7 +27,7 @@ const ClassCard = ({
         <div className="flex flex-col gap-4 p-4">
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-3">
-              <Avatar className="w-8 h-8 border border-gray-500 rounded-full overflow-hidden justify-center items-center">
+              <Avatar className="flex w-8 h-8 border border-gray-500 rounded-full overflow-hidden justify-center items-center">
                 <AvatarImage src={classData.creator.image_url || "/placeholder.svg"} />
                 <AvatarFallback>{classData.creator.username[0].toUpperCase()}</AvatarFallback>
               </Avatar>

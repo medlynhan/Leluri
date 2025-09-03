@@ -61,7 +61,7 @@ export default function ClassDetails() {
       setShowRegistrationModal={setIsRegistrationModalOpened}
       className="fixed top-0 left-0 z-105 h-screen w-screen overflow-auto"/>}
 
-      <div className="sticky top-0 bg-white p-4">
+      <div className="sticky top-0 pl-24 bg-white p-4">
         <ArrowLeft className="h-6 w-6 text-gray-700" onClick={() => router.back()}/>
       </div>
       <div className="flex flex-col px-24 gap-8 py-16">
