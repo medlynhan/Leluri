@@ -12,7 +12,6 @@ async function getPosts(user_id : string): Promise<DetailedPostWithMedia[]> {
       posts_media (*),
       posts_likes!fk_postlike_post ( user_id )
     `).order("created_at", { ascending: true })
-    console.log(user_id)
   if (error) throw new Error(error.message);
   return data.map((post) => ({
     ...post,
