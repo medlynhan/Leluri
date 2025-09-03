@@ -1,12 +1,13 @@
 "use client"
 
 import { CategoryFiltering } from "@/components/CategoryFilter"
-import ClassCard, { ClassCardInterface } from "@/components/ClassCard"
+import ClassCard from "@/components/ClassCard"
 import LoadingComponent from "@/components/LoadingComponent"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useGetClassCategories } from "@/lib/client-queries/classcategories"
 import { useGetClasses } from "@/lib/client-queries/classes"
+import { ClassCardInterface } from "@/lib/types/classes"
 import { MinimalInfoUser } from "@/lib/types/user"
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar"
 import { Search } from "lucide-react"
@@ -15,67 +16,6 @@ import { useEffect, useMemo, useState } from "react"
 import { FaX } from "react-icons/fa6"
 
 const Kelas = () => {
-
-  const temp_categories = [
-    { id: "a1b2c3d4", name: "Kerajinan Tangan" },
-    { id: "e5f6g7h8", name: "Seni Rupa" },
-    { id: "i9j0k1l2", name: "Pakaian Tradisional" },
-    { id: "m3n4o5p6", name: "Seni Pertunjukan" },
-    { id: "q7r8s9t0", name: "Kuliner Tradisional" }
-  ];
-  const temp_classes = [
-    {
-      id: "xxxxx",
-      title: "Advanced React Development",
-      creator_id: "98765",
-      avg_rating: 4.8,
-      image_url: '/posts/1756376166448.png',
-      description: "An in-depth course on React, covering hooks, context, performance optimizations, and more.",
-      location: "Online",
-      created_at: "2023-08-01T14:30:00Z",
-      category_id: "programming",
-      creator: {
-        id: "98765",
-        username: "johndoe_dev",
-        role: "Instructor",
-        image_url: '/posts/1756376166448.png',
-      },
-    },
-    {
-      id: "yyy12",
-      title: "Mastering TypeScript",
-      creator_id: "11223",
-      avg_rating: 4.7,
-      image_url: '/posts/1756376166448.png',
-      description: "Learn TypeScript in depth with practical examples and advanced concepts.",
-      location: "Online",
-      created_at: "2023-07-15T10:00:00Z",
-      category_id: "programming",
-      creator: {
-        id: "11223",
-        username: "janedoe_dev",
-        role: "Instructor",
-        image_url: '/posts/1756376166448.png',
-      },
-    },
-    {
-      id: "54321",
-      title: "Mastering TypeScript Mastering TypeScript Mastering TypeScript Mastering TypeScript Mastering TypeScript",
-      creator_id: "11223",
-      avg_rating: 4.7,
-      image_url: '/posts/1756376166448.png',
-      description: "Learn TypeScript in depth with practical examples and advanced concepts.",
-      location: "Online",
-      created_at: "2023-07-15T10:00:00Z",
-      category_id: "programming",
-      creator: {
-        id: "55667",
-        username: "robertdoe_dev",
-        role: "Instructor",
-        image_url: '/posts/1756376166448.png',
-      },
-    },
-  ];
 
   const { data: classes = [], isLoading: isGetClassesLoading, isError: isGetClassesError, error: getClassesError } = useGetClasses()
   const { data: classcategories = [], isLoading: isGetClassCategoriesLoading, isError: isGetClassCategoriesError, error: getClassCategoriesError } = useGetClassCategories()
@@ -105,7 +45,7 @@ const Kelas = () => {
   const searchClass = (search : string) => {
     if(search === '') return
     setFilteredClasses(
-      classes.filter((classData) => classData.title.toLowerCase().includes(search.toLowerCase()))
+      classes.filter((classData) => classData.name.toLowerCase().includes(search.toLowerCase()))
     )
     setUsers(
       classes
@@ -125,9 +65,6 @@ const Kelas = () => {
 
   if(isGetClassCategoriesLoading) return <LoadingComponent message="Loading class category options ..."/>
   if(isGetClassesLoading) return <LoadingComponent message="Loading available classes ..."/>
-
-  console.log(classes)
-  console.log(filteredClasses)
 
   return (
     <div className="flex flex-col w-full h-full">

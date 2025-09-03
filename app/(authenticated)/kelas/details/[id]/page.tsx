@@ -5,39 +5,33 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import Image from "next/image"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { ClassWithCreator } from "@/lib/types/class"
-import RegistrationModal from "@/components/RegistrationModal"
+import RegistrationModal from "@/components/ClassRegistrationModal"
+import { useGetClassById } from "@/lib/client-queries/classes"
+import LoadingComponent from "@/components/LoadingComponent"
+import { User } from "@supabase/supabase-js"
+import { supabase } from "@/lib/supabase"
 
-export default function BaliDanceClass() {
-
-  const temp_class: ClassWithCreator = {
-    id: "1",
-    title: "React for Beginners",
-    creator_id: "12345",
-    creator: {
-      id: "anyaman_indonesia",
-      username: "anyaman_indonesia",
-      image_url: '/posts/1756376166448.png',
-      role: 'pengrajin'
-    },
-    avg_rating: 4.8,
-    // image_url: '/posts/1756376166448.png',
-    image_url: '/posts/ss2.png',
-    description: "Learn the fundamentals of React, including hooks, components, and state management.",
-    location: "Online",
-    created_at: "2023-08-01T14:30:00Z",
-    category_id: "web-development",
-  };
+export default function ClassDetails() {
 
   const { id } = useParams()
   const router = useRouter()
 
-  const [isRegistrationModalOpened, setIsRegistrationModalOpened] = useState<boolean>(false)
-
-  const [classData, setClassData] = useState<ClassWithCreator|null>(null)
+  const [user, setUser] = useState<User|null>(null);
+  
   useEffect(() => {
-    setClassData(temp_class)
-  }, [])
+    const fetchUser = async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if(user) setUser(user);
+        else router.push('/login');
+    };
+    fetchUser();
+  }, [router]);
+
+  if(!id) return <p>No class ID provided.</p>
+
+  const { data: classData, isLoading: isGetClassByIdLoading, isError: isGetClassByIdError, error: getClassByIdError } = useGetClassById(Array.isArray(id) ? id[0] : id)
+
+  const [isRegistrationModalOpened, setIsRegistrationModalOpened] = useState<boolean>(false)
 
   useEffect(() => {
     if (isRegistrationModalOpened === true) {
@@ -50,16 +44,22 @@ export default function BaliDanceClass() {
     };
   }, [isRegistrationModalOpened]);
 
-  if(!classData) return <div>Loading...</div>
+  if(isGetClassByIdLoading) return <LoadingComponent message="Loading class information..."/>
+  if(isGetClassByIdError || !classData) return <p>Could not load class data. Please try again later.</p>
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
 
-      {isRegistrationModalOpened && 
+      {isRegistrationModalOpened && user &&
       <RegistrationModal 
-      classId={id ? (Array.isArray(id) ? id[0] : id) : ''}
+      formData={{
+        class_id: id ? (Array.isArray(id) ? id[0] : id) : '',
+        user_id: user.id,
+        notes: ''
+      }}
       showRegistrationModal={isRegistrationModalOpened}
-      setShowRegistrationModal={setIsRegistrationModalOpened}/>}
+      setShowRegistrationModal={setIsRegistrationModalOpened}
+      className="fixed top-0 left-0 z-105 h-screen w-screen overflow-auto"/>}
 
       <div className="sticky top-0 bg-white p-4">
         <ArrowLeft className="h-6 w-6 text-gray-700" onClick={() => router.back()}/>
@@ -69,7 +69,7 @@ export default function BaliDanceClass() {
           <Image src={classData.image_url} alt="NO IMAGE" width={2240} height={2240}
           className="object-contain bg-gray-200 h-full w-full"/>
         </div>
-        <h1 className="text-2xl font-bold text-gray-900">{classData.title}</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{classData.name}</h1>
         <div className="space-y-3">
           <h2 className="text-lg font-semibold text-gray-900">Class Description</h2>
           <div className="flex items-center gap-1">
@@ -107,10 +107,7 @@ export default function BaliDanceClass() {
           </Button> */}
           <Button
           className="w-full rounded-full py-3 bg-black text-white hover:bg-gray-800"
-          onClick={() => {
-            console.log("clicked")
-            setIsRegistrationModalOpened(true)
-          }}>
+          onClick={() => setIsRegistrationModalOpened(true)}>
             Daftar Kelas
           </Button>
         </div>

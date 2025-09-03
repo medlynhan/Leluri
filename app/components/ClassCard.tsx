@@ -1,13 +1,8 @@
-import { Class } from "@/lib/types"
 import { Card, CardContent } from "./ui/card"
-import { MinimalInfoUser } from "@/lib/types/user"
 import { Button } from "./ui/button"
 import { useRouter } from "next/navigation"
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar"
-
-export interface ClassCardInterface extends Class {
-  creator: MinimalInfoUser
-}
+import { ClassCardInterface } from "@/lib/types/classes"
 
 interface ClassCardInternalInterface {
   classData : ClassCardInterface
@@ -26,7 +21,7 @@ const ClassCard = ({
       <CardContent className="p-0">
         <img
           src={classData.image_url || "/placeholder.svg"}
-          alt={classData.title}
+          alt={classData.name}
           className="w-full h-48 object-cover"
         />
         <div className="flex flex-col gap-4 p-4">
@@ -42,7 +37,7 @@ const ClassCard = ({
               </div>
             </div>
           </div>
-          <h3 className="font-semibold text-md mb-2 line-clamp-2 min-h-[3rem] text-left">{classData.title}</h3>
+          <h3 className="font-semibold text-md mb-2 line-clamp-2 min-h-[3rem] text-left">{classData.name}</h3>
           <Button
             onClick={() => router.push(`/kelas/details/${classData.id}`)}
             className="flex-1 bg-black hover:bg-gray-800 text-white rounded-full">

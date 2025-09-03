@@ -106,7 +106,7 @@ export interface CommentReply {
 
 export interface Class {
   id: string;
-  title: string;
+  name: string;
   creator_id: string;
   avg_rating: number;
   image_url: string;
@@ -121,7 +121,7 @@ export interface ClassMentee {
   user_id: string;
   class_id: string;
   created_at: string;
-  is_verified: boolean;
+  is_verified?: boolean;
 }
 
 export interface UserAchievement {

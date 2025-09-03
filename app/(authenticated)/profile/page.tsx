@@ -10,9 +10,12 @@ import PostPreview from '../../components/PostPreview';
 import { LogOut, X, Award } from "lucide-react"
 import { fetchUnlockedAchievements, evaluateAchievements, AchievementRow, recordAction } from '../../lib/achievements';
 import AchievementUnlockModal from '../../components/AchievementUnlockModal';
-import Sidebar from '../../components/Sidebar';
 import { Home, Compass, BookOpen, ShoppingBag, Hamburger } from 'lucide-react'
-
+import SelectDropdown from '@/components/SelectDropdown';
+import { useGetClassCategories } from '@/lib/client-queries/classcategories';
+import LoadingComponent from '@/components/LoadingComponent';
+import PostCard from '@/components/PostCard';
+import { DetailedPostWithMedia } from '@/lib/types/posts';
 
 interface Post {
   id: string
@@ -61,6 +64,7 @@ const ProfilePage: React.FC = () => {
   const [newProductThickness, setNewProductThickness] = useState('')
   const [newClassName, setNewClassName] = useState('')
   const [newClassDescription, setNewClassDescription] = useState('')
+  const [newClassCategory, setNewClassCategory] = useState<string|null>(null)
   const [savingNew, setSavingNew] = useState(false)
   const [achievements, setAchievements] = useState<AchievementRow[]>([])
   const [showAchievementsModal, setShowAchievementsModal] = useState(false)
@@ -70,8 +74,7 @@ const ProfilePage: React.FC = () => {
   const badgeColors = ['#F5C518', '#C084FC', '#3B82F6', '#10B981', '#FB7185', '#F59E0B']
   const getBadgeColor = (index: number) => badgeColors[index % badgeColors.length]
 
-
-
+  const { data: classcategories = [], isLoading: isGetClassCategoriesLoading, isError: isGetClassCategoriesError, error: getClassCategoriesError } = useGetClassCategories()
 
   useEffect(() => {
   const fetchUserAndPosts = async () => {
@@ -259,10 +262,12 @@ const ProfilePage: React.FC = () => {
     )
   }
 
+  if(isGetClassCategoriesLoading) return <LoadingComponent message="Loading class categories options..."/>
+
   return (
-    <div className="flex w-full relative min-h-screen bg-red-500 overflow-x-hidden">
+    <div className="flex w-full relative min-h-screen overflow-x-hidden">
       <div className={`${isEditMode || showAddModal || selectedPost ? "fixed" : ""}  flex flex-col lg:flex-row  h-full w-full `}>
-        <div className="w-full min-h-[30vh]  lg:min-h-[60vh] ml-0 lg:w-80 border-b lg:border-b-transparent lg:border-r border-[var(--medium-grey)] lg:ml-64 bg-white   p-6 ">
+        <div className="w-full min-h-[30vh] lg:min-h-[60vh] ml-0 lg:w-80 border-b lg:border-b-transparent lg:border-r border-[var(--medium-grey)] p-6 ">
           <div className="w-full flex flex-col items-center text-center">
             <div className="justify-items items-center relative mb-4">
               <div className="w-24 h-24 rounded-full  p-1 ">
@@ -390,9 +395,10 @@ const ProfilePage: React.FC = () => {
             <div className="relative">
               <div className="grid grid-cols-3 gap-4">
                 {posts.map((post) => (
+                  // <PostCard key={post.id} post={post}/>
                   <div
                     key={post.id}
-                    className="aspect-square cursor-pointer rounded-lg overflow-hidden hover:opacity-90 transition-opacity"
+                    className="border border-black aspect-square cursor-pointer rounded-lg overflow-hidden hover:opacity-90 transition-opacity"
                     onClick={() => setSelectedPost(post)}
                   >
                     <Image
@@ -825,6 +831,18 @@ const ProfilePage: React.FC = () => {
           placeholder="Jelaskan kelas kamu"
         />
       </div>
+
+      {/* kategori kelas */}
+      <div>
+        <label htmlFor="category" className="block text-sm font-medium text-[var(--black)] mb-2">
+          Post Category
+        </label>
+        <SelectDropdown 
+        options={classcategories ?? []}
+        value={newClassCategory}
+        onChange={(id : string) => setNewClassCategory(id)}
+        className="w-full"/>
+      </div>
     </div>
 
     {/* button submit */}
@@ -873,6 +891,7 @@ const ProfilePage: React.FC = () => {
                 user_id: user.id,
                 image_url: publicUrl,
                 created_at: new Date().toISOString(),
+                category_id: newClassCategory
               })
               .select();
 
