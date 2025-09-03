@@ -6,21 +6,25 @@ import { useEffect, useState } from "react"
 import { X } from "lucide-react"
 import { ClassMenteeFormInput } from "@/lib/types/classmentees"
 import { useCreateClassMentee } from "@/lib/client-queries/classmentees"
+import { evaluateAchievements, recordAction } from "@/lib/achievements"
+import { User } from "@supabase/supabase-js"
 
 interface RegistrationModalInterface {
   showRegistrationModal : boolean,
   setShowRegistrationModal: React.Dispatch<React.SetStateAction<boolean>>
   formData: ClassMenteeFormInput
   className?: string,
+  user?: User
 }
 
 const RegistrationModal = ({
   showRegistrationModal,
   setShowRegistrationModal,
   formData,
-  className = ''
+  className = '',
+  user
 } : RegistrationModalInterface) => {
-
+  
   const [registrationData, setRegistrationData] = useState<ClassMenteeFormInput>({
     ...formData,
     notes: ''
@@ -32,13 +36,21 @@ const RegistrationModal = ({
     createClassMentee({
       ...registrationData
     }, {
-      onSuccess: () => setShowRegistrationModal(false)
+      onSuccess: () => {
+        setShowRegistrationModal(false);
+        if(user){
+          (async () => {
+            try {
+              await recordAction(user.id, "join_class");
+              // continue for achievement badge?
+            } catch {
+              // handle error if needed
+            }
+          })()
+        }
+      }
     })
   }
-
-  useEffect(() => {
-    console.log(registrationData)
-  }, [registrationData])
 
   return (
     <div className={`${className}`}>
@@ -68,6 +80,7 @@ const RegistrationModal = ({
               </div>
               <Button
               onClick={handleRegistrationSubmit}
+              disabled={isCreateClassMenteePending}
               className="w-full bg-black hover:bg-gray-800 text-white rounded-full mt-6">
                 Daftar
               </Button>

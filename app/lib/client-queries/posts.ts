@@ -1,24 +1,31 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient, UseQueryOptions } from "@tanstack/react-query";
 import { supabase } from "../supabase";
 import { DetailedPostWithMedia, PostInput } from "../types/posts";
 import { toast } from 'sonner'
 
 // get all posts
-async function getPosts(): Promise<DetailedPostWithMedia[]> {
+async function getPosts(user_id : string): Promise<DetailedPostWithMedia[]> {
   const { data, error } = await supabase.from('posts')
     .select(`
       *,
       user:users!posts_user_id_fkey ( id, username, image_url, role ),
-      posts_media (*)
-    `)
+      posts_media (*),
+      posts_likes!fk_postlike_post ( user_id )
+    `).order("created_at", { ascending: true })
+    console.log(user_id)
   if (error) throw new Error(error.message);
-  return data;
+  return data.map((post) => ({
+    ...post,
+    liked: post.posts_likes.some((like: any) => like.user_id === user_id),
+  }));
 }
 
-export function useGetPosts() {
-  return useQuery<DetailedPostWithMedia[], Error>({
-    queryKey: ["posts"],
-    queryFn: getPosts,
+export function useGetPosts(user_id : string|undefined, options?: UseQueryOptions<DetailedPostWithMedia[]>) {
+  return useQuery<DetailedPostWithMedia[]>({
+    queryKey: ["posts", user_id],
+    queryFn: () => getPosts(user_id ?? ''),
+    enabled: !!user_id,
+    ...options,
   });
 }
 

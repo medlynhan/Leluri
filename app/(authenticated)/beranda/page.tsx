@@ -12,10 +12,11 @@ import { supabase } from '@/lib/supabase';
 const BerandaPage = () => {
 
   const router = useRouter();
-  const { data: posts = [], isLoading, isError, error } = useGetPosts()
 
   const [user, setUser] = useState<User | null>(null);
+  
   const [chosenPostId, setChosenPostId] = useState<string|null>(null)
+  const { data: posts = [], isLoading, isError, error } = useGetPosts(user?.id)
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -34,8 +35,9 @@ const BerandaPage = () => {
   return (
     <div className="flex flex-row w-full h-full justify-center">
       <div className="flex flex-col w-full px-24 py-12 mx-auto gap-8 max-w-192">
-        {posts.map((post) => (
-          <PostCard post={post} key={post.id} onClick={() => setChosenPostId(post.id)}/>
+        {user && posts.map((post) => (
+          <PostCard post={post} key={post.id} userId={user.id}
+          onCommentClick={() => setChosenPostId(post.id)}/>
         ))}
       </div>
       {chosenPostId !== null && user &&

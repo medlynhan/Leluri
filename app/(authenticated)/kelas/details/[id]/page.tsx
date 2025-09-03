@@ -59,6 +59,7 @@ export default function ClassDetails() {
       }}
       showRegistrationModal={isRegistrationModalOpened}
       setShowRegistrationModal={setIsRegistrationModalOpened}
+      user={user}
       className="fixed top-0 left-0 z-105 h-screen w-screen overflow-auto"/>}
 
       <div className="sticky top-0 pl-24 bg-white p-4">

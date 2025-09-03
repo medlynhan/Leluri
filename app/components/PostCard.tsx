@@ -1,18 +1,42 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar"
 import { Card, CardContent } from "./ui/card"
-import { Heart, MessageSquare, Play } from "lucide-react"
+import { Heart, MessageSquare } from "lucide-react"
 import { DetailedPostWithMedia } from "@/lib/types/posts"
 import MediaCarousel from "./MediaCarousel"
+import { useCreatePostLike, useDeletePostLike } from "@/lib/client-queries/postlikes"
 
 interface PostCard {
   post: DetailedPostWithMedia,
-  onClick?: (...args: any[]) => void
+  onClick?: (...args: any[]) => void,
+  onCommentClick?: (...args: any[]) => void,
+  onLikeClick?: (...args: any[]) => void,
+  userId: string
 }
 
 const PostCard = ({ 
   post,
-  onClick
+  onClick,
+  onCommentClick,
+  onLikeClick,
+  userId
 } : PostCard) => {
+
+  const { mutate: createPostLike, isPending: isCreatePostLikePending, isError: isCreatePostLikeError, error: createPostLikeError} = useCreatePostLike()
+  const { mutate: deletePostLike, isPending: isDeletePostLikePending, isError: isDeletePostLikeError, error: deletePostLikeError} = useDeletePostLike()
+
+  const handleSelfLike = () => {
+    if(post.liked){
+      deletePostLike({
+        user_id: userId,
+        post_id: post.id
+      })
+    }else{
+      createPostLike({
+        user_id: userId,
+        post_id: post.id
+      })
+    }
+  }
 
   return (
     <Card 
@@ -33,12 +57,15 @@ const PostCard = ({
             </div>
           </div>
 
-          <div className="flex items-center gap-4 text-gray-500">
-            <div className="flex items-center gap-1">
-              <Heart className="w-4 h-4" />
-              <span className="text-sm">{post.like_count}</span>
+          <div className="flex items-center text-gray-500">
+            <div className="flex items-center gap-1 hover hover:bg-gray-100 p-2 rounded-md" onClick={(e) => {
+              e.stopPropagation()
+              onLikeClick ? onLikeClick() : handleSelfLike()
+            }}>
+              <Heart className={`w-4 h-4 ${post.liked ? "text-red-500 fill-current" : "text-gray-300 fill-current"}`} />
+              <span className="text-sm">{post.likes}</span>
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 hover:bg-gray-100 p-2 rounded-lg" onClick={() => onCommentClick && onCommentClick()}>
               <MessageSquare className="w-4 h-4" />
               <span className="text-sm">{post.comment_count}</span>
             </div>

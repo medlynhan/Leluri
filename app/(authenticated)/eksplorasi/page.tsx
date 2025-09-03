@@ -25,7 +25,7 @@ const EksplorasiPage = () => {
   const router = useRouter()
   const [user, setUser] = useState<User|null>(null)
 
-  const { data: posts = [], isLoading: isGetPostsLoading, isError: isGetPostsError, error: getPostsError } = useGetPosts()
+  const { data: posts = [], isLoading: isGetPostsLoading, isError: isGetPostsError, error: getPostsError } = useGetPosts(user?.id)
   const { data: postcategories, isLoading: isGetPostCategoriesLoading, isError: isGetPostCategoriesError, error: getPostCategoriesError} = useGetPostCategories()
 
   const [users, setUsers] = useState<MinimalInfoUser[]>([])
@@ -136,7 +136,7 @@ const EksplorasiPage = () => {
       {users.length > 0 &&
       <div className="flex flex-col w-full px-12">
         <span className="font-bold text-lg mb-4">Person ({users.length})</span>
-        <div className="grid grid-cols-6 gap-3 overflow-hidden p-1">
+        <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 overflow-hidden p-1">
           {users.map((user) => (
             <div className="flex flex-col items-center max-w-48 justify-center p-4 shadow-md rounded-md" key={user.id}>
               <Avatar className="mb-2 w-18 h-18 border border-gray-500 rounded-full overflow-hidden justify-center items-center">
@@ -163,9 +163,9 @@ const EksplorasiPage = () => {
       ) : (
         <div className="flex flex-col w-full px-12 pb-12 pt-4">
           <span className="font-bold text-lg mb-4">Content ({posts.length})</span>
-          <div className="grid grid-cols-3 gap-6 overflow-hidden h-0 flex-1 p-1">
-            {filteredPosts.map((post) => (
-              <PostCard key={post.id} post={post} onClick={() => setPostModalId(post.id)}/>
+          <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-hidden h-0 flex-1 p-1">
+            {user && filteredPosts.map((post) => (
+              <PostCard key={post.id} post={post} onClick={() => setPostModalId(post.id)} userId={user.id}/>
             ))}
           </div>
         </div>

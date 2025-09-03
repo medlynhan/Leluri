@@ -46,7 +46,7 @@ const DetailedPostModal = ({
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1">
                   <Heart className="w-5 h-5" />
-                  <span className="text-sm font-medium">{post?.like_count}</span>
+                  <span className="text-sm font-medium">{post?.likes}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <MessageCircle className="w-5 h-5" />

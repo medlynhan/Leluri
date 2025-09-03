@@ -78,8 +78,9 @@ export interface Post {
   description: string;
   created_at: string;
   category_id: string;
-  like_count: number;
+  likes: number;
   comment_count: number;
+  liked?: boolean
 }
 
 export interface PostLike {

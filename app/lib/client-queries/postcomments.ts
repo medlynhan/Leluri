@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../supabase";
 import { PostCommentInput, PostCommentWithUser } from "../types/comments";
 import { toast } from "sonner";
+import { DetailedPostWithMedia } from "../types/posts";
 
 export interface PostComment {
   id: string;
@@ -54,6 +55,7 @@ export function useCreateComment() {
     onSuccess: (data, variables) => {
       toast.success("New comment successfully added!")
       queryClient.invalidateQueries({ queryKey : ['postcomments', variables.post_id]});
+      queryClient.invalidateQueries({ queryKey : ['posts', variables.user_id]})
     },
     onError: (err: any) => {
       if (err instanceof AppError) {
