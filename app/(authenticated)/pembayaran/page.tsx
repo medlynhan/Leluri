@@ -150,9 +150,11 @@ const PembayaranPage: React.FC = () => {
             <h3 className="text-lg font-semibold mb-2">Pembayaran Kamu Berhasil</h3>
             <p className="text-xs text-gray-500 mb-6">Terimakasih telah mensupport pengrajin Indonesia !</p>
             <div className="w-40 h-32 mx-auto mb-6 relative">
-              <Image src="/images/pay/success.png" alt="Success" fill className="object-contain" />
+              <Image src="/payment.png" alt="Success" fill className="object-contain" />
             </div>
-            <button onClick={() => { setSuccess(false); router.push('/toko'); }} className="w-full py-2 border rounded-full text-sm font-medium hover:bg-gray-50">Lanjutkan</button>
+            <div>
+              <button onClick={() => { setSuccess(false); router.push('/toko'); }} className="w-full py-2 border rounded-full text-sm font-medium hover:bg-gray-50">Lanjutkan</button>
+            </div>
           </div>
         </div>
       )}

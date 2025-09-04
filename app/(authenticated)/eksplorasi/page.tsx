@@ -165,12 +165,12 @@ const EksplorasiPage = () => {
 
       {(!posts || posts.length <= 0) ? (
         <div className="flex flex-col items-center justify-center w-full h-full">
-          <Image src="/logo/empty.png" width={200} height={200} alt="NO"/>
+          <Image src="/empty.png" width={200} height={200} alt="NO"/>
           <p className="text-gray-500">No posts exist yet ...</p>
         </div>
       ) : (filteredPosts.length <= 0 && users.length <= 0) ? (
         <div className="flex items-center justify-center flex-col w-full h-full">
-          <Image src="/logo/no_result.png" width={200} height={200} alt="NO"/>
+          <Image src="/no_result.png" width={200} height={200} alt="NO"/>
           <p className="text-gray-500">No search results ...</p>
         </div>
       ) : (
