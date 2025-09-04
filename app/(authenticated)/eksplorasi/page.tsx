@@ -135,10 +135,10 @@ const EksplorasiPage = () => {
         <div className="ml-3 mr-3 lg:ml-68  mt-20 w-full max-w-[calc(100%-1rem)] lg:max-w-[calc(100%-18rem)]">
         <div className=" w-full  ">
           <span className="font-semibold text-lg w-full">Person ({users.length})</span>
-          <div className="grid grid-cols-[repeat(auto-fill,minmax(20em,1fr))] gap-3 lg:gap-6 mt-10">
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(10em,1fr))] gap-3 ml-3 mr-3  lg:gap-6 mt-10">
             {users.map((u) => (
               <div
-                className="flex flex-col items-center max-w-48 justify-center p-4 border shadow-md border-[var(--medium-grey)] rounded-md"
+                className="flex flex-col items-center max-w-48 justify-center p-4 border border-[var(--medium-grey)] rounded-md"
                 key={u.id}
               >
                 <Avatar className="mb-2 w-18 h-18 border border-gray-500 rounded-full overflow-hidden justify-center items-center">
