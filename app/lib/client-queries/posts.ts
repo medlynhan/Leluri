@@ -21,6 +21,7 @@ async function getPosts(user_id : string): Promise<DetailedPostWithMedia[]> {
     .eq("follower_id", user_id)
 
   if (postsError) throw new Error(postsError.message);
+  if (followedByUserError) throw new Error(followedByUserError.message);
 
   const finalPosts = posts.map((post) => ({
     ...post,
@@ -30,7 +31,7 @@ async function getPosts(user_id : string): Promise<DetailedPostWithMedia[]> {
     },
     liked: post.posts_likes.some((like: any) => like.user_id === user_id)
   }));
-
+  // console.log(finalPosts)
   return finalPosts
 }
 

@@ -35,14 +35,21 @@ const BerandaPage = () => {
   return (
     <div className="flex flex-row w-full h-full justify-center">
       <div className="flex flex-col w-full px-24 py-12 mx-auto gap-8 max-w-192">
-        {user && posts.map((post) => (
+        {user && posts.map((post, idx) => (
+          // <div className="flex flex-row" key={idx}>
+            
+          //   <h1>{post.user.followed ? "true" : "false"}</h1>
+          // </div>
           <PostCard 
-          post={post} key={post.id}
-          userId={user.id}
-          onCommentClick={() => setChosenPostId(post.id)}
-          showFollowButton={true}/>
+            key={post.id}
+            // postData={post}
+            post={post}
+            userId={user.id}
+            onCommentClick={() => setChosenPostId(post.id)}
+            showFollowButton={true}/>
         ))}
       </div>
+      {/* <pre>{JSON.stringify(posts, null, 2)}</pre> */}
       {chosenPostId !== null && user &&
       <SideCommentSection 
       post_id={chosenPostId} 

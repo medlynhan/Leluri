@@ -5,12 +5,9 @@ import { DetailedPostWithMedia } from "@/lib/types/posts"
 import MediaCarousel from "./MediaCarousel"
 import { useCreatePostLike, useDeletePostLike } from "@/lib/client-queries/postlikes"
 import { Button } from "./ui/button"
-import { AchievementRow, evaluateAchievements, recordAction } from "@/lib/achievements"
+import { AchievementRow } from "@/lib/achievements"
 import { useState } from "react"
 import AchievementUnlockModal from "./modal/AchievementUnlockModal"
-import { FaUserPlus } from "react-icons/fa6"
-import { FaUserCheck } from "react-icons/fa"
-import { useCreateUserFollower, useDeleteUserFollower } from "@/lib/client-queries/userfollowers"
 import FollowButton from "./FollowButton"
 
 interface PostCard {

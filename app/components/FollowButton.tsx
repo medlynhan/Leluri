@@ -21,12 +21,12 @@ const FollowButton = ({
 }: FollowButtonProps) => {
 
   const [unlockQueue, setUnlockQueue] = useState<any[]>([]);
-  const [isFollowed, setIsFollowed] = useState<boolean>(followed)
+  // const [isFollowed, setIsFollowed] = useState<boolean>(followed)
 
   const { mutateAsync: followUser, isPending: isFollowUserPending } = useCreateUserFollower();
   const { mutateAsync: unfollowUser, isPending: isUnfollowUserPending } = useDeleteUserFollower();
   const handleSelfFollow = async () => {
-    if (isFollowed) {
+    if (followed) {
       await unfollowUser({
         follower_id: userId,
         followed_id: followedUserId,
@@ -50,9 +50,9 @@ const FollowButton = ({
       onClick={(e) => {
         e.stopPropagation();
         onFollowClick ? onFollowClick() : handleSelfFollow();
-        setIsFollowed(!isFollowed)
+        // setIsFollowed(!isFollowed)
       }}>
-        {isFollowed ? (
+        {followed ? (
           <>
             <FaUserCheck className="w-4 h-4 text-green-500 fill-current" />
             <span className="text-sm text-green-500">Followed</span>
