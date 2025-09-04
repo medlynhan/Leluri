@@ -49,8 +49,14 @@ const Sidebar = () => {
   ]
 
   if(!isOpen) return (
-    <div className={`left-5 top-5 flex z-75 fixed flex justify-center items-center w-12 h-12 rounded-lg bg-[var(--white)] hover:bg-[var(--light-grey)] hover:text-[var(--yellow)] border-1 shadow-md`}  onClick={() => setIsOpen(!isOpen)} >
-      <RxHamburgerMenu className='w-5 h-5'/>
+    <div className="hidden md:block w-16 lg:w-20 shrink-0 relative">
+      <button
+        aria-label="Open menu"
+        className="left-5 top-5 flex z-75 fixed justify-center items-center w-12 h-12 rounded-lg bg-[var(--white)] hover:bg-[var(--light-grey)] hover:text-[var(--yellow)] border shadow-md transition-colors"
+        onClick={() => setIsOpen(true)}
+      >
+        <RxHamburgerMenu className='w-5 h-5'/>
+      </button>
     </div>
   )
 

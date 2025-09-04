@@ -14,7 +14,8 @@ async function getPosts(user_id : string): Promise<DetailedPostWithMedia[]> {
       posts_media (*),
       posts_likes!fk_postlike_post ( user_id )
       `)
-    .order("created_at", { ascending: true })
+  // Show latest posts first
+  .order("created_at", { ascending: false })
     
   const { data: followedByUser = [], error: followedByUserError } = await supabase.from('userfollowers')
     .select(`*`)
@@ -74,17 +75,18 @@ async function createPost({
   title,
 }: PostInput) {
   try {
-    const fileExt = posts_media[0].name.split(".").pop();
+  const fileExt = posts_media[0].name.split(".").pop()?.toLowerCase();
     const fileName = `${Date.now()}.${fileExt}`;
     const filePath = `${user_id}/${fileName}`;
 
     let mediaType: "image" | "video" = "image";
-    if (["jpg", "jpeg", "png", "gif", "bmp", "webp"].includes(fileExt)) {
-      mediaType = "image";
-    } else if (["mp4", "avi", "mov", "mkv", "webm"].includes(fileExt)) {
-      mediaType = "video";
+    if (!fileExt) throw new AppError("Unable to detect file extension", 400)
+    if (["jpg","jpeg","png","gif","bmp","webp","avif"].includes(fileExt)) {
+      mediaType = "image"
+    } else if (["mp4","avi","mov","mkv","webm"].includes(fileExt)) {
+      mediaType = "video"
     } else {
-      throw new AppError("Unsupported file type", 400);
+      throw new AppError("Unsupported file type", 400)
     }
 
     const { error: uploadError } = await supabase.storage
@@ -116,8 +118,9 @@ async function createPost({
       {
         post_id: data[0].id,
         media_type: mediaType,
-        media_url: publicUrl,
+        media_url: publicUrl.trim(),
         is_main: true,
+        created_at: new Date().toISOString()
       }
     ])
 

@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import { supabase } from '../lib/supabase';
-import { X, MoreHorizontal, Edit2, Trash2, Heart, Send, MessageSquare } from 'lucide-react';
+import { X, MoreHorizontal, Edit2, Trash2, Heart, Send, MessageSquare, Play, Pause } from 'lucide-react';
 import { RiArrowDropDownLine } from "react-icons/ri";
 
 interface Post {
@@ -244,6 +244,68 @@ const PostPreview: React.FC<PostPreviewProps> = ({ post, onClose, onPostUpdated,
     const isOwner = currentUserId === post.user_id;
     const commentCount = comments.length;
 
+    // Determine if current media is a video (simple extension-based heuristic)
+    const isVideoUrl = (url: string | undefined | null) => {
+        if (!url) return false;
+        try {
+            const clean = url.split('?')[0];
+            const ext = clean.split('.').pop()?.toLowerCase();
+            if (!ext) return false;
+            return ['mp4', 'webm', 'ogg', 'ogv', 'mov', 'm4v', 'mkv'].includes(ext);
+        } catch {
+            return false;
+        }
+    };
+    const mediaIsVideo = isVideoUrl(post.image_url);
+
+    const videoRef = useRef<HTMLVideoElement | null>(null);
+    const [videoDuration, setVideoDuration] = useState(0);
+    const [videoTime, setVideoTime] = useState(0);
+    const [videoPlaying, setVideoPlaying] = useState(false);
+
+    const formatTime = (t: number) => {
+        if (!isFinite(t)) return '0:00';
+        const m = Math.floor(t / 60);
+        const s = Math.floor(t % 60);
+        return `${m}:${s.toString().padStart(2, '0')}`;
+    };
+
+    const handleVideoLoaded = () => {
+        if (videoRef.current) {
+            setVideoDuration(videoRef.current.duration || 0);
+        }
+    };
+
+    const handleVideoTimeUpdate = () => {
+        if (videoRef.current) {
+            setVideoTime(videoRef.current.currentTime || 0);
+        }
+    };
+
+    const togglePlay = () => {
+        if (!videoRef.current) return;
+        if (videoRef.current.paused) {
+            videoRef.current.play();
+            setVideoPlaying(true);
+        } else {
+            videoRef.current.pause();
+            setVideoPlaying(false);
+        }
+    };
+
+    const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!videoRef.current) return;
+        const newTime = Number(e.target.value);
+        videoRef.current.currentTime = newTime;
+        setVideoTime(newTime);
+    };
+
+    useEffect(() => {
+        setVideoDuration(0);
+        setVideoTime(0);
+        setVideoPlaying(false);
+    }, [post.id]);
+
     return (
         <div
             className="absolute flex top-0 left-0 min-w-full min-h-full bg-black/70 items-center justify-center z-50 "
@@ -324,22 +386,65 @@ const PostPreview: React.FC<PostPreviewProps> = ({ post, onClose, onPostUpdated,
                             )}
                         </div>
                     </div>
-                    {/* Image */}
+                    {/* Media (image or video) */}
                     <div
                         className="w-fit relative flex-1 bg-black flex items-center justify-center select-none"
                         onDoubleClick={handleDoubleClick}
                     >
-                        <Image
-                            src={post.image_url}
-                            alt={post.description}
-                            width={300}
-                            height={300}
-                            className="object-contain aspect-square w-70 lg:w-90 2xl:w-100"
-                        />
+                        {mediaIsVideo ? (
+                            <>
+                                <video
+                                    ref={videoRef}
+                                    src={post.image_url}
+                                    playsInline
+                                    onLoadedMetadata={handleVideoLoaded}
+                                    onTimeUpdate={handleVideoTimeUpdate}
+                                    onClick={togglePlay}
+                                    className="object-contain aspect-square w-70 lg:w-90 2xl:w-100 max-h-[80vh] cursor-pointer"
+                                />
+                                {/* Overlay controls */}
+                                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent px-3 pt-8 pb-3 flex flex-col gap-2">
+                                    <div className="flex items-center gap-3 text-white">
+                                        <button
+                                            type="button"
+                                            onClick={togglePlay}
+                                            className="p-1.5 rounded-full bg-white/15 hover:bg-white/25 transition-colors"
+                                            aria-label={videoPlaying ? 'Pause' : 'Play'}
+                                        >
+                                            {videoPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                                        </button>
+                                        <span className="text-[11px] tabular-nums leading-none">
+                                            {formatTime(videoTime)} / {formatTime(videoDuration)}
+                                        </span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        min={0}
+                                        max={videoDuration || 0}
+                                        step={0.1}
+                                        value={videoTime}
+                                        onChange={handleSeek}
+                                        className="w-full h-1.5 rounded-full accent-white cursor-pointer bg-white/30 [::-webkit-slider-thumb]:appearance-none [::-webkit-slider-thumb]:h-3 [::-webkit-slider-thumb]:w-3 [::-webkit-slider-thumb]:rounded-full [::-webkit-slider-thumb]:bg-white"
+                                        aria-label="Seek video"
+                                    />
+                                </div>
+                            </>
+                        ) : (
+                            <Image
+                                src={post.image_url}
+                                alt={post.description}
+                                width={300}
+                                height={300}
+                                className="object-contain aspect-square w-70 lg:w-90 2xl:w-100"
+                            />
+                        )}
                         {likeAnimating && (
                             <div className="absolute inset-0 flex items-center justify-center animate-pulse">
                                 <Heart className="w-32 h-32 text-white/90 fill-white/90 drop-shadow-[0_0_10px_rgba(0,0,0,0.4)]" />
                             </div>
+                        )}
+                        {mediaIsVideo && (
+                            <span className="absolute top-2 left-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded-full tracking-wide uppercase">Video</span>
                         )}
                     </div>
                     <div className="px-5 py-4 space-y-4 md:border-t border-[var(--dark-grey)] bg-white w-70 lg:w-90 2xl:w-100">
