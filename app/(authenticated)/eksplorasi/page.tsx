@@ -84,7 +84,7 @@ const EksplorasiPage = () => {
   return (
     <div className="relative w-full h-full overflow-x-hidden">
       {/* Navbar ala Kelas */}
-      <div className="absolute top-0 left-0 flex gap-4 justify-center items-center h-14 bg-[var(--white)] w-full z-5 fixed max-w-screen p-2 ">
+      <div className="absolute top-0 left-0 flex gap-4  justify-center items-center h-14 bg-[var(--white)] w-full z-5 fixed max-w-screen p-2 ">
         <Sidebar />
 
         {/* Search Bar */}
@@ -132,12 +132,13 @@ const EksplorasiPage = () => {
 
       {/* User Search Result */}
       {users.length > 0 && (
-        <div className="flex flex-col w-full px-12 mt-20">
-          <span className="font-bold text-lg mb-4">Person ({users.length})</span>
-          <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 overflow-hidden p-1">
+        <div className="ml-3 mr-3 lg:ml-68  mt-20 w-full max-w-[calc(100%-1rem)] lg:max-w-[calc(100%-18rem)]">
+        <div className=" w-full  ">
+          <span className="font-semibold text-lg w-full">Person ({users.length})</span>
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(20em,1fr))] gap-3 lg:gap-6 mt-10">
             {users.map((u) => (
               <div
-                className="flex flex-col items-center max-w-48 justify-center p-4 shadow-md rounded-md"
+                className="flex flex-col items-center max-w-48 justify-center p-4 border shadow-md border-[var(--medium-grey)] rounded-md"
                 key={u.id}
               >
                 <Avatar className="mb-2 w-18 h-18 border border-gray-500 rounded-full overflow-hidden justify-center items-center">
@@ -150,31 +151,37 @@ const EksplorasiPage = () => {
             ))}
           </div>
         </div>
+        </div>
       )}
 
       {/* Posts Grid */}
-      <div className="ml-3 mr-3 lg:ml-68 grid grid-cols-[repeat(auto-fill,minmax(20em,1fr))] p-3 gap-3 lg:gap-6 mt-20">
-        {filteredPosts.map((post) => (
-          <PostCard
-            key={post.id}
-            post={post}
-            onClick={() => setPostModalId(post.id)}
-            userId={user?.id ?? ""}
-          />
-        ))}
-      </div>
+      {posts.length > 0 && (
+        <div className="ml-3 mr-3 lg:ml-68 p-3 flex flex-col  max-w-[calc(100%-1rem)] mt-20 w-full lg:max-w-[calc(100%-18rem)]  ">
+            <span className="font-semibold text-lg w-full">Post ({posts.length})</span>
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(20em,1fr))] gap-3 lg:gap-6 mt-10 w-full ">
+              {filteredPosts.map((post) => (
+                <PostCard
+                  key={post.id}
+                  post={post}
+                  onClick={() => setPostModalId(post.id)}
+                  userId={user?.id ?? ""}
+                />
+              ))}
+            </div>
+           </div>
+      )}
 
       {/* Empty States */}
       {(!posts || posts.length === 0) && (
         <div className="flex flex-col items-center justify-center w-full h-full">
           <Image src="/logo/empty.png" width={200} height={200} alt="NO" />
-          <p className="text-gray-500">No posts exist yet ...</p>
+          <p className="text-gray-500">Belum Ada Postingan</p>
         </div>
       )}
       {filteredPosts.length === 0 && posts.length > 0 && users.length === 0 && (
         <div className="flex flex-col items-center justify-center w-full h-full">
           <Image src="/logo/no_result.png" width={200} height={200} alt="NO" />
-          <p className="text-gray-500">No search results ...</p>
+          <p className="text-gray-500">Yah, Kami tidak menemukan pencarian</p>
         </div>
       )}
 
