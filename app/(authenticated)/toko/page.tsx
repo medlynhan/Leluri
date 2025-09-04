@@ -158,7 +158,7 @@ const StorePage: React.FC = () => {
                 <span className="font-bold text-lg mb-4">Produk ({products.length})</span>
                 {products.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-24 text-gray-500">
-                        <Image src="/logo/no_result.png" width={160} height={160} alt="No Products" />
+                        <Image src="/no_result.png" width={160} height={160} alt="No Products" />
                         <p className="mt-4">Belum ada produk yang tersedia ...</p>
                     </div>
                 ) : (
