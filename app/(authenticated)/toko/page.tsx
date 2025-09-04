@@ -118,7 +118,6 @@ const StorePage: React.FC = () => {
 
     return (
         <div className="flex flex-col w-full h-full">
-            {/* Sticky Navbar */}
             <div className="sticky top-0 flex flex-row items-center gap-4 p-6 z-10 bg-white border-b border-[var(--light-grey)]">
                 <div className="relative w-full ml-20">
                     <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />

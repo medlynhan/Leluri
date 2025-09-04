@@ -83,7 +83,6 @@ const SelfStorePage: React.FC = () => {
 
   const handleSave = async () => {
     if (!editing) return;
-    // Build update payload only with changed (non-empty) fields
     const payload: any = {};
     if (editFields.name.trim() !== '') payload.name = editFields.name.trim();
     if (editFields.price.trim() !== '') payload.price = Number(editFields.price);
@@ -93,7 +92,7 @@ const SelfStorePage: React.FC = () => {
     if (editFields.width.trim() !== '') payload.width = Number(editFields.width);
     if (editFields.thickness.trim() !== '') payload.thickness = Number(editFields.thickness);
 
-    if (Object.keys(payload).length === 0) { // nothing changed
+    if (Object.keys(payload).length === 0) {
       setEditing(null);
       return;
     }
@@ -152,18 +151,12 @@ const SelfStorePage: React.FC = () => {
                         </div>
                     </div>
 
-                    {/*Information Profile*/}
                     <div className="  flex items-center pt-4 border-t border-[var(--medium-grey)] ">
                           <div className="flex gap-2 pt-2">
                             <button onClick={() => { setEditing(product); setEditFields({ name:'', price:'', description:'', stock:'', length:'', width:'', thickness:'' }); }} className="flex-1 flex items-center justify-center gap-1 text-xs px-2 py-1 border rounded-full hover:bg-gray-50"><Edit className="w-3 h-3"/>Edit</button>
                             <button onClick={() => handleDelete(product.id)} className="flex-1 flex items-center justify-center gap-1 text-xs px-2 py-1 border rounded-full text-red-600 hover:bg-red-50"><Trash2 className="w-3 h-3"/>Hapus</button>
                           </div>
                     </div>
-
-            
-
-                              
-
               </div>
             </div>
           ))}

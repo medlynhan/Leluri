@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { supabase } from "../supabase";
 import { toast } from "sonner";
 import { AchievementRow, evaluateAchievements, recordAction } from "../achievements";
@@ -9,7 +9,6 @@ interface UserFollowerFormInput {
   followed_id: string;
 }
 
-// create new user follower
 async function createUserFollower({ 
   follower_id, 
   followed_id 
@@ -40,7 +39,6 @@ export function useCreateUserFollower() {
   });
 }
 
-// delete user follower
 async function deleteUserFollower({ 
   follower_id, 
   followed_id 
@@ -69,5 +67,55 @@ export function useDeleteUserFollower() {
         toast.error("An unexpected error occurred.");
       }
     },
+  });
+}
+
+interface BasicUser { id: string; username: string; image_url: string|null; role: string|null }
+
+async function fetchUsersByRelation(params: { targetUserId: string; mode: 'followers'|'following'; limit: number; page: number; }): Promise<BasicUser[]> {
+  const { targetUserId, mode, limit, page } = params;
+  if (!targetUserId) return [];
+  const from = page * limit;
+  const to = from + limit - 1;
+
+  const matchColumn = mode === 'followers' ? 'followed_id' : 'follower_id';
+  const idColumnToExtract = mode === 'followers' ? 'follower_id' : 'followed_id';
+
+  const { data: relRows, error: relErr } = await supabase
+    .from('userfollowers')
+    .select(`${idColumnToExtract}`)
+    .eq(matchColumn, targetUserId)
+    .range(from, to);
+  if (relErr) throw new AppError(relErr.message, parseInt(relErr.code) || 500);
+  const ids = (relRows || []).map(r => (r as any)[idColumnToExtract] as string).filter(Boolean);
+  if (!ids.length) return [];
+
+  const { data: users, error: usersErr } = await supabase
+    .from('users')
+    .select('id, username, image_url, role')
+    .in('id', ids);
+  if (usersErr) throw new AppError(usersErr.message, parseInt(usersErr.code) || 500);
+  const map: Record<string, BasicUser> = {};
+  users.forEach(u => { map[u.id] = u as BasicUser; });
+  return ids.map(id => map[id]).filter(Boolean);
+}
+
+export function useGetFollowers(user_id: string|undefined, opts?: { limit?: number; page?: number }){
+  const limit = opts?.limit ?? 30;
+  const page = opts?.page ?? 0;
+  return useQuery<BasicUser[], AppError>({
+    queryKey: ['followers', user_id, limit, page],
+    queryFn: () => fetchUsersByRelation({ targetUserId: user_id || '', mode: 'followers', limit, page }),
+    enabled: !!user_id,
+  });
+}
+
+export function useGetFollowing(user_id: string|undefined, opts?: { limit?: number; page?: number }){
+  const limit = opts?.limit ?? 30;
+  const page = opts?.page ?? 0;
+  return useQuery<BasicUser[], AppError>({
+    queryKey: ['following', user_id, limit, page],
+    queryFn: () => fetchUsersByRelation({ targetUserId: user_id || '', mode: 'following', limit, page }),
+    enabled: !!user_id,
   });
 }

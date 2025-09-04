@@ -157,7 +157,6 @@ const ProductDetailPage: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-[520px_1fr] gap-12 w-full px-12 py-8">
-        {/* Left: Image + actions */}
         <div className="flex flex-col gap-6 w-full max-w-[520px]">
           <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-gray-100">
             <Image src={product.image_url} alt={product.name} fill className="object-cover" />

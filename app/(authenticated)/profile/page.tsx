@@ -1,22 +1,25 @@
 'use client'
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { supabase } from '../../lib/supabase';
-import { User } from '@supabase/supabase-js';
-import Image from 'next/image';
-import { FaPlus } from "react-icons/fa6";
-import { IoLocationOutline, IoLogoWhatsapp } from "react-icons/io5";
-import PostPreview from '../../components/PostPreview';
-import { LogOut, X, Award } from "lucide-react"
-import { fetchUnlockedAchievements, evaluateAchievements, AchievementRow, recordAction } from '../../lib/achievements';
-import AchievementUnlockModal from '../../components/modal/AchievementUnlockModal';
-import { Home, Compass, BookOpen, ShoppingBag, Hamburger } from 'lucide-react'
-import SelectDropdown from '@/components/SelectDropdown';
-import { useGetClassCategories } from '@/lib/client-queries/classcategories';
-import LoadingComponent from '@/components/LoadingComponent';
-import PostCard from '@/components/PostCard';
-import { DetailedPostWithMedia } from '@/lib/types/posts';
-import DetailedPostModal from '@/components/modal/DetailedPostModal';
+import React, { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { supabase } from '../../lib/supabase'
+import { User } from '@supabase/supabase-js'
+import Image from 'next/image'
+import { FaPlus } from 'react-icons/fa6'
+import { IoLocationOutline, IoLogoWhatsapp } from 'react-icons/io5'
+import { LogOut, X } from 'lucide-react'
+import { AchievementRow, evaluateAchievements, recordAction } from '../../lib/achievements'
+import AchievementUnlockModal from '../../components/modal/AchievementUnlockModal'
+import { BookOpen, ShoppingBag } from 'lucide-react'
+import SelectDropdown from '@/components/SelectDropdown'
+import { useGetClassCategories } from '@/lib/client-queries/classcategories'
+import { useGetProfile, useUpdateProfile } from '@/lib/client-queries/profile'
+import { useGetProfilePosts } from '@/lib/client-queries/profilePosts'
+import { useGetFollowerCounts } from '@/lib/client-queries/followerCounts'
+import { useGetInventoryFlags } from '@/lib/client-queries/inventoryFlags'
+import { useGetAchievements } from '@/lib/client-queries/achievements'
+import LoadingComponent from '@/components/LoadingComponent'
+import PostCard from '@/components/PostCard'
+import DetailedPostModal from '@/components/modal/DetailedPostModal'
 
 interface ProfileState {
   username: string
@@ -37,11 +40,6 @@ const ProfilePage: React.FC = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
-  const [posts, setPosts] = useState<DetailedPostWithMedia[]>([])
-  const [followerCount, setFollowerCount] = useState<number>(0)
-  const [followingCount, setFollowingCount] = useState<number>(0)
-  const [hasProduct, setHasProduct] = useState(false)
-  const [hasClass, setHasClass] = useState(false) 
 
   const [showAddModal, setShowAddModal] = useState(false)
   const [creatingType, setCreatingType] = useState<'product' | 'class' | null>(null)
@@ -70,80 +68,30 @@ const ProfilePage: React.FC = () => {
   const { data: classcategories = [], isLoading: isGetClassCategoriesLoading, isError: isGetClassCategoriesError, error: getClassCategoriesError } = useGetClassCategories()
 
   useEffect(() => {
-  const fetchUserAndPosts = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (user) {
-        setUser(user)
-        const { data, error } = await supabase.from("users").select("*").eq("id", user.id).maybeSingle()
+    const load = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { router.push('/login'); return; }
+      setUser(user);
+    };
+    load();
+  }, [router]);
 
-        if (error) {
-          setError(error.message)
-        } else if (data) {
-          setProfile(data)
-        }
+  const user_id = user?.id;
+  const { data: profileData, isLoading: profileLoading } = useGetProfile(user_id);
+  const { data: postsData, isLoading: postsLoading } = useGetProfilePosts(user_id);
+  const { data: followerCounts } = useGetFollowerCounts(user_id);
+  const { data: inventoryFlags } = useGetInventoryFlags(user_id);
+  const { data: achievementsData } = useGetAchievements(user_id);
+  const updateProfileMutation = useUpdateProfile();
 
-  const { data: postsData, error: postsError } = await supabase
-          .from("posts")
-          .select(`
-            *,
-            posts_media (*),
-            user:users!posts_user_id_fkey ( id, image_url, role, username )
-            `)
-          .eq("user_id", user.id)
-          .order("created_at", { ascending: false })
-
-        if (postsError) {
-          setError(postsError.message)
-        } else if (postsData) {
-          setPosts(postsData)
-        }
-
-        const { data: productCheck } = await supabase
-          .from("product")
-          .select("id")
-          .eq("user_id", user.id)
-          .limit(1)
-        setHasProduct(!!productCheck && productCheck.length > 0)
-
-        const { data: classCheck, error: classError } = await supabase
-          .from('classes')   // ✅ benar
-          .select("id")
-          .eq("user_id", user.id)
-          .limit(1)
-
-        if (!classError) {
-          setHasClass(!!classCheck && classCheck.length > 0)
-        }
-        // follower & following counts
-        const { count: followersCount, error: followersErr } = await supabase
-          .from('userfollowers')
-          .select('*', { count: 'exact', head: true })
-          .eq('followed_id', user.id)
-        if (!followersErr) setFollowerCount(followersCount || 0)
-
-        const { count: followingCountRes, error: followingErr } = await supabase
-          .from('userfollowers')
-          .select('*', { count: 'exact', head: true })
-          .eq('follower_id', user.id)
-        if (!followingErr) setFollowingCount(followingCountRes || 0)
-
-        const unlocked = await fetchUnlockedAchievements(user.id)
-        setAchievements(unlocked)
-        const newly = await evaluateAchievements(user.id)
-        if (newly.length) {
-          setAchievements(prev => [...prev, ...newly])
-          setUnlockQueue(prev => [...prev, ...newly])
-        }
-      } else {
-        router.push("/login")
-      }
-      setLoading(false)
+  useEffect(() => { if (profileData) setProfile(profileData as any); }, [profileData]);
+  useEffect(() => {
+    if (achievementsData) {
+      setAchievements(achievementsData.achievements);
+      if (achievementsData.newlyUnlocked.length) setUnlockQueue(prev => [...prev, ...achievementsData.newlyUnlocked]);
     }
-
-    fetchUserAndPosts()
-  }, [router])
+  }, [achievementsData]);
+  useEffect(() => { if (!profileLoading && !postsLoading) setLoading(false); }, [profileLoading, postsLoading]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -157,53 +105,20 @@ const ProfilePage: React.FC = () => {
   }
 
   const handleUpdateProfile = async () => {
-    if (!user || !profile || !supabase) return
-
-    setLoading(true)
-    setError(null)
-
-    let imageUrl = profile.image_url
-
-    if (avatarFile) {
-      const fileExt = avatarFile.name.split(".").pop()
-      const fileName = `${user.id}.${fileExt}`
-      const filePath = `${fileName}`
-
-      const { error: uploadError } = await supabase.storage
-        .from("avatars")
-        .upload(filePath, avatarFile, { upsert: true })
-
-      if (uploadError) {
-        setError(uploadError.message)
-        setLoading(false)
-        return
-      }
-
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from("avatars").getPublicUrl(filePath)
-      imageUrl = publicUrl
-    }
-
-    const { error: dbError } = await supabase
-      .from("users")
-      .update({
-        username: profile.username,
-        role: profile.role,
-        biography: profile.biography,
-        location: profile.location,
-        image_url: imageUrl,
-        phone_number: profile.phone_number || null,
-      })
-      .eq("id", user.id)
-
-    if (dbError) {
-      setError(dbError.message)
-    } else {
-      setProfile({ ...profile, image_url: imageUrl })
-      setIsEditMode(false)
-    }
-    setLoading(false)
+    if (!user || !profile) return;
+    setLoading(true); setError(null);
+    updateProfileMutation.mutate({
+      user_id: user.id,
+      username: profile.username,
+      role: profile.role,
+      biography: profile.biography,
+      location: profile.location,
+      phone_number: profile.phone_number || null,
+      avatarFile,
+    }, {
+      onSuccess: (data) => { setProfile(data as any); setIsEditMode(false); setLoading(false); },
+      onError: (err: any) => { setError(err.message || 'Failed updating profile'); setLoading(false); }
+    });
   }
 
   if (loading) {
@@ -250,19 +165,7 @@ const ProfilePage: React.FC = () => {
     )
   }
 
-  const mockProfile: ProfileState = {
-    username: "madeline30_",
-    role: "pelajar budaya",
-    biography:
-      "Halo aku madeline, mahasiswa yang sedang belajar budaya. Tertarik untuk mendalam seni kerajinan tangan indonesia secara lebih dalam 🌸",
-    location: "Tangerang, Indonesia",
-    image_url: "/diverse-profile-avatars.png",
-    followers: [],
-    following: [],
-    phone_number: "0812-3456-7890",
-  }
-
-  const displayProfile = profile || mockProfile
+  const displayProfile = profile
 
   if (!displayProfile) {
     return (
@@ -281,7 +184,6 @@ const ProfilePage: React.FC = () => {
       <DetailedPostModal postId={postModalId} setPostModalId={setPostModalId} userId={user.id}/>}
 
       <div className={`${isEditMode || showAddModal ? "fixed" : ""}  flex flex-col lg:flex-row  h-full w-full `}>
-      {/* <div className={`${isEditMode || showAddModal || selectedPost ? "fixed" : ""}  flex flex-col lg:flex-row  h-full w-full `}> */}
         <div className="w-full min-h-[30vh] lg:min-h-[60vh] ml-0 lg:w-80 border-b lg:border-b-transparent lg:border-r border-[var(--medium-grey)] p-6 ">
           <div className="w-full flex flex-col items-center text-center">
             <div className="justify-items items-center relative mb-4">
@@ -309,15 +211,15 @@ const ProfilePage: React.FC = () => {
               Edit Profile
             </button>
 
-            {(hasProduct || hasClass) && (
+      {(inventoryFlags?.hasProduct || inventoryFlags?.hasClass) && (
               <div className="w-full flex justify-center items-center flex-col gap-2 mb-4">
-                {hasProduct && (
+        {inventoryFlags?.hasProduct && (
                   <button
                     onClick={() => router.push('/toko/saya')}
                     className="w-full max-w-[20em] flex items-center justify-center gap-2 py-2 px-4 border border-[var(--black)] cursor-pointer rounded-full text-sm font-medium text-[var(--black)]  hover:bg-[var(--light-grey)] hover:border-transparent transition-colors"
                   > <ShoppingBag className='w-4'/> Produk Saya</button>
                 )}
-                {hasClass && (
+        {inventoryFlags?.hasClass && (
                   <button
                     onClick={() => router.push('/kelas/saya')}
                     className="w-full max-w-[20em] flex items-center justify-center gap-2 py-2 px-4 border border-[var(--black)] cursor-pointer rounded-full text-sm font-medium text-[var(--black)]  hover:bg-[var(--light-grey)]  hover:border-transparent  transition-colors"
@@ -327,14 +229,14 @@ const ProfilePage: React.FC = () => {
             )}
 
             <div className="flex justify-center gap-8 mb-6">
-              <div className="text-center">
-                <p className="font-semibold text-[var(--black)]">{followerCount}</p>
+              <button onClick={()=>router.push('/profile/followers')} className="text-center hover:opacity-80 transition">
+                <p className="font-semibold text-[var(--black)]">{(followerCounts?.followerCount) ?? 0}</p>
                 <p className="text-sm text-[var(--dark-grey)]">pengikut</p>
-              </div>
-              <div className="text-center">
-                <p className="font-semibold text-[var(--black)]">{followingCount}</p>
+              </button>
+              <button onClick={()=>router.push('/profile/following')} className="text-center hover:opacity-80 transition">
+                <p className="font-semibold text-[var(--black)]">{(followerCounts?.followingCount) ?? 0}</p>
                 <p className="text-sm text-[var(--dark-grey)]">mengikuti</p>
-              </div>
+              </button>
             </div>
             
             {(displayProfile.location) && (
@@ -406,10 +308,10 @@ const ProfilePage: React.FC = () => {
 
         <div className="flex-1 min-h-screen p-6 ">
 
-          {posts.length > 0 ? (
+      {postsData && postsData.length > 0 ? (
             <div className="relative">
               <div className="grid grid-cols-3 gap-4">
-                {posts.map((post) => (
+        {postsData.map((post) => (
                   <PostCard
                     key={post.id}
                     post={post}
@@ -655,7 +557,6 @@ const ProfilePage: React.FC = () => {
 
             )}
 
-            {/*buat produk baru */}
             {creatingType === 'product' && (
               <div className=''>
                 <h2 className="text-lg font-semibold mb-4 w-full">Produk Baru</h2>
@@ -747,10 +648,9 @@ const ProfilePage: React.FC = () => {
                           width: Number(newProductWidth),
                           thickness: Number(newProductThickness)
                         });
-                        setHasProduct(true);
                         try {
                           await recordAction(user.id, 'add_product');
-                          if (!hasProduct && !hasClass) await recordAction(user.id, 'open_store');
+                          if (!(inventoryFlags?.hasProduct) && !(inventoryFlags?.hasClass)) await recordAction(user.id, 'open_store');
                           const newly2 = await evaluateAchievements(user.id);
                           if (newly2.length) { setAchievements(prev => [...prev, ...newly2]); setUnlockQueue(prev => [...prev, ...newly2]); }
                         } catch {}
@@ -768,186 +668,162 @@ const ProfilePage: React.FC = () => {
                 </div>
               </div>
             )}
+            {creatingType === "class" && (
+              <div>
+                <h2 className="text-lg font-semibold mb-4">Kelas Baru</h2>
 
+                <div className="space-y-4 text-sm">
+                  <div>
+                    <label className="block font-medium text-[var(--black)] mb-1">
+                      Gambar Kelas
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <div className="w-25 h-25 rounded-lg border flex items-center justify-center overflow-hidden bg-[var(--light-grey)] text-(var[--dark-grey])">
+                        {newProductImageFile ? (
+                          <Image
+                            src={URL.createObjectURL(newProductImageFile)}
+                            alt="Preview"
+                            width={200}
+                            height={200}
+                            className="object-cover w-full h-full"
+                          />
+                        ) : (
+                          <p>Preview</p>
+                        )}
+                      </div>
+                      <label className="px-3 py-2 border rounded-full cursor-pointer hover:bg-[var(--light-grey)]">
+                        Pilih File
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            if (e.target.files && e.target.files[0]) {
+                              console.log("File dipilih:", e.target.files[0]);
+                              setNewProductImageFile(e.target.files[0]);
+                            }
+                          }}
+                        />
+                      </label>
+                    </div>
+                  </div>
 
+                  <div>
+                    <label className="block font-medium text-[var(--black)] mb-1">
+                      Nama / Judul Kelas
+                    </label>
+                    <input
+                      value={newClassName}
+                      onChange={(e) => setNewClassName(e.target.value)}
+                      className="w-full border rounded-lg px-3 py-2 text-sm"
+                      placeholder="Contoh: Belajar Batik"
+                    />
+                  </div>
 
-{/*buat kelas baru */}
-{creatingType === "class" && (
-  <div>
-    <h2 className="text-lg font-semibold mb-4">Kelas Baru</h2>
+                  <div>
+                    <label className="block font-medium text-[var(--black)] mb-1">
+                      Deskripsi
+                    </label>
+                    <textarea
+                      value={newClassDescription}
+                      onChange={(e) => setNewClassDescription(e.target.value)}
+                      className="w-full border rounded-lg px-3 py-2 text-sm resize-none h-24"
+                      placeholder="Jelaskan kelas kamu"
+                    />
+                  </div>
 
-    {/* form */}
-    <div className="space-y-4 text-sm">
-      {/* gambar */}
-      <div>
-        <label className="block font-medium text-[var(--black)] mb-1">
-          Gambar Kelas
-        </label>
-        <div className="flex items-center gap-3">
-          <div className="w-25 h-25 rounded-lg border flex items-center justify-center overflow-hidden bg-[var(--light-grey)] text-(var[--dark-grey])">
-            {newProductImageFile ? (
-              <Image
-                src={URL.createObjectURL(newProductImageFile)}
-                alt="Preview"
-                width={200}
-                height={200}
-                className="object-cover w-full h-full"
-              />
-            ) : (
-              <p>Preview</p>
+                  <div>
+                    <label htmlFor="category" className="block text-sm font-medium text-[var(--black)] mb-2">
+                      Post Category
+                    </label>
+                    <SelectDropdown 
+                    options={classcategories ?? []}
+                    value={newClassCategory}
+                    onChange={(id : string) => setNewClassCategory(id)}
+                    className="w-full"/>
+                  </div>
+                </div>
+
+                <div className="flex gap-3 mt-6 text-sm">
+                  <button
+                    onClick={() => setCreatingType(null)}
+                    type="button"
+                    className="flex-1 border rounded-full py-2 hover:bg-[var(--light-grey)]"
+                  >
+                    Kembali
+                  </button>
+
+                  <button
+                    disabled={savingNew || !newProductImageFile || !newClassName}
+                    type="button"
+                    onClick={async (e) => {
+                      e.preventDefault();
+                      if (!user || !newProductImageFile) return;
+                      setSavingNew(true);
+
+                      try {
+                        console.log("Menyimpan kelas baru...");
+
+                        const bucket = "classes";
+                        const ext = newProductImageFile.name.split(".").pop();
+                        const fileName = `${user.id}-${Date.now()}.${ext}`;
+
+                        const { error: uploadError } = await supabase.storage
+                          .from(bucket)
+                          .upload(fileName, newProductImageFile);
+
+                        if (uploadError) throw uploadError;
+
+                        const { data: { publicUrl } } = supabase.storage
+                          .from(bucket)
+                          .getPublicUrl(fileName);
+
+                        const { data, error: insertError } = await supabase
+                          .from("classes")
+                          .insert({
+                            name: newClassName,
+                            description: newClassDescription,
+                            user_id: user.id,
+                            image_url: publicUrl,
+                            created_at: new Date().toISOString(),
+                            category_id: newClassCategory
+                          })
+                          .select();
+
+                        if (insertError) throw insertError;
+
+                        console.log("Insert berhasil:", data);
+
+                        setNewClassName("");
+                        setNewClassDescription("");
+                        setNewProductImageFile(null);
+                        setShowAddModal(false);
+
+                        try {
+                          await recordAction(user.id, "create_class");
+                          if (!(inventoryFlags?.hasProduct) && !(inventoryFlags?.hasClass)) {
+                            await recordAction(user.id, "open_store");
+                          }
+                          const newly3 = await evaluateAchievements(user.id);
+                          if (newly3.length) {
+                            setAchievements((prev) => [...prev, ...newly3]);
+                            setUnlockQueue((prev) => [...prev, ...newly3]);
+                          }
+                        } catch {}
+                      } catch (err) {
+                        console.error("Gagal menambahkan kelas:", err);
+                        alert("Gagal menambahkan kelas, cek console log!");
+                      } finally {
+                        setSavingNew(false);
+                      }
+                    }}
+                    className="flex-1 bg-[var(--black)] text-white rounded-full py-2 hover:bg-[var(--dark-grey)]"
+                  >
+                    {savingNew ? "Menyimpan..." : "Simpan"}
+                  </button>
+                </div>
+              </div>
             )}
-          </div>
-          <label className="px-3 py-2 border rounded-full cursor-pointer hover:bg-[var(--light-grey)]">
-            Pilih File
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                if (e.target.files && e.target.files[0]) {
-                  console.log("File dipilih:", e.target.files[0]);
-                  setNewProductImageFile(e.target.files[0]);
-                }
-              }}
-            />
-          </label>
-        </div>
-      </div>
-
-      {/* nama judul kelas */}
-      <div>
-        <label className="block font-medium text-[var(--black)] mb-1">
-          Nama / Judul Kelas
-        </label>
-        <input
-          value={newClassName}
-          onChange={(e) => setNewClassName(e.target.value)}
-          className="w-full border rounded-lg px-3 py-2 text-sm"
-          placeholder="Contoh: Belajar Batik"
-        />
-      </div>
-
-      {/* deskripsi kelas */}
-      <div>
-        <label className="block font-medium text-[var(--black)] mb-1">
-          Deskripsi
-        </label>
-        <textarea
-          value={newClassDescription}
-          onChange={(e) => setNewClassDescription(e.target.value)}
-          className="w-full border rounded-lg px-3 py-2 text-sm resize-none h-24"
-          placeholder="Jelaskan kelas kamu"
-        />
-      </div>
-
-      {/* kategori kelas */}
-      <div>
-        <label htmlFor="category" className="block text-sm font-medium text-[var(--black)] mb-2">
-          Post Category
-        </label>
-        <SelectDropdown 
-        options={classcategories ?? []}
-        value={newClassCategory}
-        onChange={(id : string) => setNewClassCategory(id)}
-        className="w-full"/>
-      </div>
-    </div>
-
-    {/* button submit */}
-    <div className="flex gap-3 mt-6 text-sm">
-      <button
-        onClick={() => setCreatingType(null)}
-        type="button"
-        className="flex-1 border rounded-full py-2 hover:bg-[var(--light-grey)]"
-      >
-        Kembali
-      </button>
-
-      <button
-        disabled={savingNew || !newProductImageFile || !newClassName}
-        type="button"
-        onClick={async (e) => {
-          e.preventDefault();
-          if (!user || !newProductImageFile) return;
-          setSavingNew(true);
-
-          try {
-            console.log("Menyimpan kelas baru...");
-
-            const bucket = "classes";
-            const ext = newProductImageFile.name.split(".").pop();
-            const fileName = `${user.id}-${Date.now()}.${ext}`;
-
-            // Upload ke storage
-            const { error: uploadError } = await supabase.storage
-              .from(bucket)
-              .upload(fileName, newProductImageFile);
-
-            if (uploadError) throw uploadError;
-
-            // Ambil public URL
-            const { data: { publicUrl } } = supabase.storage
-              .from(bucket)
-              .getPublicUrl(fileName);
-
-            // Insert ke tabel
-            const { data, error: insertError } = await supabase
-              .from("classes")
-              .insert({
-                name: newClassName,
-                description: newClassDescription,
-                user_id: user.id,
-                image_url: publicUrl,
-                created_at: new Date().toISOString(),
-                category_id: newClassCategory
-              })
-              .select();
-
-            if (insertError) throw insertError;
-
-            console.log("Insert berhasil:", data);
-
-            // update state
-            setHasClass(true);
-            setNewClassName("");
-            setNewClassDescription("");
-            setNewProductImageFile(null);
-            setShowAddModal(false);
-
-            try {
-              await recordAction(user.id, "create_class");
-              if (!hasProduct && !hasClass) {
-                await recordAction(user.id, "open_store");
-              }
-              const newly3 = await evaluateAchievements(user.id);
-              if (newly3.length) {
-                setAchievements((prev) => [...prev, ...newly3]);
-                setUnlockQueue((prev) => [...prev, ...newly3]);
-              }
-            } catch {}
-          } catch (err) {
-            console.error("Gagal menambahkan kelas:", err);
-            alert("Gagal menambahkan kelas, cek console log!");
-          } finally {
-            setSavingNew(false);
-          }
-        }}
-        className="flex-1 bg-[var(--black)] text-white rounded-full py-2 hover:bg-[var(--dark-grey)]"
-      >
-        {savingNew ? "Menyimpan..." : "Simpan"}
-      </button>
-    </div>
-  </div>
-)}
-
-
-
-
-
-
-
-
-
           </div>
         </div>
       )}
@@ -958,20 +834,6 @@ const ProfilePage: React.FC = () => {
       />
 
 
-  {/* {selectedPost && (
-        <PostPreview
-          post={selectedPost}
-          onClose={() => setSelectedPost(null)}
-          onPostUpdated={(updated) => {
-            setPosts(p => p.map(pt => pt.id === updated.id ? updated : pt));
-            setSelectedPost(updated);
-          }}
-          onPostDeleted={(deletedId) => {
-            setPosts(p => p.filter(pt => pt.id !== deletedId));
-            setSelectedPost(null);
-          }}
-        />
-      )} */}
     </div>
   )
 }
