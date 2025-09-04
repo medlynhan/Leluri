@@ -17,7 +17,8 @@ interface PostCard {
   onLikeClick?: (...args: any[]) => void,
   userId: string,
   onFollowClick?: (...args: any[]) => void,
-  showFollowButton?: boolean
+  showFollowButton?: boolean,
+  hideActions?: boolean
 }
 
 const PostCard = ({ 
@@ -27,7 +28,8 @@ const PostCard = ({
   onLikeClick,
   onFollowClick,
   showFollowButton,
-  userId
+  userId,
+  hideActions
 } : PostCard) => {
 
   const [unlockQueue, setUnlockQueue] = useState<AchievementRow[]>([])
@@ -51,11 +53,19 @@ const PostCard = ({
 
   return (
     <Card 
-    key={post.id} className="overflow-hidden border-0 shadow-sm p-0 gap-0 h-86"
+    key={post.id} className="overflow-hidden border-0 shadow-sm p-0 gap-0 flex flex-col"
     onClick={() => onClick && onClick()}>
-      <MediaCarousel posts_media={[post.posts_media[0]]}/>
+      {post.posts_media && post.posts_media.length > 0 ? (
+        <div className="w-full aspect-square bg-gray-100">
+          <MediaCarousel posts_media={post.posts_media} />
+        </div>
+      ) : (
+        <div className="flex items-center justify-center w-full aspect-square bg-gray-100 text-[10px] text-gray-500">
+          No media
+        </div>
+      )}
 
-      <CardContent className="flex py-2 px-4 items-center">
+      <CardContent className="flex py-2 px-4 items-center h-20">
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center gap-3">
             <Avatar className="flex w-8 h-8 border border-gray-500 rounded-full overflow-hidden justify-center items-center">
@@ -68,7 +78,7 @@ const PostCard = ({
             </div>
           </div>
 
-          <div className="flex items-center text-gray-500">
+          <div className="flex items-center text-gray-500 shrink-0">
             {showFollowButton && (
               <FollowButton
                 userId={userId}
@@ -78,24 +88,28 @@ const PostCard = ({
                 className="ml-2"
               />
             )}
-            <Button
-            className="flex items-center gap-1 bg-gray-50 ml-2 hover:bg-gray-100 rounded-md"
-            variant="ghost"
-            disabled={isLikePostPending || isUnlikePostPending}
-            onClick={(e) => {
-              e.stopPropagation()
-              onLikeClick ? onLikeClick() : handleSelfLike()
-            }}>
-              <Heart className={`w-4 h-4 ${post.liked ? "text-red-500 fill-current" : "text-gray-300 fill-current"}`} />
-              <span className="text-sm">{post.likes}</span>
-            </Button>
-            <Button
-            className="flex items-center gap-1 bg-gray-50 ml-2 hover:bg-gray-100 rounded-lg"
-            variant="ghost"
-            onClick={() => onCommentClick && onCommentClick()}>
-              <MessageSquare className="w-4 h-4" />
-              <span className="text-sm">{post.comment_count}</span>
-            </Button>
+            {!hideActions && (
+              <>
+                <Button
+                  className="flex items-center gap-1 bg-gray-50 ml-2 hover:bg-gray-100 rounded-md"
+                  variant="ghost"
+                  disabled={isLikePostPending || isUnlikePostPending}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onLikeClick ? onLikeClick() : handleSelfLike()
+                  }}>
+                  <Heart className={`w-4 h-4 ${post.liked ? "text-red-500 fill-current" : "text-gray-300 fill-current"}`} />
+                  <span className="text-sm">{post.likes}</span>
+                </Button>
+                <Button
+                  className="flex items-center gap-1 bg-gray-50 ml-2 hover:bg-gray-100 rounded-lg"
+                  variant="ghost"
+                  onClick={() => onCommentClick && onCommentClick()}>
+                  <MessageSquare className="w-4 h-4" />
+                  <span className="text-sm">{post.comment_count}</span>
+                </Button>
+              </>
+            )}
           </div>
 
           <AchievementUnlockModal

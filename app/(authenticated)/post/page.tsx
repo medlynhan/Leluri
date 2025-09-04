@@ -29,8 +29,9 @@ const PostPage = () => {
       fetchUser();
     }, [router]);
 
-    const [image, setImage] = useState<File | null>(null);
-    const [imageUrl, setImageUrl] = useState<string | null>(null);
+  // Single media file (image or video)
+  const [image, setImage] = useState<File | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null); // preview (video/image)
     const [formData, setFormData] = useState<PostFormData>({
       title: '',
       description: '',
@@ -38,11 +39,11 @@ const PostPage = () => {
     })
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            setImage(file);
-            setImageUrl(URL.createObjectURL(file));
-        }
+      if (e.target.files && e.target.files[0]) {
+        const file = e.target.files[0];
+        setImage(file);
+        setImageUrl(URL.createObjectURL(file));
+      }
     };
 
     useEffect(() => {
@@ -69,7 +70,7 @@ const PostPage = () => {
         return
       }
       if(!image){
-        setInputError("At minumum 1 image must be posted!")
+        setInputError("At minumum 1 media must be posted!")
         return
       }
       if(!user){
@@ -111,25 +112,35 @@ const PostPage = () => {
         <div className="space-y-4">
           {/* Upload Foto */}
           <div>
-            <label className="block text-sm font-medium text-[var(--black)] mb-2">Foto</label>
+            <label className="block text-sm font-medium text-[var(--black)] mb-2">Media (Gambar atau Video)</label>
             <label
               htmlFor="file-upload"
               className="flex flex-col justify-center items-center px-6 pt-5 pb-6 border-2 border-dashed border-[var(--medium-grey)] rounded-xl cursor-pointer hover:bg-gray-50 transition-colors"
             >
               {imageUrl ? (
-                <Image
-                  src={imageUrl}
-                  alt="Preview"
-                  width={200}
-                  height={200}
-                  className="rounded-lg mx-auto object-cover"
-                />
+                image && image.type.startsWith('video') ? (
+                  <video
+                    src={imageUrl}
+                    className="rounded-lg mx-auto object-cover max-h-64"
+                    controls
+                    playsInline
+                    muted
+                  />
+                ) : (
+                  <Image
+                    src={imageUrl}
+                    alt="Preview"
+                    width={200}
+                    height={200}
+                    className="rounded-lg mx-auto object-cover"
+                  />
+                )
               ) : (
                 <>
                   <div className="mx-auto h-12 w-12 text-[var(--dark-grey)] flex items-center justify-center">
                     <Plus size={28} />
                   </div>
-                  <p className="text-xs text-[var(--dark-grey)]">Unggah Foto</p>
+                  <p className="text-xs text-[var(--dark-grey)] text-center">Unggah gambar (jpg/png/webp) atau video (mp4/webm)</p>
                 </>
               )}
               <input
@@ -138,7 +149,7 @@ const PostPage = () => {
                 type="file"
                 className="hidden"
                 onChange={handleImageChange}
-                accept="image/*"
+                accept="image/*,video/*"
               />
             </label>
           </div>

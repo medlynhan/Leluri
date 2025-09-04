@@ -18,24 +18,14 @@ import PostCard from '@/components/PostCard';
 import { DetailedPostWithMedia } from '@/lib/types/posts';
 import DetailedPostModal from '@/components/modal/DetailedPostModal';
 
-// interface Post {
-//   id: string
-//   user_id: string
-//   description: string
-//   image_url: string
-//   created_at: string
-//   likes: number
-//   category: string
-// }
-
 interface ProfileState {
   username: string
   role: string
   biography: string
   location: string
   image_url: string
-  followers: string[]
-  following: string[]
+  followers?: string[]
+  following?: string[]
   phone_number: string
 }
 
@@ -48,7 +38,8 @@ const ProfilePage: React.FC = () => {
   const [error, setError] = useState<string | null>(null)
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
   const [posts, setPosts] = useState<DetailedPostWithMedia[]>([])
-  // const [selectedPost, setSelectedPost] = useState<DetailedPostWithMedia | null>(null)
+  const [followerCount, setFollowerCount] = useState<number>(0)
+  const [followingCount, setFollowingCount] = useState<number>(0)
   const [hasProduct, setHasProduct] = useState(false)
   const [hasClass, setHasClass] = useState(false) 
 
@@ -73,7 +64,6 @@ const ProfilePage: React.FC = () => {
 
   const [postModalId, setPostModalId] = useState<string | null>(null)
 
-  // Simple color palette for achievement badge borders (cycled)
   const badgeColors = ['#F5C518', '#C084FC', '#3B82F6', '#10B981', '#FB7185', '#F59E0B']
   const getBadgeColor = (index: number) => badgeColors[index % badgeColors.length]
 
@@ -126,6 +116,19 @@ const ProfilePage: React.FC = () => {
         if (!classError) {
           setHasClass(!!classCheck && classCheck.length > 0)
         }
+        // follower & following counts
+        const { count: followersCount, error: followersErr } = await supabase
+          .from('userfollowers')
+          .select('*', { count: 'exact', head: true })
+          .eq('followed_id', user.id)
+        if (!followersErr) setFollowerCount(followersCount || 0)
+
+        const { count: followingCountRes, error: followingErr } = await supabase
+          .from('userfollowers')
+          .select('*', { count: 'exact', head: true })
+          .eq('follower_id', user.id)
+        if (!followingErr) setFollowingCount(followingCountRes || 0)
+
         const unlocked = await fetchUnlockedAchievements(user.id)
         setAchievements(unlocked)
         const newly = await evaluateAchievements(user.id)
@@ -247,7 +250,7 @@ const ProfilePage: React.FC = () => {
     )
   }
 
-  const mockProfile = {
+  const mockProfile: ProfileState = {
     username: "madeline30_",
     role: "pelajar budaya",
     biography:
@@ -323,13 +326,13 @@ const ProfilePage: React.FC = () => {
               </div>
             )}
 
-            <div className="flex  justify-center gap-8 mb-6">
+            <div className="flex justify-center gap-8 mb-6">
               <div className="text-center">
-                <p className="font-semibold text-[var(--black)]">{displayProfile.followers.length}</p>
+                <p className="font-semibold text-[var(--black)]">{followerCount}</p>
                 <p className="text-sm text-[var(--dark-grey)]">pengikut</p>
               </div>
               <div className="text-center">
-                <p className="font-semibold text-[var(--black)]">{displayProfile.following.length}</p>
+                <p className="font-semibold text-[var(--black)]">{followingCount}</p>
                 <p className="text-sm text-[var(--dark-grey)]">mengikuti</p>
               </div>
             </div>
@@ -407,19 +410,13 @@ const ProfilePage: React.FC = () => {
             <div className="relative">
               <div className="grid grid-cols-3 gap-4">
                 {posts.map((post) => (
-                  <PostCard key={post.id} post={post} onClick={() => setPostModalId(post.id)}/>
-                  // <div
-                  // key={post.id}
-                  // className="border border-black aspect-square cursor-pointer rounded-lg overflow-hidden hover:opacity-90 transition-opacity"
-                  // onClick={() => setSelectedPost(post)}>
-                  //   <Image
-                  //     src={post.image_url || "/placeholder.svg"}
-                  //     alt={post.description}
-                  //     width={200}
-                  //     height={200}
-                  //     className="w-full h-full object-cover"
-                  //   />
-                  // </div>
+                  <PostCard
+                    key={post.id}
+                    post={post}
+                    userId={user?.id || ''}
+                    onClick={() => setPostModalId(post.id)}
+                    hideActions
+                  />
                 ))}
               </div>
               <button
