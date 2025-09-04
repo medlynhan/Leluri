@@ -1,7 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../supabase";
-import { CommentRepliesWithUser, CommentReplyInput } from "../types/replies";
+import { CommentRepliesWithUser, CommentReplyFormInput } from "../types/replies";
 import { toast } from "sonner";
+import AppError from "../errors";
+import { AchievementRow, evaluateAchievements, recordAction } from "../achievements";
 
 // get comment's replies
 async function getCommentReplies(comment_id: string) : Promise<CommentRepliesWithUser[]> {
@@ -26,7 +28,7 @@ async function createReply({
     reply,
     user_id,
     comment_id
-} : CommentReplyInput) {
+} : CommentReplyFormInput) {
   const { data, error } = await supabase.from("comments_replies").insert([
       {
         user_id,
@@ -35,17 +37,18 @@ async function createReply({
       },
     ]);
   if (error) throw new AppError(error.message, parseInt(error.code) || 500);
-  
-  return data;
+  await recordAction(user_id, "comment", comment_id)
+  return await evaluateAchievements(user_id)
 }
 
 export function useCreateReply() {
   const queryClient = useQueryClient();
-  return useMutation({
+  return useMutation<AchievementRow[], AppError, CommentReplyFormInput>({
     mutationFn: createReply,
     onSuccess: (data, variables) => {
       toast.success("New reply successfully added!")
       queryClient.invalidateQueries({ queryKey : ['commentreplies', variables.comment_id]});
+      return data
     },
     onError: (err: any) => {
       if (err instanceof AppError) {

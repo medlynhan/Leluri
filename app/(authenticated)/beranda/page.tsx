@@ -36,8 +36,11 @@ const BerandaPage = () => {
     <div className="flex flex-row w-full h-full justify-center">
       <div className="flex flex-col w-full px-24 py-12 mx-auto gap-8 max-w-192">
         {user && posts.map((post) => (
-          <PostCard post={post} key={post.id} userId={user.id}
-          onCommentClick={() => setChosenPostId(post.id)}/>
+          <PostCard 
+          post={post} key={post.id}
+          userId={user.id}
+          onCommentClick={() => setChosenPostId(post.id)}
+          showFollowButton={true}/>
         ))}
       </div>
       {chosenPostId !== null && user &&

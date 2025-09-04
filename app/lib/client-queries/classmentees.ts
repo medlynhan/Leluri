@@ -1,14 +1,15 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../supabase";
 import { toast } from "sonner";
-import { ClassMenteeInput } from "../types/classmentees";
+import { ClassMenteeFormInput } from "../types/classmentees";
+import AppError from "../errors";
 
 // create new class mentee
 async function createClassMentee({
   user_id,
   class_id,
   notes,
-} : ClassMenteeInput) {
+} : ClassMenteeFormInput) {
   try {
     const { data, error } = await supabase.from("class_mentees").insert([
       {

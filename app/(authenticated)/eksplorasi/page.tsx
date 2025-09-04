@@ -11,7 +11,7 @@ import { FaX } from 'react-icons/fa6';
 import Image from 'next/image'
 import PostCard from '@/components/PostCard';
 import DetailedPostModal from '@/components/modal/DetailedPostModal';
-import { MinimalInfoUser } from '@/lib/types/user';
+import { MinimalInfoUser } from '@/lib/types/users';
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import { useGetPostCategories } from '@/lib/client-queries/postcategories';
 import LoadingComponent from '@/components/LoadingComponent';
@@ -19,6 +19,7 @@ import { FaPlus } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
+import FollowButton from '@/components/FollowButton';
 
 const EksplorasiPage = () => {
 
@@ -137,14 +138,20 @@ const EksplorasiPage = () => {
       <div className="flex flex-col w-full px-12">
         <span className="font-bold text-lg mb-4">Person ({users.length})</span>
         <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 overflow-hidden p-1">
-          {users.map((user) => (
-            <div className="flex flex-col items-center max-w-48 justify-center p-4 shadow-md rounded-md" key={user.id}>
+          {users.map((userSearched) => (
+            <div className="flex flex-col items-center max-w-48 justify-center p-4 shadow-md rounded-md" key={userSearched.id}>
               <Avatar className="mb-2 w-18 h-18 border border-gray-500 rounded-full overflow-hidden justify-center items-center">
-                <AvatarImage src={user.image_url || "/placeholder.svg"} />
-                <AvatarFallback>{user.username[0].toUpperCase()}</AvatarFallback>
+                <AvatarImage src={userSearched.image_url || "/placeholder.svg"} />
+                <AvatarFallback>{userSearched.username[0].toUpperCase()}</AvatarFallback>
               </Avatar>
-              <p className="font-medium text-sm text-gray-900 line-clamp-1">{user.username}</p>
-              <p className="text-xs text-gray-500 line-clamp-1">{user.role}</p>
+              <p className="font-medium text-sm text-gray-900 line-clamp-1">{userSearched.username}</p>
+              <p className="text-xs text-gray-500 line-clamp-1">{userSearched.role}</p>
+              {user &&
+              <FollowButton
+              userId={user.id}
+              followed={userSearched.followed ?? false}
+              followedUserId={userSearched.id}
+              className="mt-2"/>}
             </div>
           ))}
         </div>

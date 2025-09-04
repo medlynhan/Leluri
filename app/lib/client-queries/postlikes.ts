@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../supabase";
 import { toast } from "sonner";
 import { AchievementRow, evaluateAchievements, recordAction } from "../achievements";
+import AppError from "../errors";
 
 interface PostLikeFormInput {
   user_id: string; 
@@ -14,8 +15,8 @@ async function createPostLike({
   post_id 
 } : PostLikeFormInput) : Promise<AchievementRow[]> {
   const { error } = await supabase.from("posts_likes").insert([{ user_id, post_id }]);
-  await recordAction(user_id, "like_post")
   if (error) throw new AppError(error.message, parseInt(error.code) || 500)
+  await recordAction(user_id, "like_post")
   return await evaluateAchievements(user_id)
 }
 

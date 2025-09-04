@@ -8,13 +8,19 @@ import { Button } from "./ui/button"
 import { AchievementRow, evaluateAchievements, recordAction } from "@/lib/achievements"
 import { useState } from "react"
 import AchievementUnlockModal from "./modal/AchievementUnlockModal"
+import { FaUserPlus } from "react-icons/fa6"
+import { FaUserCheck } from "react-icons/fa"
+import { useCreateUserFollower, useDeleteUserFollower } from "@/lib/client-queries/userfollowers"
+import FollowButton from "./FollowButton"
 
 interface PostCard {
   post: DetailedPostWithMedia,
   onClick?: (...args: any[]) => void,
   onCommentClick?: (...args: any[]) => void,
   onLikeClick?: (...args: any[]) => void,
-  userId: string
+  userId: string,
+  onFollowClick?: (...args: any[]) => void,
+  showFollowButton?: boolean
 }
 
 const PostCard = ({ 
@@ -22,22 +28,23 @@ const PostCard = ({
   onClick,
   onCommentClick,
   onLikeClick,
+  onFollowClick,
+  showFollowButton,
   userId
 } : PostCard) => {
 
-  const { mutateAsync: createPostLike, isPending: isCreatePostLikePending, isError: isCreatePostLikeError, error: createPostLikeError} = useCreatePostLike()
-  const { mutate: deletePostLike, isPending: isDeletePostLikePending, isError: isDeletePostLikeError, error: deletePostLikeError} = useDeletePostLike()
-
   const [unlockQueue, setUnlockQueue] = useState<AchievementRow[]>([])
 
+  const { mutateAsync: likePost, isPending: isLikePostPending, isError: isLikePostError, error: likePostError } = useCreatePostLike()
+  const { mutate: unlikePost, isPending: isUnlikePostPending, isError: isUnlikePostError, error: unlikePostError } = useDeletePostLike()
   const handleSelfLike = async () => {
     if(post.liked){
-      deletePostLike({
+      unlikePost({
         user_id: userId,
         post_id: post.id
       })
     }else{
-      const newlyUnlockedAchievements = await createPostLike({
+      const newlyUnlockedAchievements = await likePost({
         user_id: userId,
         post_id: post.id
       })
@@ -58,17 +65,26 @@ const PostCard = ({
               <AvatarImage src={post.user.image_url || "/placeholder.svg"} />
               <AvatarFallback>{post.user.username[0].toUpperCase()}</AvatarFallback>
             </Avatar>
-            <div>
+            <div className="flex flex-col">
               <p className="font-medium text-sm text-gray-900 line-clamp-1">{post.user.username}</p>
               <p className="text-xs text-gray-500 line-clamp-1">{post.user.role}</p>
             </div>
           </div>
 
           <div className="flex items-center text-gray-500">
+            {showFollowButton && (
+              <FollowButton
+                userId={userId}
+                followed={post.user.followed ?? false}
+                followedUserId={post.user.id}
+                onFollowClick={onFollowClick}
+                className="ml-2"
+              />
+            )}
             <Button
-            className="flex items-center gap-1 hover hover:bg-gray-100 rounded-md"
+            className="flex items-center gap-1 bg-gray-50 ml-2 hover:bg-gray-100 rounded-md"
             variant="ghost"
-            disabled={isCreatePostLikePending || isDeletePostLikePending}
+            disabled={isLikePostPending || isUnlikePostPending}
             onClick={(e) => {
               e.stopPropagation()
               onLikeClick ? onLikeClick() : handleSelfLike()
@@ -77,7 +93,7 @@ const PostCard = ({
               <span className="text-sm">{post.likes}</span>
             </Button>
             <Button
-            className="flex items-center gap-1 hover:bg-gray-100 rounded-lg"
+            className="flex items-center gap-1 bg-gray-50 ml-2 hover:bg-gray-100 rounded-lg"
             variant="ghost"
             onClick={() => onCommentClick && onCommentClick()}>
               <MessageSquare className="w-4 h-4" />

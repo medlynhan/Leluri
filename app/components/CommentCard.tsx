@@ -1,7 +1,7 @@
 import { useGetCommentReplies } from "@/lib/client-queries/commentreplies"
 import { CommentReply } from "@/lib/types"
 import { PostCommentWithUser } from "@/lib/types/comments"
-import { MinimalInfoUser } from "@/lib/types/user"
+import { MinimalInfoUser } from "@/lib/types/users"
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar"
 import { formatDistanceToNow } from "date-fns"
 import { useState } from "react"

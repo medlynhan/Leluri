@@ -1,5 +1,5 @@
 import { CommentReply, PostComment, User } from ".";
-import { MinimalInfoUser } from "./user";
+import { MinimalInfoUser } from "./users";
 
 export interface PostCommentWithReplies extends PostComment {
     replies: (CommentReply & { user: MinimalInfoUser })[]
@@ -10,11 +10,11 @@ export interface PostCommentWithUser extends PostComment {
     user: MinimalInfoUser
 }
 
-export interface PostCommentFormData {
+export interface PostCommentUserInput {
     comment: string
 }
 
-export interface PostCommentInput extends PostCommentFormData {
+export interface PostCommentFormInput extends PostCommentUserInput {
     user_id: string
     post_id: string
 }

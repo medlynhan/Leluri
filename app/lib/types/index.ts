@@ -140,3 +140,10 @@ export interface PostMedia {
   created_at: string;
   is_main: boolean;
 }
+
+export interface UserFollower {
+  id: string;
+  following_id: string;
+  follower_id: string;
+  created_at: string;
+}

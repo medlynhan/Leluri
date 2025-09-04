@@ -3,4 +3,5 @@ export interface MinimalInfoUser {
     username: string,
     image_url: string,
     role: string
+    followed?: boolean
 }

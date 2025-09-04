@@ -1,6 +1,6 @@
 import { Post, PostMedia } from ".";
 import { PostCommentWithReplies } from "./comments";
-import { MinimalInfoUser } from "./user";
+import { MinimalInfoUser } from "./users";
 
 export interface DetailedPostWithMedia extends Post {
     user: MinimalInfoUser

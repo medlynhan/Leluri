@@ -1,5 +1,5 @@
 import { Class } from ".";
-import { MinimalInfoUser } from "./user";
+import { MinimalInfoUser } from "./users";
 
 export interface ClassWithCreator extends Class {
   creator: {

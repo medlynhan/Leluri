@@ -1,16 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../supabase";
-import { PostCommentInput, PostCommentWithUser } from "../types/comments";
+import { PostCommentFormInput, PostCommentWithUser } from "../types/comments";
 import { toast } from "sonner";
 import { DetailedPostWithMedia } from "../types/posts";
-
-export interface PostComment {
-  id: string;
-  post_id: string;
-  user_id: string;
-  comment: string;
-  created_at: string;
-}
+import AppError from "../errors";
+import { AchievementRow, evaluateAchievements, recordAction } from "../achievements";
 
 // get all comments
 async function getPostComments(post_id: string) : Promise<PostCommentWithUser[]> {
@@ -35,7 +29,7 @@ async function createComment({
     comment,
     user_id,
     post_id
-} : PostCommentInput) {
+} : PostCommentFormInput) {
   const { data, error } = await supabase.from("posts_comments").insert([
       {
         user_id,
@@ -43,19 +37,20 @@ async function createComment({
         post_id
       },
     ]);
+  await recordAction(user_id, "comment", post_id)
   if (error) throw new AppError(error.message, parseInt(error.code) || 500);
-  
-  return data;
+  return await evaluateAchievements(user_id);
 }
 
 export function useCreateComment() {
   const queryClient = useQueryClient();
-  return useMutation({
+  return useMutation<AchievementRow[], AppError, PostCommentFormInput>({
     mutationFn: createComment,
     onSuccess: (data, variables) => {
       toast.success("New comment successfully added!")
       queryClient.invalidateQueries({ queryKey : ['postcomments', variables.post_id]});
       queryClient.invalidateQueries({ queryKey : ['posts', variables.user_id]})
+      return data
     },
     onError: (err: any) => {
       if (err instanceof AppError) {

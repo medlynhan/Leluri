@@ -43,8 +43,11 @@ export async function evaluateAchievements(userId: string): Promise<AchievementR
       case 'buy_product':
         ok = (counts['buy_product'] || 0) >= (cond.count || 0);
         break;
-      case 'social':
-        ok = (counts['comment'] || 0) >= (cond.comment || 0) && (counts['follow'] || 0) >= (cond.follow || 0);
+      case 'follow':
+        ok = (counts['follow'] || 0) >= (cond.count || 0);
+        break;
+      case 'comment':
+        ok = (counts['comment'] || 0) >= (cond.count || 0);
         break;
       case 'buy_product_month':
         ok = (counts['buy_product'] || 0) >= (cond.count || 0);

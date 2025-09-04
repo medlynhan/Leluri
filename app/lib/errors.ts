@@ -7,3 +7,5 @@ class AppError extends Error {
         this.name = "AppError";
     }
 }
+
+export default AppError
