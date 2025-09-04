@@ -84,7 +84,7 @@ const PostCard = ({
           </div>
 
           <div className="flex items-center text-gray-500 shrink-0">
-            {showFollowButton && (
+            {showFollowButton && post.user.id !== userId && (
               <FollowButton
                 userId={userId}
                 followed={post.user.followed ?? false}

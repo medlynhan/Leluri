@@ -81,8 +81,9 @@ const EksplorasiPage = () => {
     )
     setUsers(
       posts
-      .filter((post) => post.user.username
-      .includes(search))
+      .filter((post) => 
+        post.user.username?.toLowerCase().includes(search.toLowerCase()) && post.user.id !== user?.id
+      )
       .map((post) => post.user)
       .filter((value, index, self) => index === self.findIndex((t) => t.id === value.id))
     )
