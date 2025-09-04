@@ -139,7 +139,13 @@ const EksplorasiPage = () => {
         <span className="font-bold text-lg mb-4">Person ({users.length})</span>
         <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 overflow-hidden p-1">
           {users.map((userSearched) => (
-            <div className="flex flex-col items-center max-w-48 justify-center p-4 shadow-md rounded-md" key={userSearched.id}>
+            <div 
+            className="flex flex-col items-center max-w-48 justify-center p-4 shadow-md rounded-md" 
+            key={userSearched.id}
+            onClick={(e) => {
+              e.stopPropagation()
+              router.push(`/profile/${userSearched.id}`)
+            }}>
               <Avatar className="mb-2 w-18 h-18 border border-gray-500 rounded-full overflow-hidden justify-center items-center">
                 <AvatarImage src={userSearched.image_url || "/placeholder.svg"} />
                 <AvatarFallback>{userSearched.username[0].toUpperCase()}</AvatarFallback>

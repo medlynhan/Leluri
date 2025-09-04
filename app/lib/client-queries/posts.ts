@@ -151,3 +151,27 @@ export function useCreatePost() {
     },
   });
 }
+
+// get post by id
+async function getPostByUserId(user_id: string|undefined): Promise<DetailedPostWithMedia[]> {
+  const { data, error } = await supabase.from('posts')
+    .select(`
+      *,
+      user:users!posts_user_id_fkey ( id, username, image_url, role ),
+      posts_media (*)
+      `)
+    .eq('user_id', user_id)
+    .single();
+
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export function useGetPostByUserId(user_id : string|undefined, options?: UseQueryOptions<DetailedPostWithMedia[]>) {
+  return useQuery<DetailedPostWithMedia[], Error>({
+    queryKey: ["user-posts", user_id],
+    queryFn: () => getPostByUserId(user_id),
+    enabled: !!user_id,
+    ...options
+  });
+}

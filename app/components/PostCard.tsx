@@ -9,6 +9,7 @@ import { AchievementRow } from "@/lib/achievements"
 import { useState } from "react"
 import AchievementUnlockModal from "./modal/AchievementUnlockModal"
 import FollowButton from "./FollowButton"
+import { useRouter } from "next/navigation"
 
 interface PostCard {
   post: DetailedPostWithMedia,
@@ -32,6 +33,7 @@ const PostCard = ({
   hideActions
 } : PostCard) => {
 
+  const router = useRouter()
   const [unlockQueue, setUnlockQueue] = useState<AchievementRow[]>([])
 
   const { mutateAsync: likePost, isPending: isLikePostPending, isError: isLikePostError, error: likePostError } = useCreatePostLike()
@@ -67,7 +69,10 @@ const PostCard = ({
 
       <CardContent className="flex py-2 px-4 items-center h-20">
         <div className="flex items-center justify-between w-full">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3" onClick={(e) => {
+            e.stopPropagation()
+            router.push(`/profile/${post.user.id}`)
+          }}>
             <Avatar className="flex w-8 h-8 border border-gray-500 rounded-full overflow-hidden justify-center items-center">
               <AvatarImage src={post.user.image_url || "/placeholder.svg"} />
               <AvatarFallback>{post.user.username[0].toUpperCase()}</AvatarFallback>

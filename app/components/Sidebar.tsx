@@ -81,7 +81,7 @@ const Sidebar = () => {
         </ul>
       </nav>
       <div className="mt-auto">
-        <div className="p-3 hover:bg-gray-100 rounded-lg cursor-pointer" onClick={() => router.push('/profile')}>
+        <div className="p-3 hover:bg-gray-100 rounded-lg cursor-pointer" onClick={() => router.push(`/profile/${user?.id}`)}>
             <div className="flex items-center">
             {profile?.image_url ? (
                 <Image src={profile.image_url} alt={profile.username} width={40} height={40} className="rounded-full" />

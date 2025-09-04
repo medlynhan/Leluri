@@ -6,9 +6,13 @@ export interface User {
   image_url?: string | null;
   biography?: string | null;
   location?: string | null;
-  role: string;
+  role?: string;
   created_at: string;
   phone_number?: string | null;
+  achievements?: string[]
+  follower_count: number
+  following_count: number
+  role_id?: string
 }
 
 export interface Category {
@@ -145,5 +149,11 @@ export interface UserFollower {
   id: string;
   following_id: string;
   follower_id: string;
+  created_at: string;
+}
+
+export interface UserRole {
+  id: string;        
+  role: string;      
   created_at: string;
 }

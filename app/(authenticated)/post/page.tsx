@@ -13,30 +13,30 @@ import { PostFormData } from '@/lib/types/posts';
 
 const PostPage = () => {
   
-    const [user, setUser] = useState<User | null>(null);
-    const [inputError, setInputError] = useState<string|null>(null);
-    const router = useRouter();
+  const [user, setUser] = useState<User | null>(null);
+  const [inputError, setInputError] = useState<string|null>(null);
+  const router = useRouter();
 
-    useEffect(() => {
-      const fetchUser = async () => {
-          const { data: { user } } = await supabase.auth.getUser();
-          if (user) {
-              setUser(user);
-          } else {
-              router.push('/login');
-          }
-      };
-      fetchUser();
-    }, [router]);
+  useEffect(() => {
+    const fetchUser = async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+            setUser(user);
+        } else {
+            router.push('/login');
+        }
+    };
+    fetchUser();
+  }, [router]);
 
   // Single media file (image or video)
   const [image, setImage] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null); // preview (video/image)
-    const [formData, setFormData] = useState<PostFormData>({
-      title: '',
-      description: '',
-      category_id: '',
-    })
+  const [formData, setFormData] = useState<PostFormData>({
+    title: '',
+    description: '',
+    category_id: '',
+  })
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       if (e.target.files && e.target.files[0]) {
@@ -46,9 +46,9 @@ const PostPage = () => {
       }
     };
 
-    useEffect(() => {
-      console.log(formData)
-    }, [formData])
+    // useEffect(() => {
+    //   console.log(formData)
+    // }, [formData])
 
     const handleInputFormData = (
       field: keyof PostFormData,
