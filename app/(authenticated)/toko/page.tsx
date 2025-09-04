@@ -139,7 +139,7 @@ const StorePage: React.FC = () => {
             <div className="relative w-full h-full ">
                 
                 {/*Navbar*/}
-                <div className='flex gap-4 justify-center bg-[var(--white)] w-full z-20 fixed  max-w-screen p-2'>
+                <div className='flex gap-4 justify-center bg-[var(--white)] w-full z-5 fixed  max-w-screen p-2 border h-14'>
                     {/*Sidebar */}
                     <Sidebar />
 
@@ -148,7 +148,7 @@ const StorePage: React.FC = () => {
                         <input
                             type="text"
                             placeholder="Apa yang ingin kamu temukan?"
-                            className="w-full py-3 pl-12 pr-4 border border-[var(--black)] rounded-full  h-[80%] border"
+                            className="w-full py-3 pl-12 pr-4 border border-[var(--black)] rounded-full  h-full border"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
@@ -158,7 +158,7 @@ const StorePage: React.FC = () => {
 
                     {/*Icon */}
                     <div className="w-30  lg:col-span-1  flex items-center justify-end  gap-6 mr-3">
-                        <button onClick={handleSearch} className="bg-[var(--yellow)] text-white  h-[80%] rounded-full flex-1 font-semibold hover:bg-transparent hover:border-[var(--yellow)] border border-transparent font-semibold hover:text-[var(--black)]  transition-colors">Cari</button>
+                        <button onClick={handleSearch} className="bg-[var(--yellow)] text-white  h-full rounded-full flex-1 font-semibold hover:bg-transparent hover:border-[var(--yellow)] border border-transparent font-semibold hover:text-[var(--black)]  transition-colors">Cari</button>
                         <button onClick={() => router.push('/keranjang')} aria-label="Keranjang" className=" h-[80%] rounded-full  transition-colors">
                             <ShoppingCart className="w-6 h-6 hover:text-[var(--yellow)]" />
                         </button>

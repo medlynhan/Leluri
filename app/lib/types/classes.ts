@@ -7,6 +7,7 @@ export interface ClassWithCreator extends Class {
     username: string
     image_url: string
     role: string
+    rating?: Float16Array
   }
 }
 

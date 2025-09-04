@@ -13,6 +13,7 @@ interface SideCommentSectionInterface {
   user_id: string,
   closeCommentSection: () => void,
   className?: string;
+  hiddenCloseButton? : string;
 }
 
 interface Replying {
@@ -24,7 +25,9 @@ const SideCommentSection = ({
   post_id,
   user_id,
   closeCommentSection,
-  className = ''
+  className = '',
+  hiddenCloseButton = ''
+  
 } : SideCommentSectionInterface) => {
 
   const { data: comments = [], isLoading, isError: isGetPostCommentsError, error: getPostCommentsError } = useGetPostComments(post_id)
@@ -56,14 +59,21 @@ const SideCommentSection = ({
   
   return (
     <div className={`${className}`}>
-      <div className="p-4 border-b flex items-center justify-between">
-        <h3 className="font-semibold">Comments ({comments.length})</h3>
-        <Button variant="ghost" size="sm" onClick={closeCommentSection}>
-          <X className="w-5 h-5"/>
-        </Button>
+      <div className=" p-4 border-b flex items-center justify-between">
+        <h3 className="flex items-center font-semibold  h-full">Comments ({comments.length})</h3>
+        <button
+          onClick={closeCommentSection}
+          className={` p-1 h-full rounded-full hover:bg-[var(--light-grey)] transition-colors ${hiddenCloseButton}`}
+          aria-label="Tutup"
+        >
+          <X className="w-5 h-5 text-[var(--black)] " />
+        </button>
       </div>
 
-      <div className="top-0 flex-1 overflow-y-auto">
+      <div className="top-0 flex-1 overflow-y-auto scrollbar-hide">
+        <div>
+
+        </div>
         {comments.map((comment) => (
           <CommentCard comment={comment} key={comment.id} onReplyClicked={(id : string, username : string) => setReplyReceipient({ id: id, username: username })}/>
         ))}

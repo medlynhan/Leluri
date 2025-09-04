@@ -58,19 +58,19 @@ const RegistrationModal = ({
         <DialogContent 
         className="fixed z-102 flex min-h-screen w-screen bg-black/50 mx-auto justify-center items-center">
           <div
-          className="relative bg-white w-1/2 z-103 max-w-180 rounded-lg p-12">
+          className="relative bg-white w-1/2 z-103 max-w-180 rounded-lg p-12 justify-center items-center flex-col">
             <DialogClose asChild>
               <button className="absolute top-4 right-4 text-gray-500 hover:text-black">
                 <X className="h-5 w-5" />
               </button>
             </DialogClose>
             <DialogHeader>
-              <DialogTitle className="text-center font-semibold text-lg">DAFTAR KELAS</DialogTitle>
+              <DialogTitle className="text-center font-semibold text-lg">Daftar Kelas</DialogTitle>
             </DialogHeader>
 
-            <div className="space-y-4 mt-4">
-              <div>
-                <label className="text-sm font-medium mb-2 block">Motivation & Notes for Tutor/Mentor</label>
+            <div className="space-y-4 mt-4 justify-center items-center flex w-full flex-col">
+              <div className="w-full">
+                <label className="text-sm font-medium mb-2 block">Kirim Motivasi & Pesan untuk Tutor/Mentor</label>
                 <textarea
                   value={registrationData.notes}
                   onChange={(e) => setRegistrationData((prev) => ({ ...prev, notes: e.target.value }))}
@@ -81,7 +81,7 @@ const RegistrationModal = ({
               <Button
               onClick={handleRegistrationSubmit}
               disabled={isCreateClassMenteePending}
-              className="w-full bg-black hover:bg-gray-800 text-white rounded-full mt-6">
+              className="w-full bg-black hover:bg-[var(--dark-grey)] text-white rounded-full mt-6 max-w-40">
                 Daftar
               </Button>
             </div>

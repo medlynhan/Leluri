@@ -72,7 +72,7 @@ const PembayaranPage: React.FC = () => {
   return (
     <div className="w-full p-6">
       <header className="mb-8 flex items-center gap-4">
-        <button onClick={() => router.back()} className="p-2 rounded-full hover:bg-gray-100"><ArrowLeft className="w-6 h-6" /></button>
+        <button onClick={() => router.back()} className="p-2 rounded-full hover:text-[var(--yellow)] hover:bg-gray-100"><ArrowLeft className="w-6 h-6" /></button>
         <h1 className="text-lg font-semibold">Pembayaran</h1>
       </header>
 
@@ -137,7 +137,7 @@ const PembayaranPage: React.FC = () => {
           <button
             onClick={confirmPayment}
             disabled={!selectedOption || cart.length === 0 || processing}
-            className="bg-black text-white rounded-full py-3 font-semibold disabled:opacity-40 hover:bg-gray-800"
+            className="bg-black text-white rounded-full py-3 font-semibold  hover:bg-[var(--dark-grey)] transition-all duration-200"
           >
             {processing ? 'Memproses...' : 'Lanjutkan Pembayaran'}
           </button>

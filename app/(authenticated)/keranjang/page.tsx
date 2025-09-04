@@ -117,10 +117,17 @@ const CartPage: React.FC = () => {
 
   const renderEmpty = () => (
     <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
+      <Image
+        src={ "/empty-cart.png"}
+        alt="Kerannjang Kosong"
+        width={200}
+        height={200}
+        className="w-80  object-cover "
+      />
       <p className="text-gray-500 text-lg font-medium">Oops, keranjang kamu masih kosong...</p>
       <button
         onClick={() => router.push("/toko")}
-        className="mt-6 px-6 py-3 rounded-full bg-black text-white text-sm font-semibold hover:bg-gray-800"
+        className="mt-6 px-6 py-3 rounded-full bg-black text-white text-sm font-semibold hover:bg-[var(--dark-grey)] "
       >
         Mulai Belanja
       </button>
@@ -222,7 +229,7 @@ const CartPage: React.FC = () => {
           </div>
           <button
             onClick={() => router.push("/pembayaran")}
-            className="w-full sm:w-auto px-10 bg-black text-white rounded-full py-3 font-semibold hover:bg-gray-800 transition-colors"
+            className="w-full sm:w-auto px-10 bg-black text-white rounded-full py-3 font-semibold hover:bg-[var(--dark-grey)] transition-colors"
           >
             Lanjutkan Pembelian
           </button>
@@ -235,7 +242,7 @@ const CartPage: React.FC = () => {
     <div className="p-6 w-full h-full flex flex-col">
 	<button
             onClick={() => router.back()}
-            className="p-2 rounded-full"
+            className="p-2 rounded-full hover:text-[var(--yellow)] hover:bg-gray-100 w-10 h-10 mb-5"
             aria-label="Kembali"
           >
             <ArrowLeft className="w-6 h-6" />
