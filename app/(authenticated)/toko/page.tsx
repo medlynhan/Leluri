@@ -139,7 +139,7 @@ const StorePage: React.FC = () => {
             <div className="relative w-full h-full ">
                 
                 {/*Navbar*/}
-                <div className='flex gap-4 justify-center bg-[var(--white)] w-full z-5 fixed  max-w-screen p-2 border h-14'>
+                <div className='flex gap-4 justify-center bg-[var(--white)] w-full z-5 fixed  max-w-screen p-2  h-14'>
                     {/*Sidebar */}
                     <Sidebar />
 
@@ -148,7 +148,7 @@ const StorePage: React.FC = () => {
                         <input
                             type="text"
                             placeholder="Apa yang ingin kamu temukan?"
-                            className="w-full py-3 pl-12 pr-4 border border-[var(--black)] rounded-full  h-full border"
+                            className="w-full pl-12 pr-4 border border-gray-200 shadow-xs  rounded-full h-full"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             onKeyPress={(e) => e.key === 'Enter' && handleSearch()}

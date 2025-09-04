@@ -102,7 +102,7 @@ const searchClass = (term: string) => {
   return (
     <div className="relative w-full h-full overflow-x-hidden">
       {/* Navbar */}
-      <div className="absolute top-0 left-0 flex gap-4 justify-center items-center h-14 bg-[var(--white)] w-full z-5 fixed max-w-screen p-2 border">
+      <div className="absolute top-0 left-0 flex gap-4 justify-center items-center h-14 bg-[var(--white)] w-full z-5 fixed max-w-screen p-2 ">
         <Sidebar />
 
         {/* Search Bar */}
@@ -110,7 +110,7 @@ const searchClass = (term: string) => {
           <input
             type="text"
             placeholder="Apa yang ingin kamu temukan?"
-            className="w-full pl-12 pr-4 border border-[var(--black)] rounded-full h-full"
+            className="w-full pl-12 pr-4 border border-gray-200 shadow-xs  rounded-full h-full"
             value={search}
             onChange={(e) => handleSearchChange(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && searchClass(search)}
