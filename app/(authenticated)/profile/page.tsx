@@ -178,13 +178,14 @@ const ProfilePage: React.FC = () => {
   if(isGetClassCategoriesLoading) return <LoadingComponent message="Loading class categories options..."/>
 
   return (
-    <div className="flex w-full relative min-h-screen overflow-x-hidden">
+    <div className="flex  min-h-screen overflow-x-hidden lg:ml-64 min-h-screen">
 
       {(postModalId !== null) && user &&
       <DetailedPostModal postId={postModalId} setPostModalId={setPostModalId} userId={user.id}/>}
 
-      <div className={`${isEditMode || showAddModal ? "fixed" : ""}  flex flex-col lg:flex-row  h-full w-full `}>
-        <div className="w-full min-h-[30vh] lg:min-h-[60vh] ml-0 lg:w-80 border-b lg:border-b-transparent lg:border-r border-[var(--medium-grey)] p-6 ">
+      <div className={`${isEditMode || showAddModal  || postModalId ? " " : ""}lg:fixed  flex flex-col lg:flex-row  h-full w-full  max-w-screen lg:w-[calc(100%-16rem)] `}>
+      {/* <div className={`${isEditMode || showAddModal || selectedPost ? "fixed" : ""}  flex flex-col lg:flex-row  h-full w-full `}> */}
+        <div className="w-full min-h-[30vh] lg:min-h-[60vh]   ml-0 lg:w-80 border-b lg:border-b-transparent lg:border-r border-[var(--medium-grey)] p-6 mac-h-screen lg:overflow-y-auto lg:cursor-pointer scrollbar-hide">
           <div className="w-full flex flex-col items-center text-center">
             <div className="justify-items items-center relative mb-4">
               <div className="w-24 h-24 rounded-full  p-1 ">
@@ -306,24 +307,18 @@ const ProfilePage: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex-1 min-h-screen p-6 ">
+        <div className="flex-1 min-h-screen p-6 lg:overflow-y-auto  lg:cursor-pointer  ">
 
       {postsData && postsData.length > 0 ? (
             <div className="relative">
-              <div className="grid grid-cols-3 gap-4">
-        {postsData.map((post) => (
-                  <PostCard
-                    key={post.id}
-                    post={post}
-                    userId={user?.id || ''}
-                    onClick={() => setPostModalId(post.id)}
-                    hideActions
-                  />
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(17em,1fr))] p-3 gap-2 lg:gap-4">
+                {postsData.map((post) => (
+                  <PostCard key={post.id} post={post} onClick={() => setPostModalId(post.id)} hidden={"hidden"}/>
                 ))}
               </div>
               <button
                 onClick={() => router.push("/post")}
-                className="absolute top-0 right-0 w-12 h-12 bg-black text-white rounded-full flex items-center justify-center hover:bg-[var(--dark-grey)] transition-colors shadow-lg"
+                className="fixed absolute top-0 right-0 w-12 h-12 bg-black text-white rounded-full flex items-center justify-center hover:bg-[var(--dark-grey)] transition-colors shadow-lg"
               >
                 <FaPlus className="w-5 h-5" />
               </button>
@@ -480,7 +475,7 @@ const ProfilePage: React.FC = () => {
             <button onClick={() => setShowAchievementsModal(false)} className="absolute top-3 right-3 p-1 rounded-full hover:bg-[var(--light-grey)]" aria-label="Tutup"><X className="w-5 h-5"/></button>
             <h2 className="text-lg font-semibold mb-4 flex items-center gap-2"> Pencapaian</h2>
             {achievements.length === 0 ? <p className="text-sm text-[var(--dark-grey)]">Belum ada pencapaian.</p> : (
-              <ul className="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
+              <ul className="space-y-3 max-h-[60vh] overflow-y-auto pr-2 scrollbar-hide">
                 {achievements.map((a,i) => {
                   const color = getBadgeColor(i)
                   return (

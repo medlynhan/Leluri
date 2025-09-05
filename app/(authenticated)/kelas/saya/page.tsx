@@ -120,7 +120,7 @@ const SelfClassesPage: React.FC = () => {
         </button>
       </header>
       <div className="flex items-center mt-10 mb-10 justify-between md:px-6">
-        <h1 className="text-lg font-semibold">Produk ({classes.length})</h1>
+        <h1 className="text-lg font-semibold">Kelas ({classes.length})</h1>
       </div>
       {/* Loading */}
       {loading ? (
@@ -188,8 +188,8 @@ const SelfClassesPage: React.FC = () => {
 
       {/* Modal edit */}
       {editing && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-5 w-80">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 ">
+          <div className="bg-white rounded-xl p-5 w-80 min-h-[50vh] flex flex-col justify-center m-5">
             <h2 className="font-semibold mb-4 text-sm">Edit Kelas</h2>
             <div className="space-y-3">
               <div>

@@ -7,15 +7,13 @@ import { useCreateComment, useGetPostComments } from "@/lib/client-queries/postc
 import { useState } from "react"
 import LoadingComponent from "./LoadingComponent"
 import { useCreateReply } from "@/lib/client-queries/commentreplies"
-import { AchievementRow } from "@/lib/achievements"
-import AchievementUnlockModal from "./modal/AchievementUnlockModal"
 
 interface SideCommentSectionInterface {
   post_id: string,
   user_id: string,
   closeCommentSection: () => void,
   className?: string;
-  isPostChange?: boolean
+  hiddenCloseButton? : string;
 }
 
 interface Replying {
@@ -28,51 +26,54 @@ const SideCommentSection = ({
   user_id,
   closeCommentSection,
   className = '',
+  hiddenCloseButton = ''
+  
 } : SideCommentSectionInterface) => {
 
-  const [unlockQueue, setUnlockQueue] = useState<AchievementRow[]>([])
+  const { data: comments = [], isLoading, isError: isGetPostCommentsError, error: getPostCommentsError } = useGetPostComments(post_id)
+  const { mutate: createNewComment, isPending: isPendingCreateNewComment, isError: isCreateCommentError, error: createCommentError } = useCreateComment()
+  const { mutate: createNewReply, isPending: isPendingCreateNewReply, isError: isCreateReplyError, error: createReplyError } = useCreateReply()
   
   const [comment, setComment] = useState<string>('')
   const [replyReceipient, setReplyReceipient] = useState<Replying|null>(null)
 
-  const { data: comments = [], isLoading, isError: isGetPostCommentsError, error: getPostCommentsError } = useGetPostComments(post_id)
-  const { mutateAsync: createNewComment, isPending: isPendingCreateNewComment, isError: isCreateCommentError, error: createCommentError } = useCreateComment()
-  const { mutateAsync: createNewReply, isPending: isPendingCreateNewReply, isError: isCreateReplyError, error: createReplyError } = useCreateReply()
-  const handleSubmitComment = async () => {
+  const handleSubmitComment = () => {
     if(!comment || comment.length <= 0) return
-    let newlyUnlockedAchievements = null
     if(replyReceipient === null){
-      newlyUnlockedAchievements = await createNewComment({
+      createNewComment({
         post_id: post_id,
         user_id: user_id,
         comment: comment
       })
     }else{
-      newlyUnlockedAchievements = await createNewReply({
+      createNewReply({
         comment_id: replyReceipient.id,
         user_id: user_id,
         reply: comment
       })
     }
     setComment('')
-    setUnlockQueue((prev) => [...prev, ...newlyUnlockedAchievements])
   }
 
   if(isLoading) return <LoadingComponent message="loading post comments..."/>
   
   return (
     <div className={`${className}`}>
-      <div className="p-4 border-b flex items-center justify-between">
-        <h3 className="font-semibold">Comments ({comments.length})</h3>
-        <Button variant="ghost" size="sm" onClick={() => {
-          setReplyReceipient(null)
-          closeCommentSection()
-        }}>
-          <X className="w-5 h-5"/>
-        </Button>
+      <div className=" p-4 border-b flex items-center justify-between">
+        <h3 className="flex items-center font-semibold  h-full">Comments ({comments.length})</h3>
+        <button
+          onClick={closeCommentSection}
+          className={` p-1 h-full rounded-full hover:bg-[var(--light-grey)] transition-colors ${hiddenCloseButton}`}
+          aria-label="Tutup"
+        >
+          <X className="w-5 h-5 text-[var(--black)] " />
+        </button>
       </div>
 
-      <div className="top-0 flex-1 overflow-y-auto">
+      <div className="top-0 flex-1 overflow-y-auto scrollbar-hide">
+        <div>
+
+        </div>
         {comments.map((comment) => (
           <CommentCard comment={comment} key={comment.id} onReplyClicked={(id : string, username : string) => setReplyReceipient({ id: id, username: username })}/>
         ))}
@@ -95,18 +96,12 @@ const SideCommentSection = ({
           <div className="flex-1 flex gap-2">
             <Input placeholder="Add comments..." className="flex-1 text-sm"
             value={comment} onChange={(e) => setComment(e.target.value)}/>
-            <Button size="sm" className="px-3"
-            onClick={handleSubmitComment} 
-            disabled={isPendingCreateNewComment || isPendingCreateNewReply}>
+            <Button size="sm" className="px-3" onClick={handleSubmitComment} disabled={isPendingCreateNewComment}>
               <Send className="w-4 h-4"/>
             </Button>
           </div>
         </div>
       </div>
-      <AchievementUnlockModal
-        queue={unlockQueue.map(a => ({ id: a.id, name: a.name, description: a.description, badge_icon: a.badge_icon }))}
-        onClose={(id) => setUnlockQueue(q => q.filter(x => x.id !== id))}
-      />
     </div>
   )
 }

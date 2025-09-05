@@ -110,11 +110,10 @@ const SelfStorePage: React.FC = () => {
           <button onClick={() => router.back()} className="p-2 hover:bg-[var(--light-grey)] hover:text-[var(--yellow)] rounded-full ml-4">
             <ArrowLeft className="w-6 h-6" />
           </button>
-          
         </header>
-      <div className="flex items-center mt-10 mb-10 justify-between  md:px-6">
-        <h1 className="text-lg font-semibold">Produk ({products.length})</h1>
-      </div>
+        <div className="flex items-center mt-10 mb-10 justify-between  md:px-6">
+          <h1 className="text-lg font-semibold">Produk ({products.length})</h1>
+        </div>
 
       {loading ? (
         <div className="ml-3 mr-3 grid grid-cols-[repeat(auto-fill,minmax(15em,1fr))] p-3 gap-3 lg:gap-6 mt-20 ">

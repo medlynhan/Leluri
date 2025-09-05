@@ -4,11 +4,11 @@ import React, { useState, useEffect } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Home, Compass, BookOpen, ShoppingBag } from 'lucide-react'
+import { Home, Compass, BookOpen, ShoppingBag, LogOut, Hamburger } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { User } from '@supabase/supabase-js'
-import { RxHamburgerMenu } from 'react-icons/rx'
-import { X } from 'lucide-react'
+import { RxHamburgerMenu } from "react-icons/rx";
+import { X } from "lucide-react"
 
 interface Profile {
   username: string
@@ -20,7 +20,7 @@ const Sidebar = () => {
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
-  const [mobileOpen, setMobileOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -48,62 +48,51 @@ const Sidebar = () => {
     { href: '/toko', icon: ShoppingBag, label: 'Toko' },
   ]
 
-  const NavContent = () => (
-    <>
-      <div className="mb-10 w-full flex flex-row justify-between items-center">
-        <Image src="/logo-leluri.png" alt="Leluri Logo" width={70} height={70} />
-        <button onClick={() => setMobileOpen(false)} className="p-1 md:hidden hover:bg-[var(--medium-grey)] rounded-full transition-colors flex" aria-label="Tutup">
-          <X className="w-5 h-5" />
-        </button>
-      </div>
-      <nav className="flex-grow">
-        <ul>
-          {navItems.map(item => (
-            <li key={item.href}>
-              <Link href={item.href} className={`flex items-center p-3 my-2 rounded-lg transition-colors ${pathname === item.href ? 'bg-gray-100 text-orange-600' : 'hover:bg-gray-100'}`} onClick={() => setMobileOpen(false)}>
-                <item.icon className="w-5 h-5" />
-                <span className="ml-4 font-medium">{item.label}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </nav>
-      <div className="mt-auto">
-        <div className="p-3 hover:bg-gray-100 rounded-lg cursor-pointer" onClick={() => { setMobileOpen(false); router.push('/profile') }}>
-          <div className="flex items-center">
-            {profile?.image_url ? (
-              <Image src={profile.image_url} alt={profile.username} width={40} height={40} className="rounded-full" />
-            ) : (
-              <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
-            )}
-            <div className="ml-3">
-              <p className="font-semibold text-sm">{profile?.username || 'Loading...'}</p>
-            </div>
+  return (
+    <div className='w-fit h-fit'>
+      
+      {/*Sidebar Desktop */}
+      <div className={`top-0 absolute left-0  lg:flex lg:flex ${isOpen ? "flex" : "hidden"}  w-64 z-50 flex-none bg-[var(--white)] h-screen p-4 fixed flex-col shadow-[2px_0_2px_rgba(0,0,0,0.1)] lg:shadow-none lg:border-r border-[var(--medium-grey)] z-10`}>
+        <div className="mb-10 w-full flex justify-between items-center">
+          {/*logo*/}
+          <Image src="/logo-leluri.png" alt="Leluri Logo" width={70} height={70} className=""/>
+          <button onClick={() => setIsOpen(!isOpen)} className="p-1 hover:bg-[var(--medium-grey)] rounded-full transition-colors lg:hidden flex ">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        <nav className="flex-grow">
+          <ul>
+            {navItems.map((item) => (
+              <li key={item.href}>
+                <Link href={item.href} className={`flex items-center p-3 my-2 rounded-lg transition-colors ${pathname === item.href ? 'bg-[var(--light-grey)] text-[var(--yellow)]' : 'hover:bg-[var(--light-grey)]'}`}>
+                  <item.icon className="w-5 h-5" />
+                  <span className="ml-4 font-medium">{item.label}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <div className="mt-auto">
+          <div className="p-3 hover:bg-[var(--light-grey)] rounded-lg cursor-pointer" onClick={() => router.push('/profile')}>
+              <div className="flex items-center">
+              {profile?.image_url ? (
+                  <Image src={profile.image_url} alt={profile.username} width={40} height={40} className="rounded-full" />
+              ) : (
+                  <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
+              )}
+              <div className="ml-3">
+                  <p className="font-semibold text-sm">{profile?.username || 'Loading...'}</p>
+              </div>
+              </div>
           </div>
         </div>
       </div>
-    </>
-  )
-
-  return (
-    <>
-      <button
-        aria-label="Buka menu"
-        className="fixed md:hidden left-4 top-4 z-40 flex justify-center items-center w-11 h-11 rounded-lg bg-white hover:bg-[var(--light-grey)] border shadow-md"
-        onClick={() => setMobileOpen(true)}
-      >
-        <RxHamburgerMenu className='w-5 h-5' />
-      </button>
-      {mobileOpen && <div className="fixed inset-0 bg-black/40 z-30 md:hidden" onClick={() => setMobileOpen(false)} />}
-      {mobileOpen && (
-        <div className="fixed md:hidden top-0 left-0 z-40 w-72 max-w-[80%] h-full bg-white p-4 border-r flex flex-col">
-          <NavContent />
-        </div>
-      )}
-      <div className="hidden md:flex md:sticky top-0 z-20 flex-col w-64 xl:w-72 h-screen bg-white p-4 border-r">
-        <NavContent />
+          
+      {/*Sidebar Mobile */}
+      <div className={`lg:hidden flex z-10 absolute top-2 left-2  fixed h-10 flex justify-center items-center w-10   rounded-lg bg-[var(--white)] hover:bg-[var(--light-grey)] hover:text-[var(--yellow)]`}  onClick={() => setIsOpen(!isOpen)} >
+            <RxHamburgerMenu className='w-5 h-5'/>
       </div>
-    </>
+    </div>
   )
 }
 

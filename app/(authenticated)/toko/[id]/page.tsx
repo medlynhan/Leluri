@@ -156,6 +156,7 @@ const ProductDetailPage: React.FC = () => {
         </button>
       </div>
 
+<<<<<<< HEAD
       <div className="grid grid-cols-1 xl:grid-cols-[520px_1fr] gap-12 w-full px-12 py-8">
         <div className="flex flex-col gap-6 w-full max-w-[520px]">
           <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-gray-100">
@@ -184,6 +185,40 @@ const ProductDetailPage: React.FC = () => {
                     <Plus className="w-4 h-4" />
                   </button>
                 </div>
+=======
+    <div className={` flex flex-col md:flex-row gap-10 mt-16 p-6 md:px-12 w-full`}> 
+        
+      {/*Kolom pertama */}
+      <div className="flex  w-full md:w-[40%] flex flex-col gap-5 ">
+        <h1 className="leading-tight break-words text-2xl font-semibold md:hidden">{product.name}</h1>
+        <p className='text-xl  font-semibold  md:hidden'>{formatPrice(product.price)}</p>
+        <div className="relative aspect-square w-full rounded-xl overflow-hidden">
+          <Image src={product.image_url} alt={product.name} fill className="object-cover aspect-square" />
+        </div>
+
+        <div>
+          <p className="mb-2">Stok Barang: {product.stock}</p>
+          {outOfStock ? (
+            <div className="py-3">Stok habis</div>
+          ) : (
+            <div className="flex w-full ">
+              <div className="flex items-center border rounded-full px-2 py-1 w-full ">
+                <button
+                  onClick={() => handleQuantityChange(-1)}
+                  className="p-2 rounded-full hover:bg-[var(--light-grey)] trans hover:text-[var(--yellow)] disabled:text-[var(--dark-grey)] disabled:cursor-not-allowed"
+                  disabled={quantity <= 1}
+                >
+                  <Minus className="w-4 h-4" />
+                </button>
+                <span className="flex-1 text-center select-none">{quantity}</span>
+                <button
+                  onClick={() => handleQuantityChange(1)}
+                  className="p-2 rounded-full hover:bg-[var(--light-grey)] hover:text-[var(--yellow)] disabled:text-[var(--dark-grey)] disabled:cursor-not-allowed"
+                  disabled={quantity >= product.stock}
+                >
+                  <Plus className="w-4 h-4" />
+                </button>
+>>>>>>> fixInterface
               </div>
             )}
           </div>
@@ -207,6 +242,7 @@ const ProductDetailPage: React.FC = () => {
           )}
         </div>
 
+<<<<<<< HEAD
         {/* Right: Details */}
         <div className="flex flex-col gap-8 w-full">
           <div className="space-y-3">
@@ -248,6 +284,42 @@ const ProductDetailPage: React.FC = () => {
       </div>
     </div>
   )
+=======
+      {/*Kolom kedua */}
+      <div className="w-full md:w-[60%] min-w-[60%] flex flex-col gap-8 ">
+        <h1 className="leading-tight break-words text-3xl font-semibold hidden md:flex">{product.name}</h1>
+        <p className='text-2xl  font-semibold hidden md:flex'>{formatPrice(product.price)}</p>
+
+        <section className="space-y-2 w-full">
+          <h2 className='text-base  font-semibold w-full'>Deskripsi Produk</h2>
+          <p className="leading-relaxed whitespace-pre-line break-words text-justify">{product.description}</p>
+        </section>
+
+        <section className="space-y-2 w-full">
+          <h2 className='text-base  font-semibold'>Ukuran</h2>
+          <ul className="space-y-1">
+            <li>Panjang: {product.length} cm</li>
+            <li>Lebar: {product.width} cm</li>
+            <li>Tebal: {product.thickness} cm</li>
+          </ul>
+        </section>
+
+        <section className="space-y-3 w-full">
+          <h2 className='text-base  font-semibold'>Penjual</h2>
+          <div className="flex items-center gap-3">
+            <Image src={product.user.image_url || '/default-avatar.png'} alt={product.user.username} width={48} height={48} className="rounded-full object-cover" />
+            <div>
+              <p className='font-semibold'>{product.user.username}</p>
+              <p className="capitalize text-[var(--dark-grey)]">{product.user.role}</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    </div>
+  );
+>>>>>>> fixInterface
 };
 
 export default ProductDetailPage;

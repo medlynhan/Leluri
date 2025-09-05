@@ -13,6 +13,8 @@ const MediaCarousel = ({ posts_media }: { posts_media: PostMedia[] }) => {
   const [videoDuration, setVideoDuration] = useState(0)
   const videoRef = useRef<HTMLVideoElement | null>(null)
 
+  const current = validMedia[mediaIdx]
+
   useEffect(() => {
     if (mediaIdx >= validMedia.length && mediaIdx !== 0) setMediaIdx(0)
   }, [mediaIdx, validMedia.length])
@@ -21,12 +23,12 @@ const MediaCarousel = ({ posts_media }: { posts_media: PostMedia[] }) => {
     const next = mediaIdx + value
     if (next < 0 || next >= validMedia.length) return
     setMediaIdx(next)
-    setIsVideoPlaying(false)
   }
 
   const handleVideoClick = () => {
     const videoElement = videoRef.current
     if (!videoElement) return
+
     if (videoElement.paused && !videoElement.ended) {
       void videoElement.play()
       setIsVideoPlaying(true)
@@ -66,14 +68,17 @@ const MediaCarousel = ({ posts_media }: { posts_media: PostMedia[] }) => {
   }
 
   useEffect(() => {
-    // Reset on slide change
+    // Reset state & video element on slide change
     setIsVideoPlaying(false)
     setVideoTime(0)
     setVideoDuration(0)
     setIsMuted(true)
+    if (videoRef.current) {
+      videoRef.current.pause()
+      videoRef.current.currentTime = 0
+      videoRef.current.muted = true
+    }
   }, [mediaIdx])
-
-  const current = validMedia[mediaIdx]
 
   const guessType = (m?: PostMedia) => {
     if (!m) return undefined
@@ -89,7 +94,6 @@ const MediaCarousel = ({ posts_media }: { posts_media: PostMedia[] }) => {
 
   if (process.env.NODE_ENV !== 'production') {
     if (validMedia.length === 0 && posts_media && posts_media.length > 0) {
-
       console.warn('[MediaCarousel] posts_media provided but filtered empty', { raw: posts_media })
     } else if (posts_media.length === 0) {
       console.info('[MediaCarousel] No media entries for this post')
@@ -97,26 +101,27 @@ const MediaCarousel = ({ posts_media }: { posts_media: PostMedia[] }) => {
   }
 
   return (
-    <div className="flex flex-col w-full h-full">
-      <div className="w-full h-full aspect-square relative bg-gray-100 overflow-hidden">
-        {!current && (
-          <div className="flex items-center justify-center w-full h-full text-xs text-gray-500">No media</div>
-        )}
+    <div className="flex flex-col aspect-square">
+      <div className="w-full flex-1 relative bg-gray-100 overflow-hidden">
         {current && currentType === 'image' && (
           <Image
             src={current.media_url}
             alt="Media not accessible..."
-            fill
-            sizes="(max-width: 768px) 100vw, 33vw"
-            className="object-cover"
+            height={480}
+            width={480}
+            className="object-cover w-full h-full bg-gray-200 aspect-square"
           />
         )}
+
         {current && currentType === 'video' && (
-          <div className="absolute inset-0" onClick={handleVideoClick}>
+          <div
+            className="relative w-full h-full p-0 m-0"
+            onClick={handleVideoClick}
+          >
             <video
               ref={videoRef}
               id={`video-${mediaIdx}`}
-              className="w-full h-full object-cover cursor-pointer"
+              className="object-cover w-full h-full bg-gray-200 aspect-square cursor-pointer"
               loop
               playsInline
               preload="metadata"
@@ -155,29 +160,31 @@ const MediaCarousel = ({ posts_media }: { posts_media: PostMedia[] }) => {
             </div>
           </div>
         )}
+
         {current && !currentType && (
           <div className="flex items-center justify-center w-full h-full text-[10px] text-gray-500 px-2 text-center">
             Unsupported media type
           </div>
         )}
       </div>
+
       {validMedia.length > 1 && (
-        <div className="h-6 w-full flex flex-row gap-2 items-center justify-center border-none">
+        <div className="h-6 w-full flex flex-row gap-2 items-center justify-center border-none z-100">
           <FaArrowLeft
-            style={{ fontSize: '16px' }}
-            className="text-gray-500 hover:bg-gray-100 rounded-full p-1"
+            style={{ fontSize: "16px" }}
+            className="text-gray-500 hover:bg-gray-100 rounded-full p-1 cursor-pointer"
             onClick={(e) => { e.stopPropagation(); handleMediaChange(-1) }}
           />
-            {validMedia.map((_, idx) => (
-              <FaCircle
-                style={{ fontSize: '4px' }}
-                className={idx === mediaIdx ? `text-gray-700` : `text-gray-200`}
-                key={idx}
-              />
-            ))}
+          {validMedia.map((_, idx) => (
+            <FaCircle
+              style={{ fontSize: "4px" }}
+              className={idx === mediaIdx ? `text-gray-700` : `text-gray-200`}
+              key={idx}
+            />
+          ))}
           <FaArrowRight
-            style={{ fontSize: '16px' }}
-            className="text-gray-500 hover:bg-gray-100 rounded-full p-1"
+            style={{ fontSize: "16px" }}
+            className="text-gray-500 hover:bg-gray-100 rounded-full p-1 cursor-pointer"
             onClick={(e) => { e.stopPropagation(); handleMediaChange(1) }}
           />
         </div>

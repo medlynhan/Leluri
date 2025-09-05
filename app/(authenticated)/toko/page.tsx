@@ -1,10 +1,11 @@
 'use client'
-import React, { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
-import Image from 'next/image'
-import { FaSearch } from 'react-icons/fa'
-import { Star, ShoppingCart, X } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import React, { useState, useEffect } from 'react';
+import { supabase } from '../../lib/supabase';
+import Image from 'next/image';
+import { FaSearch } from 'react-icons/fa';
+import { Star, ShoppingCart } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import Sidebar from '../../components/Sidebar';
 
 interface Product {
     id: string;
@@ -82,26 +83,37 @@ const StorePage: React.FC = () => {
 
     if (loading) {
         return (
-            <div className="flex flex-col w-full h-full px-12 py-6">
-                <div className="h-14 w-full mb-8 bg-[var(--light-grey)] rounded-xl animate-pulse" />
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {Array.from({ length: 8 }).map((_, i) => (
-                        <div key={i} className="rounded-2xl border border-[var(--medium-grey)] overflow-hidden">
-                            <div className="aspect-square bg-[var(--light-grey)] animate-pulse" />
-                            <div className="p-4 space-y-3">
-                                <div className="h-4 w-3/4 bg-[var(--light-grey)] rounded animate-pulse" />
-                                <div className="h-4 w-1/2 bg-[var(--light-grey)] rounded animate-pulse" />
-                                <div className="flex items-center gap-1">
-                                    {Array.from({ length: 5 }).map((_, s) => (
-                                        <div key={s} className="w-4 h-4 bg-[var(--light-grey)] rounded animate-pulse" />
-                                    ))}
-                                    <div className="h-4 w-10 bg-[var(--light-grey)] rounded animate-pulse" />
+            <div className="p-4">
+                <div className="flex justify-between items-center mb-6 ">
+                    <div className="relative w-full max-w-lg">
+                        <div className="h-12 bg-[var(--light-grey)] rounded-full animate-pulse" />
+                    </div>
+                    <div className="flex items-center gap-6">
+                        <div className="h-12 w-32 bg-[var(--light-grey)] rounded-full animate-pulse" />
+                        <div className="w-6 h-6 bg-[var(--light-grey)] rounded-full animate-pulse" />
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 lg:grid-cols-4 gap-6">
+                    {[...Array(8)].map((_, i) => (
+                        <div key={i} className="bg-[var(--white)] rounded-2xl  overflow-hidden border border-[var(--dark-grey)]">
+                            <div className="relative h-72 bg-[var(--light-grey)] animate-pulse" />
+                            <div className="p-4 w-64">
+                                <div className="h-5 bg-[var(--light-grey)] rounded w-3/4 mb-2 animate-pulse" />
+                                <div className="mt-2">
+                                    <div className="h-5 bg-[var(--light-grey)] rounded w-1/2 mb-2 animate-pulse" />
+                                    <div className="flex items-center gap-1">
+                                        {[...Array(5)].map((_, s) => (
+                                            <div key={s} className="w-4 h-4 bg-[var(--light-grey)] rounded animate-pulse" />
+                                        ))}
+                                        <div className="h-4 w-8 bg-[var(--light-grey)] rounded ml-2 animate-pulse" />
+                                    </div>
                                 </div>
-                                <div className="flex items-center pt-3 border-t border-[var(--light-grey)] gap-3">
-                                    <div className="w-8 h-8 rounded-full bg-[var(--light-grey)] animate-pulse" />
-                                    <div className="flex-1 space-y-2">
-                                        <div className="h-3 w-24 bg-[var(--light-grey)] rounded animate-pulse" />
-                                        <div className="h-3 w-16 bg-[var(--light-grey)] rounded animate-pulse" />
+                                <div className="flex items-center mt-4 pt-4 border-r border-[var(--light-grey)]">
+                                    <div className="w-8 h-8 bg-[var(--light-grey)] rounded-full animate-pulse" />
+                                    <div className="ml-3 flex-1">
+                                        <div className="h-4 bg-[var(--light-grey)] rounded w-24 mb-1 animate-pulse" />
+                                        <div className="h-3 bg-[var(--light-grey)] rounded w-16 animate-pulse" />
                                     </div>
                                 </div>
                             </div>
@@ -109,7 +121,7 @@ const StorePage: React.FC = () => {
                     ))}
                 </div>
             </div>
-        )
+        );
     }
 
     if (error) {
@@ -117,104 +129,103 @@ const StorePage: React.FC = () => {
     }
 
     return (
-        <div className="flex flex-col w-full h-full">
-            <div className="sticky top-0 flex flex-row items-center gap-4 p-6 z-10 bg-white border-b border-[var(--light-grey)]">
-                <div className="relative w-full ml-20">
-                    <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                    <input
-                        placeholder="Apa yang ingin kamu temukan ?"
-                        className="pl-12 py-3 text-base border border-gray-300 bg-white rounded-full w-full"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                    />
-                    {searchTerm.length > 0 && (
-                        <button
-                            type="button"
-                            onClick={() => { setSearchTerm(''); fetchProducts(''); }}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:bg-gray-100 p-1 rounded-full"
-                            aria-label="Clear search"
-                        >
-                            <X className="w-4 h-4" />
-                        </button>
-                    )}
-                </div>
-                <button
-                    onClick={handleSearch}
-                    className="px-8 py-3 bg-orange-400 hover:bg-orange-500 text-white font-medium rounded-full"
-                >
-                    Cari
-                </button>
-                <button
-                    onClick={() => router.push('/keranjang')}
-                    aria-label="Keranjang"
-                    className="p-3 rounded-full hover:bg-gray-100"
-                >
-                    <ShoppingCart className="w-6 h-6" />
-                </button>
-            </div>
+        
+        <div className='flex min-h-screen bg-[var(--white)] overflow-x-hidden '>
+            
+            
+            
+            
+            
+            <div className="relative w-full h-full ">
+                
+                {/*Navbar*/}
+                <div className='flex gap-4 justify-center bg-[var(--white)] w-full z-5 fixed  max-w-screen p-2  h-14'>
+                    {/*Sidebar */}
+                    <Sidebar />
 
-            <div className="flex flex-col w-full px-12 pb-12 pt-6">
-                <span className="font-bold text-lg mb-4">Produk ({products.length})</span>
-                {products.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-24 text-gray-500">
-                        <Image src="/no_result.png" width={160} height={160} alt="No Products" />
-                        <p className="mt-4">Belum ada produk yang tersedia ...</p>
+                    {/*Search Bar */}
+                    <div className="flex  justify-center items-center ml-10 lg:ml-64 flex relative flex-1 ">
+                        <input
+                            type="text"
+                            placeholder="Apa yang ingin kamu temukan?"
+                            className="w-full pl-12 pr-4 border border-gray-200 shadow-xs  rounded-full h-full"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                        />
+                        <FaSearch className="absolute top-1/2 left-4 -translate-y-1/2 text-[var(--dark-grey)]" />
                     </div>
-                ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {products.map(product => (
-                            <div
-                                key={product.id}
-                                className="bg-white w-full rounded-2xl overflow-hidden border border-[var(--medium-grey)] cursor-pointer transition-transform duration-300 hover:-translate-y-1"
-                                onClick={() => router.push(`/toko/${product.id}`)}
-                            >
-                                <div className="relative aspect-square">
-                                    <Image
-                                        src={product.image_url}
-                                        alt={product.name}
-                                        layout="fill"
-                                        objectFit="cover"
-                                        className="rounded-t-2xl"
-                                    />
-                                </div>
-                                <div className="w-full grid p-4">
-                                    <h3 className="w-full text-lg font-semibold truncate">
-                                        {product.name}
-                                    </h3>
-                                    <div className="my-2">
-                                        <p className="text-sm font-semibold">
-                                            Rp {product.price.toLocaleString('id-ID')}
-                                        </p>
-                                        <div className="mt-1">
-                                            <StarRating rating={product.rating} />
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center pt-4 border-t border-[var(--medium-grey)]">
-                                        <Image
-                                            src={product.user.image_url || '/placeholder.svg'}
-                                            alt={product.user.username}
-                                            width={32}
-                                            height={32}
-                                            className="w-8 h-8 rounded-full object-cover"
-                                        />
-                                        <div className="ml-3">
-                                            <p className="text-xs font-semibold text-[var(--dark-grey)]">
-                                                {product.user.username}
-                                            </p>
-                                            <p className="text-xs text-[var(--dark-grey)] capitalize">
-                                                {product.user.role}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
+
+                    {/*Icon */}
+                    <div className="w-30  lg:col-span-1  flex items-center justify-end  gap-6 mr-3">
+                        <button onClick={handleSearch} className="bg-[var(--yellow)] text-white  h-full rounded-full flex-1 font-semibold hover:bg-transparent hover:border-[var(--yellow)] border border-transparent font-semibold hover:text-[var(--black)]  transition-colors">Cari</button>
+                        <button onClick={() => router.push('/keranjang')} aria-label="Keranjang" className=" h-[80%] rounded-full  transition-colors">
+                            <ShoppingCart className="w-6 h-6 hover:text-[var(--yellow)]" />
+                        </button>
+                    </div>
+                    
+                </div>
+
+
+
+                {/*List of Products */}
+                <div className="ml-3 mr-3 lg:ml-68 grid grid-cols-[repeat(auto-fill,minmax(15em,1fr))] p-3 gap-3 lg:gap-6 mt-20">
+                    {products.map(product => (
+                        <div key={product.id} className="bg-[var(--white)] w-full rounded-2xl overflow-hidden border border-[var(--medium-grey)] cursor-pointer transition-transform duration-300 hover:-translate-y-1" onClick={() => router.push(`/toko/${product.id}`)}>
+                            <div className="relative aspect-square ">
+                                <Image
+                                    src={product.image_url}
+                                    alt={product.name}
+                                    layout="fill"
+                                    objectFit="cover"
+                                    className="rounded-t-2xl "
+                                />
                             </div>
-                        ))}
-                    </div>
-                )}
+                            <div className="w-full grid p-4 w-64">
+                                <h3 className=" w-full text-lg font-semibold truncate">
+                                    {product.name}
+                                </h3>
+
+                                <div className="my-2 ">
+                                    <p className="text-sm font-semibold ">
+                                    Rp {product.price.toLocaleString('id-ID')}
+                                    </p>
+                                    <div className="mt-1">
+                                    <StarRating rating={product.rating} />
+                                    </div>
+                                </div>
+
+                                {/*Information Profile*/}
+                                <div className="  flex items-center pt-4 border-t border-[var(--medium-grey)] ">
+                                    <Image
+                                    src={product.user.image_url || '/placeholder.svg'}
+                                    alt={product.user.username}
+                                    width={32}
+                                    height={32}
+                                    className="w-8 h-8 rounded-full object-cover"
+                                    />
+                                    <div className="ml-3">
+                                    <p className="text-xs font-semibold text-[var(--dark-grey)]text-[var(--dark-grey)]">
+                                        {product.user.username}
+                                    </p>
+                                    <p className="text-xs  text-[var(--dark-grey)] capitalize">
+                                        {product.user.role}
+                                    </p>
+                                    </div>
+                                </div>
+
+
+                                
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
             </div>
         </div>
-    )
+
+        
+    );
 };
 
 export default StorePage;
