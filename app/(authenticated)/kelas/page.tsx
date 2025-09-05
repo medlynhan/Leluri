@@ -149,7 +149,7 @@ const Kelas = () => {
       <div className="flex flex-col w-full px-12 pt-6 pb-18">
         <span className="font-bold text-lg mb-4">Classes ({filteredClasses.length})</span>
         <div className="grid grid-cols-[repeat(auto-fill,minmax(15em,1fr))] gap-3 lg:gap-6">
-          {filteredClasses.concat(filteredClasses).map((kelas, idx) => (
+          {filteredClasses.map((kelas, idx) => (
             <ClassCard key={idx} kelas={kelas}/>
           ))}
         </div>

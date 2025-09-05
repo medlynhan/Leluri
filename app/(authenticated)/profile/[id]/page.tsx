@@ -194,12 +194,12 @@ const ProfilePage: React.FC = () => {
   console.log(userprofile)
 
   return (
-    <div className="flex w-full relative min-h-screen overflow-x-hidden">
+    <div className="flex w-full relative min-h-screen lg:h-screen overflow-x-hidden bg-red-50">
       {(postModalId !== null) && user &&
       <DetailedPostModal postId={postModalId} setPostModalId={setPostModalId} userId={user.id}/>}
 
-      <div className={`${isEditMode || showAddModal ? "fixed" : ""}  flex flex-col lg:flex-row h-full w-full`}>
-        <div className="w-full min-h-[30vh] lg:min-h-[60vh] ml-0 lg:w-80 border-b lg:border-b-transparent lg:border-r border-[var(--medium-grey)] p-6 ">
+      <div className={`${isEditMode || showAddModal ? "fixed" : ""} bg-red-100 flex flex-col lg:flex-row h-full w-full`}>
+        <div className="lg:h-screen lg:overflow-y-auto w-full min-h-[30vh] lg:min-h-[60vh] ml-0 lg:w-80 border-b lg:border-b-transparent lg:border-r border-[var(--medium-grey)] p-6">
           <div className="justify-center items-center w-full flex flex-col text-center w-full">
             <Avatar className="self-center flex w-24 h-24 border border-gray-500 rounded-full overflow-hidden justify-center items-center">
               <AvatarImage src={userprofile.image_url || "/placeholder.svg"} />
@@ -311,12 +311,16 @@ const ProfilePage: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex-1 min-h-screen p-6 ">
-
-      {postsData && postsData.length > 0 ? (
-            <div className="relative">
-              <div className="grid grid-cols-3 gap-4">
-        {postsData.map((post) => (
+        {postsData && postsData.length > 0 ? (
+          <div className="relative flex-1 p-6 max-h-screen overflow-y-auto">
+            <div className="grid grid-cols-3 gap-4">
+              {postsData
+                .concat(postsData)
+                .concat(postsData)
+                .concat(postsData)
+                .concat(postsData)
+                .concat(postsData)
+                .map((post) => (
                   <PostCard
                     key={post.id}
                     post={post}
@@ -325,43 +329,47 @@ const ProfilePage: React.FC = () => {
                     hideActions
                   />
                 ))}
-              </div>
-              {userprofile.id === user?.id && (
+            </div>
+
+            {userprofile.id === user?.id && (
+              <button
+                onClick={() => router.push("/post")}
+                className="fixed top-5 right-5 w-12 h-12 bg-black text-white rounded-full flex items-center justify-center hover:bg-[var(--dark-grey)] transition-colors shadow-lg"
+              >
+                <FaPlus className="w-5 h-5" />
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="flex h-full flex-col items-center justify-center h-96 text-center">
+            <div className="mb-6">
+              <Image
+                src="/profile-empty.png"
+                alt="Empty state illustration"
+                width={300}
+                height={150}
+                className="opacity-60"
+              />
+            </div>
+            {userprofile.id === user?.id ? (
+              <>
+                <h3 className="text-lg font-medium text-[var(--dark-grey)] mb-2">
+                  Mulai postingan pertama kamu
+                </h3>
                 <button
                   onClick={() => router.push("/post")}
-                  className="absolute top-0 right-0 w-12 h-12 bg-black text-white rounded-full flex items-center justify-center hover:bg-[var(--dark-grey)] transition-colors shadow-lg"
+                  className="px-6 py-2 bg-black text-white rounded-full hover:bg-[var(--dark-grey)] transition-colors"
                 >
-                  <FaPlus className="w-5 h-5" />
+                  Buat Postingan
                 </button>
-              )}
-            </div>
-          ) : (
-            <div className="flex h-full flex-col items-center justify-center h-96 text-center">
-              <div className="mb-6">
-                <Image
-                  src="/profile-empty.png"
-                  alt="Empty state illustration"
-                  width={300}
-                  height={150}
-                  className="opacity-60"
-                />
-              </div>
-              {userprofile.id === user?.id ? (
-                <>
-                  <h3 className="text-lg font-medium text-[var(--dark-grey)] mb-2">Mulai postingan pertama kamu</h3>
-                  <button
-                    onClick={() => router.push("/post")}
-                    className="px-6 py-2 bg-black text-white rounded-full hover:bg-[var(--dark-grey)] transition-colors"
-                  >
-                    Buat Postingan
-                  </button>
-                </>
-              ) : (
-                <h3 className="text-lg font-medium text-[var(--dark-grey)] mb-2">Belum ada postingan.</h3>
-              )}
-            </div>
-          )}
-        </div>
+              </>
+            ) : (
+              <h3 className="text-lg font-medium text-[var(--dark-grey)] mb-2">
+                Belum ada postingan.
+              </h3>
+            )}
+          </div>
+        )}
       </div>
 
   {isEditMode && (
@@ -533,8 +541,7 @@ const ProfilePage: React.FC = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <button
                       onClick={() => setCreatingType('product')}
-                      className="border border-[var(--medium-grey)] rounded-xl p-4 hover:bg-[var(--light-grey)] flex flex-col items-center gap-2"
-                    >
+                      className="border border-[var(--medium-grey)] rounded-xl p-4 hover:bg-[var(--light-grey)] flex flex-col items-center gap-2">
                       <Image
                         src={"/buat-produk-baru.png"}
                         alt="Tambah Produk Baru"
