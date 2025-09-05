@@ -113,7 +113,7 @@ export interface Class {
   id: string;
   name: string;
   creator_id: string;
-  avg_rating: number;
+  rating: number;
   image_url: string;
   description: string;
   location: string;
