@@ -232,11 +232,11 @@ const ProfilePage: React.FC = () => {
             <div className="flex justify-center gap-8 mb-6">
               <button onClick={()=>router.push('/profile/followers')} className="text-center hover:opacity-80 transition">
                 <p className="font-semibold text-[var(--black)]">{(followerCounts?.followerCount) ?? 0}</p>
-                <p className="text-sm text-[var(--dark-grey)]">pengikut</p>
+                <p className="text-sm text-[var(--dark-grey)] hover:text-[var(--black)]">pengikut</p>
               </button>
               <button onClick={()=>router.push('/profile/following')} className="text-center hover:opacity-80 transition">
                 <p className="font-semibold text-[var(--black)]">{(followerCounts?.followingCount) ?? 0}</p>
-                <p className="text-sm text-[var(--dark-grey)]">mengikuti</p>
+                <p className="text-sm text-[var(--dark-grey)] hover:text-[var(--black)]">mengikuti</p>
               </button>
             </div>
             

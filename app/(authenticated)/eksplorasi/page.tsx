@@ -168,7 +168,7 @@ const EksplorasiPage = () => {
       {posts.length > 0 && (
         <div className="ml-3 mr-3 lg:ml-68 p-3 flex flex-col max-w-[calc(100%-1rem)] mt-10 w-full lg:max-w-[calc(100%-18rem)]">
           {/* Hanya tampilkan jumlah post kalau tidak search */}
-          {!search.trim() ? null : <span className="font-semibold text-lg w-full">Post ({filteredPosts.length})</span>}
+          { (filteredPosts.length === 0 && posts.length > 0 && users.length === 0) || !posts.length || !search.trim() ? null : <span className="font-semibold text-lg w-full">Post ({filteredPosts.length})</span>}
           <div className="grid grid-cols-[repeat(auto-fill,minmax(20em,1fr))] gap-3 lg:gap-6 mt-4 w-full">
             {filteredPosts.map(post => (
               <PostCard
@@ -184,15 +184,15 @@ const EksplorasiPage = () => {
 
       {/* Empty states */}
       {!posts.length && (
-        <div className="flex flex-col items-center justify-center w-full h-full mt-20">
-          <Image src="/logo/empty.png" width={200} height={200} alt="NO" />
-          <p className="text-gray-500">Belum Ada Postingan</p>
+        <div className="ml-3 mr-3 lg:ml-68 p-3 flex flex-col justify-center items-center mt-10 max-w-[calc(100%-1rem)] mt-10 w-full lg:max-w-[calc(100%-18rem)]">
+          <Image src="/no_result.png" width={300} height={300} alt="NO" />
+          <p className="text-gray-500 text-base">Belum Ada Postingan</p>
         </div>
       )}
       {filteredPosts.length === 0 && posts.length > 0 && users.length === 0 && (
-        <div className="flex flex-col items-center justify-center w-full h-full mt-20">
-          <Image src="/logo/no_result.png" width={200} height={200} alt="NO" />
-          <p className="text-gray-500">Yah, Kami tidak menemukan pencarian</p>
+        <div className="ml-3 mr-3 lg:ml-68 p-3 flex flex-col justify-center  items-center mt-10 max-w-[calc(100%-1rem)] mt-10 w-full lg:max-w-[calc(100%-18rem)]">
+          <Image src="/no_result.png" width={300} height={300} alt="NO" />
+          <p className="text-gray-500 text-base">Yah, Kami tidak menemukan pencarian</p>
         </div>
       )}
 

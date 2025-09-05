@@ -14,7 +14,10 @@ export default function AuthenticatedLayout({ children }: { children: React.Reac
     "/pembayaran",
     "/post",
     "/keranjang",
-    /^\/kelas\/details\/[^/]+$/
+    /^\/kelas\/details\/[^/]+$/,
+    "/profile/followers",
+    "/profile/following",
+    /^\/profile\/[^/]+$/,
   ];
 
   const hideSidebar = noSidebarRoutes.some((rule) =>

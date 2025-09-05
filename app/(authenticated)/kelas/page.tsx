@@ -143,7 +143,7 @@ const searchClass = (term: string) => {
       </div>
 
       {/* List Classes */}
-      <div className="ml-3 mr-3 lg:ml-68 grid grid-cols-[repeat(auto-fill,minmax(15em,1fr))] p-3 gap-3 lg:gap-6 mt-20   ">
+      <div className="ml-3 mr-3 lg:ml-68 grid grid-cols-[repeat(auto-fill,minmax(15em,1fr))] p-3 gap-3 lg:gap-6 mt-15   ">
         {filteredClasses.map((kelas) => (
           <div
             key={kelas.id}
@@ -197,16 +197,16 @@ const searchClass = (term: string) => {
 
       {/* Empty / No Results */}
       {(!classes || classes.length === 0) && (
-        <div className="flex flex-col items-center justify-center w-full h-full">
-          <Image src="/logo/empty.png" width={200} height={200} alt="NO" />
-          <p className="text-gray-500">No classes exist yet ...</p>
-        </div>
+          <div className="ml-3 mr-3 lg:ml-68 p-3 flex flex-col justify-center  items-center mt-10 max-w-[calc(100%-1rem)] mt-10 w-full lg:max-w-[calc(100%-18rem)]">
+            <Image src="/no_result.png" width={300} height={300} alt="NO" />
+            <p className="text-gray-500 text-base">Belum ada kelas</p>
+          </div>
       )}
       {filteredClasses.length === 0 && classes.length > 0 && (
-        <div className="flex flex-col items-center justify-center w-full h-full">
-          <Image src="/logo/no_result.png" width={200} height={200} alt="NO" />
-          <p className="text-gray-500">No search results ...</p>
-        </div>
+          <div className="ml-3 mr-3 lg:ml-68 p-3 flex flex-col justify-center  items-center mt-10 max-w-[calc(100%-1rem)] mt-10 w-full lg:max-w-[calc(100%-18rem)]">
+            <Image src="/no_result.png" width={300} height={300} alt="NO" />
+            <p className="text-gray-500 text-base">Yah, Kami tidak menemukan pencarian</p>
+          </div>
       )}
     </div>
   )

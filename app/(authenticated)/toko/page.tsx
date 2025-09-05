@@ -84,7 +84,7 @@ const StorePage: React.FC = () => {
     if (loading) {
         return (
             <div className="p-4">
-                <div className="flex justify-between items-center mb-6 ">
+                <div className="bg-[var(--white)] flex justify-between items-center mb-6 ">
                     <div className="relative w-full max-w-lg">
                         <div className="h-12 bg-[var(--light-grey)] rounded-full animate-pulse" />
                     </div>
@@ -169,7 +169,7 @@ const StorePage: React.FC = () => {
 
 
                 {/*List of Products */}
-                <div className="ml-3 mr-3 lg:ml-68 grid grid-cols-[repeat(auto-fill,minmax(15em,1fr))] p-3 gap-3 lg:gap-6 mt-20">
+                <div className="ml-3 mr-3 lg:ml-68 grid grid-cols-[repeat(auto-fill,minmax(15em,1fr))] p-3 gap-3 lg:gap-6 mt-15">
                     {products.map(product => (
                         <div key={product.id} className="bg-[var(--white)] w-full rounded-2xl overflow-hidden border border-[var(--medium-grey)] cursor-pointer transition-transform duration-300 hover:-translate-y-1" onClick={() => router.push(`/toko/${product.id}`)}>
                             <div className="relative aspect-square ">
@@ -220,8 +220,15 @@ const StorePage: React.FC = () => {
                         </div>
                     ))}
                 </div>
-
+                {/* Empty / No Results */}
+                {(!products || products.length === 0) && (
+                    <div className="ml-3 mr-3 lg:ml-68 p-3 flex flex-col justify-center  items-center mt-10 max-w-[calc(100%-1rem)] mt-10 w-full lg:max-w-[calc(100%-18rem)]">
+                    <Image src="/no_result.png" width={300} height={300} alt="NO" />
+                    <p className="text-gray-500 text-base">Yah, produk tidak ditemukan</p>
+                    </div>
+                )}
             </div>
+  
         </div>
 
         
