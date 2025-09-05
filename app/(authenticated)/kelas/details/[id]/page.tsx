@@ -48,7 +48,7 @@ export default function ClassDetails() {
   if(isGetClassByIdError || !classData) return <p>Could not load class data. Please try again later.</p>
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-white">
 
       {isRegistrationModalOpened && user &&
       <RegistrationModal 
@@ -63,25 +63,29 @@ export default function ClassDetails() {
       className="fixed top-0 left-0 z-105 h-screen w-screen overflow-auto"/>}
 
       <div className="sticky top-0 pl-24 bg-white p-4">
-        <ArrowLeft className="h-6 w-6 text-gray-700" onClick={() => router.back()}/>
+        <div className="flex flex-row items-center w-fit rounded-full hover:bg-gray-100 py-1 px-4 gap-2 cursor-pointer">
+          <ArrowLeft className="h-9 w-9 text-gray-700" onClick={() => router.back()}/>
+          <span className="text-lg font-semibold">Go Back</span>
+        </div>
       </div>
       <div className="flex flex-col px-24 gap-8 py-16">
         <div className="flex items-center justify-center w-full h-96 overflow-hidden rounded-lg">
           <Image src={classData.image_url} alt="NO IMAGE" width={2240} height={2240}
           className="object-contain bg-gray-200 h-full w-full"/>
         </div>
-        <h1 className="text-2xl font-bold text-gray-900">{classData.name}</h1>
-        <div className="space-y-3">
-          <h2 className="text-lg font-semibold text-gray-900">Class Description</h2>
+        <div className="flex flex-col gap-2">
+          <h1 className="text-2xl font-bold text-gray-900">{classData.name}</h1>
           <div className="flex items-center gap-1">
             {[1, 2, 3, 4, 5].map((star) => (
               <Star
-                key={star}
-                className={`h-4 w-4 ${star <= Math.floor(classData.avg_rating) ? "fill-orange-400 text-orange-400" : "text-gray-300"}`}
-              />
+              key={star}
+              className={`h-4 w-4 ${star <= Math.floor(classData.rating) ? "fill-orange-400 text-orange-400" : "text-gray-300"}`}/>
             ))}
-            <span className="ml-2 text-sm font-medium text-gray-900">{classData.avg_rating}</span>
+            <span className="ml-2 text-sm font-medium text-gray-900">{classData.rating}</span>
           </div>
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-lg font-semibold text-gray-900">Class Description</h2>
           <p 
             className="text-sm text-gray-700 leading-relaxed"
             dangerouslySetInnerHTML={{ __html: classData.description }}
@@ -90,7 +94,11 @@ export default function ClassDetails() {
 
         <div className="space-y-3 pb-8">
           <h2 className="text-lg font-semibold text-gray-900">About Tutor</h2>
-          <div className="flex items-center gap-3 bg-gray-100 p-4 rounded-lg">
+          <div className="flex items-center gap-3 bg-gray-50 p-4 rounded-lg hover:bg-gray-100"
+          onClick={(e) => {
+            e.stopPropagation()
+            router.push(`/profile/${classData.id}`)
+          }}>
             <Avatar className="h-10 w-10">
               <AvatarImage src={classData.creator.image_url} />
               <AvatarFallback className="bg-yellow-100 text-yellow-800">{classData.creator.username[0].toUpperCase()}</AvatarFallback>
