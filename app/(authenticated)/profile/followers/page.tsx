@@ -54,7 +54,7 @@ export default function FollowersPage(){
               <p className="text-sm font-medium">{f.username}</p>
               <p className="text-xs text-[var(--dark-grey)]">{f.role}</p>
             </div>
-            <Link href="/profile" className="text-xs underline">Lihat</Link>
+            <Link href={`/profile/${f.id}`} className="text-xs underline">Lihat</Link>
           </li>
         ))}
       </ul>

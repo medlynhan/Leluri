@@ -207,7 +207,7 @@ const ProfilePage: React.FC = () => {
             </Avatar>
             <p className="text-sm text-[var(--dark-grey)] mt-3">{userprofile.role}</p>
             <h1 className="text-lg font-semibold text-[var(--black)] mb-3">{userprofile.username}</h1>
-            <span className="text-xs w-full bg-gray-100 rounded-xs p-2 mb-4 text-gray-300 text-justify w-full min-h-[calc(1.25em*4)]">{userprofile.biography ?? "This user doesn't have any bio yet..."}</span>
+            <span className="text-xs w-full bg-white-100 rounded-xs p-2 mb-4 text-white-300 text-justify w-full min-h-[calc(1.25em*4)]">{userprofile.biography ?? "This user doesn't have any bio yet..."}</span>
             {userprofile.id === user?.id &&
             <button
               onClick={() => setIsEditMode(true)}
@@ -326,12 +326,14 @@ const ProfilePage: React.FC = () => {
                   />
                 ))}
               </div>
-              <button
-                onClick={() => router.push("/post")}
-                className="absolute top-0 right-0 w-12 h-12 bg-black text-white rounded-full flex items-center justify-center hover:bg-[var(--dark-grey)] transition-colors shadow-lg"
-              >
-                <FaPlus className="w-5 h-5" />
-              </button>
+              {userprofile.id === user?.id && (
+                <button
+                  onClick={() => router.push("/post")}
+                  className="absolute top-0 right-0 w-12 h-12 bg-black text-white rounded-full flex items-center justify-center hover:bg-[var(--dark-grey)] transition-colors shadow-lg"
+                >
+                  <FaPlus className="w-5 h-5" />
+                </button>
+              )}
             </div>
           ) : (
             <div className="flex h-full flex-col items-center justify-center h-96 text-center">
@@ -344,13 +346,19 @@ const ProfilePage: React.FC = () => {
                   className="opacity-60"
                 />
               </div>
-              <h3 className="text-lg font-medium text-[var(--dark-grey)] mb-2">Mulai postingan pertama kamu</h3>
-              <button
-                onClick={() => router.push("/post")}
-                className="px-6 py-2 bg-black text-white rounded-full hover:bg-[var(--dark-grey)] transition-colors"
-              >
-                Buat Postingan
-              </button>
+              {userprofile.id === user?.id ? (
+                <>
+                  <h3 className="text-lg font-medium text-[var(--dark-grey)] mb-2">Mulai postingan pertama kamu</h3>
+                  <button
+                    onClick={() => router.push("/post")}
+                    className="px-6 py-2 bg-black text-white rounded-full hover:bg-[var(--dark-grey)] transition-colors"
+                  >
+                    Buat Postingan
+                  </button>
+                </>
+              ) : (
+                <h3 className="text-lg font-medium text-[var(--dark-grey)] mb-2">Belum ada postingan.</h3>
+              )}
             </div>
           )}
         </div>
