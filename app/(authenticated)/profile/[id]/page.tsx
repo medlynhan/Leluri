@@ -159,7 +159,7 @@ const ProfilePage: React.FC = () => {
             </div>
           </div>
         </div>
-  <div className="flex-1 p-6 overflow-hidden">
+      <div className="flex-1 p-6 overflow-hidden">
           <div className="grid grid-cols-3 gap-4">
             <div className="aspect-square bg-[var(--medium-grey)] rounded-lg"></div>
             <div className="aspect-square bg-[var(--medium-grey)] rounded-lg"></div>
@@ -191,14 +191,12 @@ const ProfilePage: React.FC = () => {
   if(isGetClassCategoriesLoading) return <LoadingComponent message="Loading class categories options..."/>
   if(isGetUserProfileLoading) return <LoadingComponent message="Loading user profile..."/>
 
-  console.log(userprofile)
-
   return (
-    <div className="flex w-full relative min-h-screen lg:h-screen overflow-x-hidden bg-red-50">
+    <div className="flex w-full relative min-h-screen lg:h-screen overflow-x-hidden ">
       {(postModalId !== null) && user &&
       <DetailedPostModal postId={postModalId} setPostModalId={setPostModalId} userId={user.id}/>}
 
-      <div className={`${isEditMode || showAddModal ? "fixed" : ""} bg-red-100 flex flex-col lg:flex-row h-full w-full`}>
+      <div className={`${isEditMode || showAddModal ? "fixed" : ""} flex flex-col lg:flex-row h-full w-full`}>
         <div className="lg:h-screen lg:overflow-y-auto w-full min-h-[30vh] lg:min-h-[60vh] ml-0 lg:w-80 border-b lg:border-b-transparent lg:border-r border-[var(--medium-grey)] p-6">
           <div className="justify-center items-center w-full flex flex-col text-center w-full">
             <Avatar className="self-center flex w-24 h-24 border border-gray-500 rounded-full overflow-hidden justify-center items-center">
@@ -315,11 +313,6 @@ const ProfilePage: React.FC = () => {
           <div className="relative flex-1 p-6 max-h-screen overflow-y-auto">
             <div className="grid grid-cols-3 gap-4">
               {postsData
-                .concat(postsData)
-                .concat(postsData)
-                .concat(postsData)
-                .concat(postsData)
-                .concat(postsData)
                 .map((post) => (
                   <PostCard
                     key={post.id}
