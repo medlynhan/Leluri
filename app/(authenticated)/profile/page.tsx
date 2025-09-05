@@ -313,7 +313,7 @@ const ProfilePage: React.FC = () => {
             <div className="relative">
               <div className="grid grid-cols-[repeat(auto-fill,minmax(17em,1fr))] p-3 gap-2 lg:gap-4">
                 {postsData.map((post) => (
-                  <PostCard key={post.id} post={post} onClick={() => setPostModalId(post.id)} hidden={"hidden"}/>
+                  <PostCard key={post.id} post={post} onClick={() => setPostModalId(post.id)} hideActions={"hidden"}/>
                 ))}
               </div>
               <button

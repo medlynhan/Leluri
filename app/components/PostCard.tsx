@@ -19,7 +19,7 @@ interface PostCard {
   userId: string,
   onFollowClick?: (...args: any[]) => void,
   showFollowButton?: boolean,
-  hideActions?: boolean
+  hideActions?: string
 
 }
 
