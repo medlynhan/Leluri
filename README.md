@@ -32,6 +32,8 @@ Tujuan utamanya adalah membangun **komunitas budaya digital yang suportif dan be
 
 - Profil Pengguna → biodata, kontak, dan konten yang dibuat pengguna.
   
+- Gamifikasi → sistem pencapaian berbasis badge yang seru
+  
 ## 🚦 Menjalankan Proyek
 
 Untuk menjalankan proyek ini di lokal: 
