@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎭📱 Leluri - Platform Komunitas Budaya Digital
 
-## Getting Started
-edit
-First, run the development server:
+Platform komunitas digital untuk melestarikan budaya Indonesia melalui konten, kelas, dan marketplace. Leluri menghadirkan ruang di mana pengrajin, sanggar seni, generasi muda, kolektor, dan pecinta budaya bisa **berbagi, belajar, membeli, dan saling mendukung** dalam satu ekosistem online.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 👩‍💻 Latar Belakang Proyek
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Proyek ini dibuat sebagai bentuk inovasi digital untuk menjawab tantangan pelestarian budaya Indonesia. Leluri hadir untuk menjembatani kesenjangan ini dengan menghadirkan platform komunitas yang difokuskan pada konten budaya.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Tujuan utamanya adalah membangun **komunitas budaya digital yang suportif dan berkelanjutan**, sehingga budaya Indonesia tidak hanya dipertahankan, tetapi juga dihidupkan kembali dalam format modern.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## ✨ Teknologi
 
-## Learn More
+- `Next.js` (framework React untuk frontend dan fullstack logic)
+- `React + TypeScript` (frontend development)
+- `Tailwind CSS` (styling responsif)
+- `ShadCN UI` (komponen UI modern & reusable)
+- `Supabase` (database & authentication)
+- `Supabase Storage` (penyimpanan gambar & video)
+- `Vercel`(deployment)
 
-To learn more about Next.js, take a look at the following resources:
+## 🚀 Fitur
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Beranda → menampilkan konten singkat budaya dari akun yang diikuti.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Eksplorasi → cari dan filter konten populer dari seluruh komunitas.
 
-## Deploy on Vercel
+- Interaksi → like, komentar, dan berbagi postingan.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Kelas/Workshop → daftar kelas dari pengrajin atau sanggar seni.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Toko Budaya → etalase produk budaya.
+
+- Profil Pengguna → biodata, kontak, dan konten yang dibuat pengguna.
+  
+## 🚦 Menjalankan Proyek
+
+Untuk menjalankan proyek ini di lokal: 
+
+1. Clone repositori `git clone https://github.com/medlynhan/leluri.git`
+
+2. Masuk ke folder proyek  `cd leluri`
+
+3. Install dependencies `npm install`
+   
+4. Buat file .env.local dan masukkan konfigurasi Supabase (API Key, Project URL, dsb).
+
+5. Jalankan development server  `npm run dev`
+
+6. Buka di browser  `(http://localhost:3000/)`
+
+
+## 🤝 Kontribusi & Pengembangan
+Proyek ini masih dalam tahap pengembangan awal. Harapannya, proyek ini bisa terus dikembangkan bersama komunitas dan mendapatkan dukungan kolaborasi dari berbagai pihak.
+
