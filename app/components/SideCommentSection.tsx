@@ -4,9 +4,11 @@ import CommentCard from "./CommentCard"
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar"
 import { Input } from "./ui/input"
 import { useCreateComment, useGetPostComments } from "@/lib/client-queries/postcomments"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import LoadingComponent from "./LoadingComponent"
 import { useCreateReply } from "@/lib/client-queries/commentreplies"
+import { supabase } from "@/lib/supabase"
+
 
 interface SideCommentSectionInterface {
   post_id: string,
@@ -55,9 +57,28 @@ const SideCommentSection = ({
     setComment('')
   }
 
+    const [currentUser, setCurrentUser] = useState<{id: string, image_url: string, username: string} | null>(null);
+
+    useEffect(() => {
+      const fetchUser = async () => {
+        const { data, error } = await supabase
+          .from('users')
+          .select('id, image_url, username')
+          .eq('id', user_id)
+          .single();
+
+        if (!error && data) setCurrentUser(data);
+      };
+      fetchUser();
+    }, [user_id]);
+
   if(isLoading) return <LoadingComponent message="loading post comments..."/>
   
   return (
+
+
+
+
     <div className={`${className}`}>
       <div className=" p-4 border-b flex items-center justify-between">
         <h3 className="flex items-center font-semibold  h-full">Comments ({comments.length})</h3>
@@ -90,7 +111,7 @@ const SideCommentSection = ({
         <div className=" flex gap-2">
           
           <Avatar className="flex w-8 h-8 border border-gray-500 rounded-full overflow-hidden justify-center items-center">
-            <AvatarImage src="/user-profile-illustration.png" />
+            <AvatarImage src={currentUser?.image_url || "/user-profile-illustration.png"} />
             <AvatarFallback>U</AvatarFallback>
           </Avatar>
           <div className="flex-1 flex gap-2">

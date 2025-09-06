@@ -29,10 +29,10 @@ const CommentCard = ({
   if(isLoading) return <LoadingComponent message=""/>
 
   return (
-    <div className="p-4 border-b">
+    <div className="p-4 border-b" >
       <div className="flex gap-3">
-        <Avatar className="flex w-8 h-8 border border-gray-500 rounded-full overflow-hidden justify-center items-center">
-          <AvatarImage src="/simple-green-leaf-logo.png" />
+        <Avatar className="flex w-8 h-8 border border-gray-500 rounded-full overflow-hidden justify-center items-center ">
+          <AvatarImage src={comment.user.image_url || "/placeholder.svg"} />
           <AvatarFallback>{comment.user.username[0].toUpperCase()}</AvatarFallback>
         </Avatar>
         <div className="flex-1">
@@ -70,7 +70,7 @@ const ReplyCard = ({
     <div key={reply.id}>
       <div className="flex gap-3 pt-4">
         <Avatar className="flex w-8 h-8 border border-gray-500 rounded-full overflow-hidden justify-center items-center">
-          <AvatarImage src="/simple-green-leaf-logo.png" />
+          <AvatarImage src={user?.image_url || "/placeholder.svg"} />
           <AvatarFallback>{user.username[0].toUpperCase()}</AvatarFallback>
         </Avatar>
         <div className="flex-1">

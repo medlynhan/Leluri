@@ -7,6 +7,7 @@ import MediaCarousel from "../MediaCarousel"
 import SideCommentSection from "../SideCommentSection"
 import { useGetPostById } from "@/lib/client-queries/posts"
 import LoadingComponent from "../LoadingComponent"
+import { useCreatePostLike, useDeletePostLike } from "@/lib/client-queries/postlikes"
 
 interface DetailedPostModal {
   postId: string,
@@ -20,9 +21,41 @@ const DetailedPostModal = ({
   userId
 } : DetailedPostModal) => {
 
-  const { data: post, isLoading, isError, error } = useGetPostById(postId)
+const { data: post, isLoading, isError, error } = useGetPostById(postId, userId)
 
-  if(isLoading) return <LoadingComponent message="Loading post details..."/>
+
+const { mutateAsync: likePost, isPending: isLikePostPending } = useCreatePostLike()
+const { mutate: unlikePost, isPending: isUnlikePostPending } = useDeletePostLike()
+
+const handleLike = async () => {
+  if (!post) return
+  if (post.liked) {
+    unlikePost({ user_id: userId, post_id: post.id })
+  } else {
+    await likePost({ user_id: userId, post_id: post.id })
+  }
+}
+
+
+const [showBigHeart, setShowBigHeart] = useState<boolean>(false)
+
+const handleDoubleClick = async () => {
+  await handleLike()
+  setShowBigHeart(true)
+  setTimeout(() => setShowBigHeart(false), 800) // animasi ilang
+}
+
+
+  if (isLoading) {
+    return <LoadingComponent message="Loading post details..." />
+  }
+
+  if (isError) {
+    return <div className="p-4 text-red-500">Error: {String(error)}</div>
+  }
+
+
+
 
   return (
     <div className="fixed h-screen inset-0 bg-black/50 flex items-center justify-center z-101 p-4 ">
@@ -32,7 +65,7 @@ const DetailedPostModal = ({
         <span className="flex-1 flex flex-col lg:overflow-y-auto lg:overflow-x-hidden scrollbar-hide">
           <div className="py-3 px-4 border-b flex items-center gap-3 justify-between">
             <Avatar className="flex w-10 h-10 border border-gray-500 rounded-full overflow-hidden justify-center items-center">
-              <AvatarImage src="/simple-green-leaf-logo.png" />
+              <AvatarImage src={post?.user?.image_url || "/placeholder.svg"} />
               <AvatarFallback>{post?.user.username[0].toUpperCase()}</AvatarFallback>
             </Avatar>
             <div className=" flex-1">
@@ -48,14 +81,29 @@ const DetailedPostModal = ({
             </button>
           </div>
           
-          <MediaCarousel posts_media={post?.posts_media ?? []}/>
+          <div onDoubleClick={handleDoubleClick} className="relative">
+            <MediaCarousel posts_media={post?.posts_media ?? []}/>
+              {showBigHeart && (
+                <Heart className="absolute inset-0 m-auto w-24 h-24 text-red-500 opacity-80 animate-ping" />
+              )}
+          </div>
 
           <span className=" p-4 border-t">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1">
-                  <Heart className="w-5 h-5" />
-                  <span className="text-sm font-medium">{post?.likes}</span>
+                  <button
+                    disabled={isLikePostPending || isUnlikePostPending}
+                    onClick={handleLike}
+                    className="flex items-center gap-1"
+                  >
+                    <Heart
+                      className={`w-5 h-5 cursor-pointer ${
+                        post?.liked ? "text-red-500 fill-current" : "text-[var(--black)] "
+                      }`}
+                    />
+                    <span className="text-sm font-medium">{post?.likes}</span>
+                  </button>
                 </div>
                 <div className="flex items-center gap-1">
                   <MessageCircle className="w-5 h-5" />

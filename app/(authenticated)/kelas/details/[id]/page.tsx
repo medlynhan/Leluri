@@ -63,6 +63,11 @@ export default function ClassDetailPage() {
 
           {/* Tombol daftar */}
           <button
+            className="w-full py-3 rounded-full border border-[var(--black)] text-[var(--black)] font-semibold hover:bg-[var(--light-grey)] transition"
+          >
+            Hubungi Tutor
+          </button>
+          <button
             onClick={() => setIsRegistrationModalOpened(true)}
             className="w-full py-3 rounded-full bg-black text-white font-semibold hover:bg-[var(--dark-grey)] transition"
           >

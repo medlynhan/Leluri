@@ -36,8 +36,4 @@ const StarRating: React.FC<StarRatingProps> = ({ rating, size = 16 }) => {
   );
 };
 
-<<<<<<< HEAD
 export default StarRating;
-=======
-export default StarRating;
->>>>>>> 260514d9f595c4a30a14adf381c2e3659dc762da

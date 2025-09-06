@@ -46,26 +46,36 @@ export function useGetPosts(user_id : string|undefined, options?: UseQueryOption
 }
 
 // get post by id
-async function getPostById(post_id: string): Promise<DetailedPostWithMedia> {
-  const { data, error } = await supabase.from('posts')
+// get post by id
+async function getPostById(post_id: string, user_id?: string): Promise<DetailedPostWithMedia & { liked: boolean; likes: number }> {
+  const { data: post, error } = await supabase.from('posts')
     .select(`
       *,
       user:users!posts_user_id_fkey ( id, username, image_url, role ),
-      posts_media (*)
-      `)
+      posts_media (*),
+      posts_likes!fk_postlike_post ( user_id )
+    `)
     .eq('id', post_id)
     .single();
 
   if (error) throw new Error(error.message);
-  return data;
+
+  return {
+    ...post,
+    liked: post.posts_likes?.some((like: any) => like.user_id === user_id) ?? false,
+    likes: post.posts_likes?.length ?? 0
+  }
 }
 
-export function useGetPostById(post_id: string) {
-  return useQuery<DetailedPostWithMedia, Error>({
-    queryKey: ["post", post_id],
-    queryFn: () => getPostById(post_id),
+export function useGetPostById(post_id: string, user_id?: string) {
+  return useQuery({
+    queryKey: ["post", post_id, user_id],
+    queryFn: () => getPostById(post_id, user_id),
+    enabled: !!post_id
   });
 }
+
+
 
 // create new post
 async function createPost({
@@ -173,5 +183,60 @@ export function useGetPostByUserId(user_id : string|undefined, options?: UseQuer
     queryFn: () => getPostByUserId(user_id),
     enabled: !!user_id,
     ...options
+  });
+}
+
+
+
+// get all posts (hanya dari user yang difollow)
+async function getFollowedPosts(user_id : string): Promise<DetailedPostWithMedia[]> {
+
+  // cari siapa saja yang di-follow user ini
+  const { data: followedByUser = [], error: followedByUserError } = await supabase
+    .from("userfollowers")
+    .select("followed_id")
+    .eq("follower_id", user_id);
+
+  if (followedByUserError) throw new Error(followedByUserError.message);
+
+  const followedIds = (followedByUser ?? []).map((f) => f.followed_id);
+
+  if (followedIds.length === 0) {
+    // kalau user belum follow siapa pun, beranda kosong
+    return [];
+  }
+
+  // ambil post hanya dari user yang difollow
+  const { data: posts, error: postsError } = await supabase
+    .from("posts")
+    .select(`
+      *,
+      user:users!posts_user_id_fkey ( id, username, image_url, role ),
+      posts_media (*),
+      posts_likes!fk_postlike_post ( user_id )
+    `)
+    .in("user_id", followedIds) // <-- filter di sini
+    .order("created_at", { ascending: false });
+
+  if (postsError) throw new Error(postsError.message);
+
+  const finalPosts = posts.map((post) => ({
+    ...post,
+    user: {
+      ...post?.user,
+      followed: followedIds.includes(post.user.id), // karena pasti difollow
+    },
+    liked: post.posts_likes.some((like: any) => like.user_id === user_id),
+  }));
+
+  return finalPosts;
+}
+
+export function useGetFollowedPosts(user_id: string | undefined, options?: UseQueryOptions<DetailedPostWithMedia[]>) {
+  return useQuery<DetailedPostWithMedia[], Error>({
+    queryKey: ["followed-posts", user_id],
+    queryFn: () => getFollowedPosts(user_id as string),
+    enabled: !!user_id,
+    ...options,
   });
 }

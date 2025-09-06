@@ -109,7 +109,7 @@ const MediaCarousel = ({ posts_media }: { posts_media: PostMedia[] }) => {
             alt="Media not accessible..."
             height={480}
             width={480}
-            className="object-cover w-full h-full bg-gray-200 aspect-square"
+            className="object-cover w-full h-full bg-gray-200 aspect-square cursor-pointer"
           />
         )}
 

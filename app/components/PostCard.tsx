@@ -65,13 +65,13 @@ const PostCard = ({
     <CardContent className={`flex py-2 px-4 items-center ${hideActions ? 'hidden' : ''}`}>
       <div className="flex items-center justify-between w-full">
         <div className="flex items-center gap-3" onClick={(e) => { e.stopPropagation(); router.push(`/profile/${post.user.id}`) }}>
-          <Avatar className="flex w-8 h-8 border border-gray-500 rounded-full overflow-hidden justify-center items-center">
+          <Avatar className="flex min-w-5 min-h-5 cursor-pointer max-w-8 max-h-8 border border-gray-500 rounded-full overflow-hidden justify-center items-center">
             <AvatarImage src={post.user.image_url || "/placeholder.svg"} />
             <AvatarFallback>{post.user.username[0].toUpperCase()}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
-            <p className="font-medium text-sm text-gray-900 line-clamp-1">{post.user.username}</p>
-            <p className="text-xs text-gray-500 line-clamp-1">{post.user.role}</p>
+            <p className="font-medium text-gray-900 line-clamp-1 text-xs">{post.user.username}</p>
+            <p className="text-xs text-gray-500 line-clamp-1 text-xs">{post.user.role}</p>
           </div>
         </div>
 
@@ -93,7 +93,7 @@ const PostCard = ({
                 disabled={isLikePostPending || isUnlikePostPending}
                 onClick={(e) => { e.stopPropagation(); onLikeClick ? onLikeClick() : handleSelfLike() }}
               >
-                <Heart className={`w-4 h-4 ${post.liked ? "text-red-500 fill-current" : "text-gray-300 fill-current"}`} />
+                <Heart className={`w-4 h-4 cursor-pointer ${post.liked ? "text-red-500 fill-current" : "text-gray-300 fill-current"}`} />
                 <span className="text-sm">{post.likes}</span>
               </Button>
               <Button
@@ -101,7 +101,7 @@ const PostCard = ({
                 variant="ghost"
                 onClick={() => onCommentClick && onCommentClick()}
               >
-                <MessageSquare className="w-4 h-4" />
+                <MessageSquare className="w-4 h-4 cursor-pointer" />
                 <span className="text-sm">{post.comment_count}</span>
               </Button>
             </>

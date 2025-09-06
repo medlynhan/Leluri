@@ -17,7 +17,7 @@ export default function AuthenticatedLayout({ children }: { children: React.Reac
     /^\/kelas\/details\/[^/]+$/,
     "/profile/followers",
     "/profile/following",
-    /^\/profile\/[^/]+$/,
+
   ];
 
   const hideSidebar = noSidebarRoutes.some((rule) =>
