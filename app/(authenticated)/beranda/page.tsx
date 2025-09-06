@@ -50,7 +50,7 @@ const BerandaPage = () => {
           ))}
           {posts.length <=0  &&  (
             <div className="w-full max-h-screen flex-col justify-center items-center border-3-">
-              <Image src="/empty.png" width={300} height={300} alt="NO" className='opacity-70'/>
+              <Image src="/empty.png" width={300} height={300} alt="Belum ada postingan" className='opacity-70'/>
               <p className="text-center text-[var(--dark-grey)] text-lg ">Belum ada postingan</p>
               <p className="text-center text-[var(--dark-grey)] ">Yuk segera explore komunitas disini !</p>
             </div>

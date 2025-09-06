@@ -49,7 +49,7 @@ const Sidebar = () => {
   ]
 
   return (
-    <div className='w-fit h-fit'>
+    <div className='w-fit h-fit z-50 '>
       
       {/*Sidebar Desktop */}
       <div className={`top-0 absolute left-0  lg:flex lg:flex ${isOpen ? "flex" : "hidden"}  w-64 z-50 flex-none bg-[var(--white)] h-screen p-4 fixed flex-col shadow-[2px_0_2px_rgba(0,0,0,0.1)] lg:shadow-none lg:border-r border-[var(--medium-grey)] z-10`}>

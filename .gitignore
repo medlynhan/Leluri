@@ -42,4 +42,3 @@ next-env.d.ts
 
 /temp
 /app/lib/db-internal-queries
-/public

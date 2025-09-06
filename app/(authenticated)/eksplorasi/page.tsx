@@ -92,7 +92,7 @@ const EksplorasiPage = () => {
     <div className="relative w-full h-full overflow-x-hidden">
 
       {/* Navbar */}
-      <div className="absolute top-0 left-0 flex gap-4 justify-center items-center h-14 bg-[var(--white)] w-full z-50 fixed p-2 max-w-screen">
+      <div className="absolute top-0 left-0 flex gap-4 justify-center items-center h-14 bg-[var(--white)] w-full z-10 fixed p-2 max-w-screen">
         <Sidebar />
 
         {/* Search bar */}
