@@ -45,7 +45,7 @@ const BerandaPage = () => {
               post={post}
               userId={user.id}
               onCommentClick={() => setChosenPostId(post.id)}
-              showFollowButton={true}
+              showFollowButton={false}
             />
           ))}
           {posts.length <=0  &&  (
