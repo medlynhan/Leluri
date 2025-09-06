@@ -232,7 +232,7 @@ const ProfilePage: React.FC = () => {
         {postsData && postsData.length > 0 ? (
           <div className="grid grid-cols-[repeat(auto-fill,minmax(17em,1fr))] p-3 gap-2 lg:gap-4">
             {postsData.map(post => (
-              <PostCard key={post.id} post={post} onClick={() => setPostModalId(post.id)} hideActions={"hidden"} />
+              <PostCard key={post.id} post={post} onClick={() => setPostModalId(post.id)} hideActions={"hidden"} userId={profile.id || ""} />
             ))}
           </div>
         ) : (
