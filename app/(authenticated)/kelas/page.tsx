@@ -5,7 +5,7 @@ import LoadingComponent from "@/components/LoadingComponent"
 import { useGetClassCategories } from "@/lib/client-queries/classcategories"
 import { useGetClasses } from "@/lib/client-queries/classes"
 import { ClassCardInterface } from "@/lib/types/classes"
-import { MinimalInfoUser } from "@/lib/types/user"
+import { MinimalInfoUser } from "@/lib/types/users"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import Image from "next/image"
 import { useEffect, useState , useMemo} from "react"
@@ -90,7 +90,7 @@ const searchClass = (term: string) => {
   const handleSearchChange = (input: string) => {
     setSearch(input)
     if (!input || input.length <= 0) {
-      setFilteredClasses(classes)
+      setUsers([]) // reset suggestion juga
     }
   }
 
