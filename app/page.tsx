@@ -28,20 +28,21 @@ export default function Home() {
 
   return (
     
-    <div  className="animate-fadeIn container md:p-15 md:gap-30 relative">
+    <div  className="relative animate-fadeIn container md:px-10   ">
       {/*logo*/}
-      <Image src="/logo-leluri.png" alt="Leluri Logo" width={70} height={70} className="absolute top-5 left-5 fixed "/>
-      
+      <div className="sticky top-5 left-5 z-50 bg-white px-2 rounded-xl">
+          <Image src="/logo-leluri.png" alt="Leluri Logo" width={70} height={70} className="rounded-xl "/>
+      </div>
       
       {/*landing section*/}
       <div className="grid grid-rows-1 md:grid-rows-1 md:grid-cols-2 gap-4  w-full portrait:min-h-[50vh] landscape:min-h-[70vh] ">
         <div data-aos="fade-up" data-aos-duration="2000" className="flex flex-col  gap-6 text-left justify-center p-5 md:p-10 ">
           <h1 className="text-2xl md:text-3xl 2xl:text-4xl font-semibold w-full">Komunitas Budaya Untuk Generasi Kreatif!</h1>
-          <p  className="w-full text-sm md:text-md 2xl:text-base text-justify">Daftar atau login sekarang untuk mulai berkarya, bergabung, dan dukung budaya Indonesia!</p>
+          <p  className="w-full text-sm md:text-md 2xl:text-base text-justify border-[var(--black)]">Daftar atau login sekarang untuk mulai berkarya, bergabung, dan dukung budaya Indonesia!</p>
           
           <div className="flex gap-4 w-full">
               <Button onClick={goToLoginPage} text={"Masuk"} additional_styles="bg-[var(--yellow)] md:px-8 border-transparent text-[var(--white)]  hover:scale-105  transition-all duration-300 hover:bg-[var(--white)] hover:text-[var(--yellow)] hover:border-[var(--yellow)]"/>
-              <Button onClick={goToSignUpPage} text={"Daftar"} additional_styles="md:px-8 hover:bg-[var(--black)]   hover:text-[var(--white)]   hover:scale-105 hover:bg-[var(--black)] transition-all duration-300"/>
+              <Button onClick={goToSignUpPage} text={"Daftar"} additional_styles="md:px-8 hover:bg-[var(--black)] border-[var(--black)]  hover:text-[var(--white)]   hover:scale-105 hover:bg-[var(--black)] transition-all duration-300"/>
           </div>
 
         </div>

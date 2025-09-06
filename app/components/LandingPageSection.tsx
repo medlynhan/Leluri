@@ -29,7 +29,7 @@ export default function LandingPageSection({title,  description, image, order1, 
           </div>
 
           <div  className={`flex min-h-[30vh] md:min-h-[50vh] w-full justify-center  items-center ${order2}`}>
-            <Image src={`/${image}.png`} alt="Explorasi Budaya" width={400} height={400} className="animate-float  h-auto w-full md:w-[30em] p-10  w-auto opacity-100"/>
+            <Image src={`/${image}.png`} alt="Explorasi Budaya" width={400} height={400} className="animate-float max-w-[30em] h-auto w-full md:w-[30em] p-10  w-auto opacity-100"/>
           </div>
 
         </div>
