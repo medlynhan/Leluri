@@ -2,6 +2,8 @@
 
 Platform komunitas digital untuk melestarikan budaya Indonesia melalui konten, kelas, dan marketplace. Leluri menghadirkan ruang di mana pengrajin, sanggar seni, generasi muda, kolektor, dan pecinta budaya bisa **berbagi, belajar, membeli, dan saling mendukung** dalam satu ekosistem online.
 
+👉 [Lihat demo di sini](https://leluri.vercel.app)  
+
 ## 👩‍💻 Latar Belakang Proyek
 
 Proyek ini dibuat sebagai bentuk inovasi digital untuk menjawab tantangan pelestarian budaya Indonesia. Leluri hadir untuk menjembatani kesenjangan ini dengan menghadirkan platform komunitas yang difokuskan pada konten budaya.
