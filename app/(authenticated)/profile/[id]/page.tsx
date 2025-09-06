@@ -79,7 +79,31 @@ const ProfilePage: React.FC = () => {
     }
   }, [achievementsData])
 
-  // Loading selesai
+  useEffect(() => {
+    if (user && profile && profile.id && user.id !== profile.id && profile.followed === undefined) {
+      let cancelled = false;
+      (async () => {
+        try {
+          const { data, error } = await supabase
+            .from('userfollowers')
+            .select('follower_id')
+            .eq('follower_id', user.id)
+            .eq('followed_id', profile.id)
+            .maybeSingle();
+          if (!cancelled) {
+            setProfile(prev => prev ? { ...prev, followed: !!data } : prev)
+          }
+          if (error && (error as any).code && !['PGRST116','PGRST103'].includes((error as any).code)) {
+            console.warn('Follow status check error:', error)
+          }
+        } catch (e) {
+          if (!cancelled) console.warn('Follow status fetch failed', e)
+        }
+      })();
+      return () => { cancelled = true }
+    }
+  }, [user, profile?.id, profile?.followed])
+
   useEffect(() => {
     if (!isGetUserProfileLoading && !postsLoading) setLoading(false)
   }, [isGetUserProfileLoading, postsLoading])
@@ -89,7 +113,6 @@ const ProfilePage: React.FC = () => {
     router.push('/login')
   }
 
-  // Callback untuk toggle follow
   const handleFollowToggle = (newFollowed: boolean) => {
     setProfile(prev => prev ? { ...prev, followed: newFollowed } : prev)
   }
@@ -130,17 +153,13 @@ const ProfilePage: React.FC = () => {
 
           {/* Follow Button */}
           {user && profile.id !== user.id && (
-              <FollowButton
-                userId={user.id}                       // siapa yang login
-                followedUserId={profile.id || ""}      // siapa yang sedang dilihat
-                followed={profile.followed ?? false}   // status follow dari API
-                onFollowClick={() =>
-                  setProfile(prev =>
-                    prev ? { ...prev, followed: !prev.followed } : prev
-                  )
-                }
-                className="self-center w-full max-w-[20em] mb-6 py-2 px-4"
-              />
+            <FollowButton
+              userId={user.id}
+              followedUserId={profile.id || ''}
+              followed={profile.followed ?? false}
+              onChange={(f) => setProfile(prev => prev ? { ...prev, followed: f } : prev)}
+              className="self-center w-full max-w-[20em] mb-6 py-2 px-4"
+            />
           )}
 
           {/* Follower/Following */}
