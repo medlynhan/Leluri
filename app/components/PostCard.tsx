@@ -81,7 +81,7 @@ const PostCard = ({
               userId={userId}
               followed={post.user.followed ?? false}
               followedUserId={post.user.id}
-              onFollowClick={onFollowClick}
+              onChange={() => onFollowClick && onFollowClick()}
               className="ml-2"
             />
           )}
