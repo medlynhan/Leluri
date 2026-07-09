@@ -1,58 +1,79 @@
-# 🎭📱 Leluri - Platform Komunitas Budaya Digital
+# 🎭📱 Leluri - Digital Cultural Community Platform
 
-Platform komunitas digital untuk melestarikan budaya Indonesia melalui konten, kelas, dan marketplace. Leluri menghadirkan ruang di mana pengrajin, sanggar seni, generasi muda, kolektor, dan pecinta budaya bisa **berbagi, belajar, membeli, dan saling mendukung** dalam satu ekosistem online.
+A digital community platform designed to preserve and promote Indonesian culture through cultural content, workshops, and an online marketplace. Leluri brings together artisans, cultural studios, collectors, enthusiasts, and younger generations in a collaborative ecosystem where they can **share, learn, discover, and support Indonesian cultural heritage**.
 
-👉 [Lihat demo di sini](https://leluri.vercel.app)  
+👉 **Live Demo:** https://leluri.vercel.app
 
-## 👩‍💻 Latar Belakang Proyek
+---
 
-Proyek ini dibuat sebagai bentuk inovasi digital untuk menjawab tantangan pelestarian budaya Indonesia. Leluri hadir untuk menjembatani kesenjangan ini dengan menghadirkan platform komunitas yang difokuskan pada konten budaya.
+## 👩‍💻 Project Background
 
-Tujuan utamanya adalah membangun **komunitas budaya digital yang suportif dan berkelanjutan**, sehingga budaya Indonesia tidak hanya dipertahankan, tetapi juga dihidupkan kembali dalam format modern.
+Leluri was developed to address the growing challenge of preserving Indonesian cultural heritage in the digital era. Many cultural initiatives focus solely on introducing traditions without creating sustainable communities that encourage long-term engagement.
 
-## ✨ Teknologi
+To bridge this gap, Leluri provides a digital platform where users can share cultural knowledge, participate in workshops, connect with local artisans, and discover cultural products. The goal is to transform culture from something that is simply preserved into something that is actively experienced and shared by future generations.
 
-- `Next.js` (framework React untuk frontend dan fullstack logic)
-- `React + TypeScript` (frontend development)
-- `Tailwind CSS` (styling responsif)
-- `ShadCN UI` (komponen UI modern & reusable)
-- `Supabase` (database & authentication)
-- `Supabase Storage` (penyimpanan gambar & video)
-- `Vercel`(deployment)
+---
 
-## 🚀 Fitur
+## ✨ Tech Stack
 
-- Beranda → menampilkan konten singkat budaya dari akun yang diikuti.
+- **Next.js** – React framework for full-stack web development
+- **React & TypeScript** – Frontend development
+- **Tailwind CSS** – Responsive styling
+- **ShadCN UI** – Reusable modern UI components
+- **Supabase** – Database and authentication
+- **Supabase Storage** – Image and video storage
+- **Vercel** – Deployment
 
-- Eksplorasi → cari dan filter konten populer dari seluruh komunitas.
+---
 
-- Interaksi → like, komentar, dan berbagi postingan.
+## 🚀 Features
 
-- Kelas/Workshop → daftar kelas dari pengrajin atau sanggar seni.
+- **Home Feed** – View cultural posts from followed users.
+- **Explore** – Discover and filter popular cultural content from the community.
+- **Community Interaction** – Like, comment, and share cultural posts.
+- **Workshops & Classes** – Register for workshops hosted by artisans and cultural studios.
+- **Cultural Marketplace** – Browse and purchase cultural products.
+- **User Profile** – Manage personal profiles, contact information, and published content.
+- **Gamification** – Earn achievement badges through community participation.
 
-- Toko Budaya → etalase produk budaya.
+---
 
-- Profil Pengguna → biodata, kontak, dan konten yang dibuat pengguna.
-  
-- Gamifikasi → sistem pencapaian berbasis badge yang seru
-  
-## 🚦 Menjalankan Proyek
+## 🚦 Running the Project Locally
 
-Untuk menjalankan proyek ini di lokal: 
+1. Clone the repository
 
-1. Clone repositori `git clone https://github.com/medlynhan/leluri.git`
+```bash
+git clone https://github.com/medlynhan/leluri.git
+```
 
-2. Masuk ke folder proyek  `cd leluri`
+2. Navigate to the project directory
 
-3. Install dependencies `npm install`
-   
-4. Buat file .env.local dan masukkan konfigurasi Supabase (API Key, Project URL, dsb).
+```bash
+cd leluri
+```
 
-5. Jalankan development server  `npm run dev`
+3. Install dependencies
 
-6. Buka di browser  `(http://localhost:3000/)`
+```bash
+npm install
+```
 
+4. Create a `.env.local` file and configure your Supabase credentials (Project URL, API Key, etc.).
 
-## 🤝 Kontribusi & Pengembangan
-Proyek ini masih dalam tahap pengembangan awal. Harapannya, proyek ini bisa terus dikembangkan bersama komunitas dan mendapatkan dukungan kolaborasi dari berbagai pihak.
+5. Start the development server
 
+```bash
+npm run dev
+```
+
+6. Open your browser and visit
+
+```
+http://localhost:3000
+```
+
+---
+
+## 🤝 Contribution & Future Development
+
+Leluri is currently in its early development stage. Future improvements will focus on expanding community features, enhancing scalability, and enriching cultural experiences. Contributions, feedback, and collaborations are always welcome.
